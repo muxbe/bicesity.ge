@@ -1,0 +1,251 @@
+import React, { useState, useEffect } from 'react';
+import {
+ChevronLeft,
+Zap,
+Bike,
+Info,
+CreditCard,
+Hash,
+ArrowRight,
+Package,
+Cpu,
+LocateFixed
+} from 'lucide-react';
+
+const SEED_ATTRS = [
+{ id: 'attr_1', name: 'Frame Material', isPublic: true },
+{ id: 'attr_2', name: 'Battery Range', isPublic: true },
+{ id: 'attr_3', name: 'Weight', isPublic: true },
+{ id: 'attr_4', name: 'Groupset', isPublic: true },
+{ id: 'attr_5', name: 'Internal Dealer Note', isPublic: false }
+];
+
+const SEED_BIKES = [
+{
+id: 'prod_1',
+name: 'S-Works Turbo Levo',
+type: 'Electrical',
+serial: 'SPEC-7721-EV',
+price: '12499',
+image: 'https://images.unsplash.com/photo-1593761713314-44874730c421?q=80&w=1000&auto=format&fit=crop',
+values: {
+attr_1: 'Fact 11m Carbon',
+attr_2: '5-7 Hours / 700Wh',
+attr_3: '22.1 kg',
+attr_4: 'SRAM XX1 Eagle',
+attr_5: 'Incoming from Berlin warehouse'
+}
+},
+{
+id: 'prod_2',
+name: 'Trek Emonda SLR 9',
+type: 'Manual',
+serial: 'TRK-RD-990',
+price: '9850',
+image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=1000&auto=format&fit=crop',
+values: {
+attr_1: '800 Series OCLV Carbon',
+attr_3: '6.75 kg',
+attr_4: 'Shimano Dura-Ace Di2',
+attr_5: 'Needs pedal installation'
+}
+},
+{
+id: 'prod_3',
+name: 'Specialized Sirrus X',
+type: 'Manual',
+serial: 'SPEC-CITY-22',
+price: '1850',
+image: 'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?q=80&w=1000&auto=format&fit=crop',
+values: {
+attr_1: 'A1 Premium Aluminum',
+attr_3: '10.5 kg',
+attr_4: 'Shimano Deore',
+attr_5: 'Floor model - 5% discount possible'
+}
+}
+];
+
+export default function App() {
+const [view, setView] = useState('shop');
+const [selectedItem, setSelectedItem] = useState(null);
+const [category, setCategory] = useState('bicycle');
+const [products, setProducts] = useState([]);
+const [attributes, setAttributes] = useState([]);
+
+useEffect(() => {
+let stock = JSON.parse(localStorage.getItem(`velo_stock_${category}`) || '[]');
+let attrs = JSON.parse(localStorage.getItem(`velo_attrs_${category}`) || '[]');
+
+// Auto-fill with examples if empty to show the user how it looks
+if (category === 'bicycle' && stock.length === 0) {
+stock = SEED_BIKES;
+attrs = SEED_ATTRS;
+localStorage.setItem('velo_stock_bicycle', JSON.stringify(SEED_BIKES));
+localStorage.setItem('velo_attrs_bicycle', JSON.stringify(SEED_ATTRS));
+}
+
+setProducts(stock);
+setAttributes(attrs);
+}, [category]);
+
+const openDetail = (item) => {
+setSelectedItem(item);
+setView('detail');
+window.scrollTo(0, 0);
+};
+
+if (view === 'shop') {
+return (
+<div className="min-h-screen bg-slate-50 font-['Plus_Jakarta_Sans'] text-slate-900">
+    <header className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+                <div
+                    className="bg-blue-600 w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                    <Bike size={24} />
+                </div>
+                <span className="text-2xl font-black tracking-tighter">VELO<span
+                        className="text-blue-600">HUB</span></span>
+            </div>
+            <nav className="hidden md:flex gap-8 text-sm font-bold text-slate-500">
+                <a href="#" className="text-blue-600">Catalog</a>
+                <a href="#" className="hover:text-blue-600 transition-colors">Workshops</a>
+                <a href="#" className="hover:text-blue-600 transition-colors">Locations</a>
+            </nav>
+            <button
+                className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all">
+                Staff Portal
+            </button>
+        </div>
+    </header>
+
+    <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="mb-16 text-center">
+            <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">Explore the Future <br />
+                of Cycling.</h1>
+            <div className="flex justify-center gap-4 mt-10">
+                <button onClick={()=> setCategory('bicycle')} className={`px-10 py-5 rounded-[2.5rem] font-black
+                    transition-all flex items-center gap-3 border-2 ${category === 'bicycle' ? 'bg-blue-600 text-white
+                    border-blue-600 shadow-2xl shadow-blue-200 scale-105' : 'bg-white text-slate-400 border-slate-100
+                    hover:border-blue-200'}`}>
+                    <Bike size={24} /> Bicycles
+                </button>
+                <button onClick={()=> setCategory('part')} className={`px-10 py-5 rounded-[2.5rem] font-black
+                    transition-all flex items-center gap-3 border-2 ${category === 'part' ? 'bg-blue-600 text-white
+                    border-blue-600 shadow-2xl shadow-blue-200 scale-105' : 'bg-white text-slate-400 border-slate-100
+                    hover:border-blue-200'}`}>
+                    <Package size={24} /> Components
+                </button>
+            </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {products.map((item) => (
+            <div key={item.id} onClick={()=> openDetail(item)} className="bg-white rounded-[3rem] p-5 border
+                border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer group">
+                <div className="relative overflow-hidden rounded-[2.2rem] mb-6 aspect-[4/3] bg-slate-100">
+                    <img src={item.image} alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                        <span className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest
+                            text-white shadow-lg flex items-center gap-2 ${item.type==='Electrical' ? 'bg-amber-500'
+                            : 'bg-slate-900' }`}>
+                            {item.type === 'Electrical' ?
+                            <Zap size={12} fill="currentColor" /> :
+                            <Bike size={12} />} {item.type}
+                        </span>
+                    </div>
+                </div>
+                <div className="px-3 pb-4">
+                    <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-2xl font-black text-slate-900">{item.name}</h3>
+                        <div className="text-right">
+                            <p className="text-2xl font-black text-blue-600">${item.price}</p>
+                        </div>
+                    </div>
+                    <p className="text-slate-400 text-sm font-bold mb-6 flex items-center gap-1.5">
+                        <Hash size={14} /> {item.serial}
+                    </p>
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">View
+                            Configuration</span>
+                        <div
+                            className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                            <ArrowRight size={20} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ))}
+        </div>
+    </main>
+</div>
+);
+}
+
+return (
+<div className="min-h-screen bg-white font-['Plus_Jakarta_Sans'] text-slate-900">
+    <div className="max-w-7xl mx-auto px-6 py-12">
+        <button onClick={()=> setView('shop')} className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl
+            bg-slate-50 text-slate-500 hover:text-slate-900 font-black text-sm mb-12 transition-all">
+            <ChevronLeft size={20} /> Back to Catalog
+        </button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+            <div className="space-y-8">
+                <div className="rounded-[4rem] overflow-hidden bg-slate-100 shadow-2xl">
+                    <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-auto object-cover" />
+                </div>
+                <div className="flex gap-4">
+                    <div className="flex-1 p-6 rounded-[2rem] bg-slate-50 border border-slate-100 text-center">
+                        <LocateFixed className="mx-auto mb-2 text-blue-600" />
+                        <p className="text-[10px] font-black uppercase text-slate-400">Availability</p>
+                        <p className="font-bold">In Stock</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col py-4">
+                <div className="mb-10">
+                    <div className="flex gap-3 mb-6">
+                        <span className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em]
+                            text-white ${selectedItem.type==='Electrical' ? 'bg-amber-500' : 'bg-slate-900' }`}>
+                            {selectedItem.type}
+                        </span>
+                        <span
+                            className="px-5 py-2 rounded-full bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">
+                            ID: {selectedItem.serial}
+                        </span>
+                    </div>
+                    <h1 className="text-6xl font-black text-slate-900 leading-none mb-6">{selectedItem.name}</h1>
+                    <div className="flex items-center gap-4">
+                        <span className="text-5xl font-black text-blue-600">${selectedItem.price}</span>
+                    </div>
+                </div>
+
+                <div className="mb-12">
+                    <h2
+                        className="text-xs font-black uppercase tracking-[0.3em] text-slate-300 mb-8 flex items-center gap-4">
+                        <div className="h-px bg-slate-100 flex-1"></div>
+                        Configuration
+                        <div className="h-px bg-slate-100 flex-1"></div>
+                    </h2>
+                    <div className="grid grid-cols-2 gap-6">
+                        {attributes.filter(a => a.isPublic).map(attr => (
+                        <div key={attr.id} className="group">
+                            <p
+                                className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-blue-500 transition-colors">
+                                {attr.name}</p>
+                            <p className="font-black text-xl text-slate-800">{selectedItem.values[attr.id] || "N/A"}</p>
+                        </div>
+                        ))}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+);
+}

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bicycle/Parts Upload Form Example</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --line: #d1d5db;
+      --ink: #0f172a;
+      --muted: #475569;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --danger: #dc2626;
+      --ok: #059669;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 20px;
+    }
+
+    .layout {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tabs {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+
+    .tab-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      height: 34px;
+      padding: 0 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .tab-btn.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 14px;
+      color: var(--ink);
+      background: #fff;
+      font-family: inherit;
+    }
+
+    textarea {
+      height: 90px;
+      padding-top: 10px;
+      resize: vertical;
+    }
+
+    .photos-wrap {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .photos-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .photo-card, .add-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 170px;
+      background: #fff;
+      position: relative;
+    }
+
+    .photo-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .badge {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      padding: 4px 8px;
+      font-weight: 700;
+      background: var(--blue-soft);
+      color: var(--blue);
+      border: 1px solid #bfdbfe;
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 6px;
+      padding: 8px;
+    }
+
+    .btn {
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 0 8px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn:hover { background: #f8fafc; }
+    .btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .btn-danger { border-color: #fecaca; color: var(--danger); }
+
+    .add-card {
+      border-style: dashed;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 10px;
+    }
+
+    .add-card:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    .add-inner {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .plus {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 24px;
+      line-height: 34px;
+      font-weight: 700;
+      margin: 0 auto 8px;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .submit {
+      border: 0;
+      border-radius: 8px;
+      height: 40px;
+      padding: 0 16px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .ghost {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      height: 40px;
+      padding: 0 16px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .preview-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .preview-photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      background: #e2e8f0;
+    }
+
+    .preview-body {
+      padding: 12px;
+    }
+
+    .preview-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .preview-meta {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .preview-ok {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--ok);
+      font-weight: 700;
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="panel">
+      <h1>New Product Form</h1>
+      <p class="subtitle">Single photo field with multiple upload support for both Bicycle and Parts.</p>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="Bicycle" type="button">Bicycle</button>
+        <button class="tab-btn" data-tab="Parts" type="button">Parts</button>
+      </div>
+
+      <form id="product-form">
+        <div class="grid">
+          <div>
+            <label>Item Name</label>
+            <input id="name" type="text" placeholder="Trek Emonda SLR 9" />
+          </div>
+
+          <div>
+            <label>Serial / Part #</label>
+            <input id="serial" type="text" placeholder="TRK-RD-990" />
+          </div>
+
+          <div>
+            <label>Price</label>
+            <input id="price" type="number" min="0" placeholder="9850" />
+          </div>
+
+          <div id="bike-field">
+            <label>Drive Type</label>
+            <select>
+              <option>Manual</option>
+              <option>Electrical</option>
+            </select>
+          </div>
+
+          <div id="parts-field" style="display:none;">
+            <label>Compatibility</label>
+            <input type="text" placeholder="11-speed Shimano / SRAM" />
+          </div>
+
+          <div class="full">
+            <label>Description</label>
+            <textarea placeholder="Short selling description..."></textarea>
+          </div>
+        </div>
+
+        <div class="photos-wrap">
+          <div class="photos-head">
+            <label style="margin:0;">Product Images</label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <span class="pill" id="count-pill">0 images</span>
+              <span class="pill">First image is Primary</span>
+              <span class="pill">Max 12</span>
+            </div>
+          </div>
+
+          <input id="file-input" type="file" accept="image/*" multiple hidden />
+          <div class="photo-grid" id="photo-grid"></div>
+          <p class="hint">No need to create multiple image fields. One field handles all uploads.</p>
+        </div>
+
+        <div class="actions">
+          <button class="submit" type="button">Save Product</button>
+          <button class="ghost" type="button">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="panel">
+      <h1 style="font-size:20px; margin-bottom:10px;">Live Preview</h1>
+      <article class="preview-card">
+        <img id="preview-image" class="preview-photo" alt="Preview" />
+        <div class="preview-body">
+          <h2 id="preview-name" class="preview-title">Untitled Item</h2>
+          <p id="preview-meta" class="preview-meta">No serial • $0</p>
+          <p class="preview-ok">Primary image is used in product listing.</p>
+        </div>
+      </article>
+    </aside>
+  </main>
+
+  <script>
+    const MAX_IMAGES = 12;
+    const state = { tab: 'Bicycle', photos: [] };
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const bikeField = document.getElementById('bike-field');
+    const partsField = document.getElementById('parts-field');
+    const fileInput = document.getElementById('file-input');
+    const photoGrid = document.getElementById('photo-grid');
+    const countPill = document.getElementById('count-pill');
+
+    const nameInput = document.getElementById('name');
+    const serialInput = document.getElementById('serial');
+    const priceInput = document.getElementById('price');
+    const previewName = document.getElementById('preview-name');
+    const previewMeta = document.getElementById('preview-meta');
+    const previewImage = document.getElementById('preview-image');
+
+    function updatePreviewText() {
+      const name = nameInput.value.trim() || 'Untitled Item';
+      const serial = serialInput.value.trim() || 'No serial';
+      const price = priceInput.value ? Number(priceInput.value).toLocaleString() : '0';
+      previewName.textContent = name;
+      previewMeta.textContent = serial + ' • $' + price;
+    }
+
+    function updatePreviewImage() {
+      if (state.photos.length > 0) {
+        previewImage.src = state.photos[0].url;
+      } else {
+        previewImage.src =
+          state.tab === 'Bicycle'
+            ? 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80'
+            : 'https://images.unsplash.com/photo-1544133782-96420be44061?auto=format&fit=crop&w=1200&q=80';
+      }
+    }
+
+    function setTab(nextTab) {
+      state.tab = nextTab;
+      tabButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.tab === nextTab);
+      });
+      bikeField.style.display = nextTab === 'Bicycle' ? 'block' : 'none';
+      partsField.style.display = nextTab === 'Parts' ? 'block' : 'none';
+      updatePreviewImage();
+    }
+
+    function removePhoto(index) {
+      URL.revokeObjectURL(state.photos[index].url);
+      state.photos.splice(index, 1);
+      renderPhotos();
+    }
+
+    function makePrimary(index) {
+      if (index === 0) return;
+      const selected = state.photos[index];
+      state.photos.splice(index, 1);
+      state.photos.unshift(selected);
+      renderPhotos();
+    }
+
+    function openFilePicker() {
+      if (state.photos.length >= MAX_IMAGES) return;
+      fileInput.click();
+    }
+
+    function renderPhotos() {
+      countPill.textContent = state.photos.length + (state.photos.length === 1 ? ' image' : ' images');
+      photoGrid.innerHTML = '';
+
+      state.photos.forEach((photo, index) => {
+        const card = document.createElement('article');
+        card.className = 'photo-card';
+
+        const img = document.createElement('img');
+        img.src = photo.url;
+        img.alt = photo.name;
+        img.className = 'photo-img';
+        card.appendChild(img);
+
+        if (index === 0) {
+          const badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = 'Primary';
+          card.appendChild(badge);
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'photo-actions';
+
+        const primaryBtn = document.createElement('button');
+        primaryBtn.type = 'button';
+        primaryBtn.className = index === 0 ? 'btn btn-primary' : 'btn';
+        primaryBtn.textContent = index === 0 ? 'Primary' : 'Make Primary';
+        primaryBtn.disabled = index === 0;
+        primaryBtn.onclick = () => makePrimary(index);
+        actions.appendChild(primaryBtn);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-danger';
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = () => removePhoto(index);
+        actions.appendChild(removeBtn);
+
+        card.appendChild(actions);
+        photoGrid.appendChild(card);
+      });
+
+      const addCard = document.createElement('button');
+      addCard.type = 'button';
+      addCard.className = 'add-card';
+      addCard.onclick = openFilePicker;
+      addCard.disabled = state.photos.length >= MAX_IMAGES;
+
+      const inner = document.createElement('div');
+      inner.className = 'add-inner';
+      inner.innerHTML = `
+        <div class="plus">+</div>
+        <div>${state.photos.length >= MAX_IMAGES ? 'Maximum reached' : 'Add photos'}<br/>JPG, PNG, WEBP</div>
+      `;
+      addCard.appendChild(inner);
+      photoGrid.appendChild(addCard);
+
+      updatePreviewImage();
+    }
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => setTab(btn.dataset.tab));
+    });
+
+    fileInput.addEventListener('change', (event) => {
+      const files = Array.from(event.target.files || []);
+      const freeSlots = MAX_IMAGES - state.photos.length;
+      files.slice(0, freeSlots).forEach((file) => {
+        state.photos.push({ name: file.name, url: URL.createObjectURL(file) });
+      });
+      fileInput.value = '';
+      renderPhotos();
+    });
+
+    [nameInput, serialInput, priceInput].forEach((el) => {
+      el.addEventListener('input', updatePreviewText);
+    });
+
+    updatePreviewText();
+    setTab('Bicycle');
+    renderPhotos();
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Bicycle">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#sky)"/>
+  <path d="M0 560c170-60 300-54 440-8 150 49 280 58 420 2 134-53 234-56 340-17v263H0z" fill="#e2e8f0"/>
+  <circle cx="365" cy="520" r="138" fill="none" stroke="#0f172a" stroke-width="34"/>
+  <circle cx="835" cy="520" r="138" fill="none" stroke="#0f172a" stroke-width="34"/>
+  <path d="M365 520h176l125-190 169 190H541L455 365m211-35h112m-323 35-54-98h-82" fill="none" stroke="#0ea5e9" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="541" cy="520" r="28" fill="#0f172a"/>
+  <path d="M735 330h126l42 54" fill="none" stroke="#0f172a" stroke-width="30" stroke-linecap="round"/>
+</svg>

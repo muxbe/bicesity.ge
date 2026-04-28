@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeloHub | Professional Bicycle Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .hidden-view {
+            display: none !important;
+        }
+
+        .product-card:hover .hover-zoom {
+            transform: scale(1.05);
+        }
+
+        .admin-sidebar-active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- VIEW TOGGLE (FLOATING) -->
+    <div
+        class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] glass-nav border border-slate-200 p-1.5 rounded-full shadow-2xl flex items-center gap-2">
+        <button id="btn-user-view" onclick="switchView('user')"
+            class="px-6 py-2.5 rounded-full text-sm font-bold transition-all bg-blue-600 text-white shadow-lg">
+            <i class="fas fa-shopping-cart mr-2"></i>Customer View
+        </button>
+        <button id="btn-admin-view" onclick="switchView('admin')"
+            class="px-6 py-2.5 rounded-full text-sm font-bold transition-all text-slate-600 hover:bg-slate-100">
+            <i class="fas fa-user-shield mr-2"></i>Admin Panel
+        </button>
+    </div>
+
+    <!-- USER SIDE PAGE -->
+    <div id="user-side" class="min-h-screen">
+        <!-- User Navigation -->
+        <nav class="glass-nav sticky top-0 z-50 border-b border-slate-100 px-6 py-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 p-2 rounded-xl text-white">
+                        <i class="fas fa-bicycle text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tighter">VELO<span
+                            class="text-blue-600">HUB</span></span>
+                </div>
+                <div class="hidden md:flex gap-8 text-sm font-bold text-slate-600 uppercase tracking-widest">
+                    <a href="#" class="text-blue-600">Explore</a>
+                    <a href="#" class="hover:text-blue-600 transition-colors">Bicycles</a>
+                    <a href="#" class="hover:text-blue-600 transition-colors">Components</a>
+                </div>
+                <div class="flex items-center gap-5">
+                    <i class="fas fa-search text-slate-400 cursor-pointer hover:text-slate-900"></i>
+                    <div class="relative cursor-pointer">
+                        <i class="fas fa-shopping-bag text-slate-700"></i>
+                        <span
+                            class="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <header class="max-w-7xl mx-auto px-6 py-16 md:py-24 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span
+                    class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 inline-block">2024
+                    Collection Live</span>
+                <h1 class="text-5xl md:text-7xl font-black leading-none mb-8">Engineering <br><span
+                        class="text-blue-600">Pure Speed.</span></h1>
+                <p class="text-slate-500 text-lg mb-10 max-w-md leading-relaxed">Experience the peak of cycling
+                    technology. Custom frames, professional components, and world-class service.</p>
+                <div class="flex gap-4">
+                    <button
+                        class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl hover:-translate-y-1">Shop
+                        Bikes</button>
+                    <button
+                        class="bg-white border border-slate-200 text-slate-900 px-8 py-4 rounded-2xl font-bold hover:bg-slate-50 transition-all">View
+                        Parts</button>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=1200"
+                        class="w-full h-full object-cover" alt="Hero Bike">
+                </div>
+                <div
+                    class="absolute -bottom-10 -left-10 bg-white p-8 rounded-3xl shadow-2xl border border-slate-100 hidden md:block">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-lg">In Stock</p>
+                            <p class="text-slate-400 text-sm">Ready for dispatch</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Product Listing -->
+        <main class="max-w-7xl mx-auto px-6 pb-40">
+            <h2 class="text-3xl font-black mb-12">New Arrivals</h2>
+            <div id="user-product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Products injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- ADMIN SIDE PAGE -->
+    <div id="admin-side" class="min-h-screen flex hidden-view">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-slate-900 text-slate-400 flex flex-col shrink-0">
+            <div class="p-8 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                        <i class="fas fa-user-cog text-xl"></i>
+                    </div>
+                    <span class="text-white font-black text-xl tracking-tight">ADMIN PRO</span>
+                </div>
+            </div>
+            <nav class="p-6 flex-1 space-y-2">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 ml-4">Management</p>
+                <button onclick="switchAdminTab('inventory')" id="tab-inventory"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-bold transition-all admin-sidebar-active">
+                    <i class="fas fa-boxes"></i> Inventory Stock
+                </button>
+                <button onclick="switchAdminTab('schema')" id="tab-schema"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-bold transition-all hover:bg-slate-800">
+                    <i class="fas fa-project-diagram"></i> Dynamic Fields
+                </button>
+                <button
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-bold transition-all hover:bg-slate-800 opacity-50">
+                    <i class="fas fa-chart-line"></i> Sales Reports
+                </button>
+            </nav>
+            <div class="p-8 bg-slate-950/50">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-white leading-none">Admin User</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Super Admin Account</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Admin Content -->
+        <main class="flex-1 overflow-y-auto p-10">
+            <!-- Inventory Tab -->
+            <div id="admin-inventory-view">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h1 class="text-3xl font-black">Inventory Management</h1>
+                        <p class="text-slate-400">Add values to the fields you defined in the schema.</p>
+                    </div>
+                    <button
+                        class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all">
+                        <i class="fas fa-plus mr-2"></i>New Product
+                    </button>
+                </div>
+                <div id="admin-product-list" class="space-y-6">
+                    <!-- Product Rows Injected here -->
+                </div>
+            </div>
+
+            <!-- Schema Tab -->
+            <div id="admin-schema-view" class="hidden-view">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h1 class="text-3xl font-black">Dynamic Fields</h1>
+                        <p class="text-slate-400">Define which technical specifications should be available for each
+                            item category.</p>
+                    </div>
+                    <button onclick="openSchemaModal()"
+                        class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all">
+                        <i class="fas fa-plus mr-2"></i>Add Specification
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                        <h2 class="text-xl font-black mb-6 flex items-center gap-3">
+                            <i class="fas fa-bicycle text-blue-600"></i> Bicycle Specs
+                        </h2>
+                        <div id="schema-list-bicycle" class="space-y-3"></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                        <h2 class="text-xl font-black mb-6 flex items-center gap-3">
+                            <i class="fas fa-cog text-slate-400"></i> Parts Specs
+                        </h2>
+                        <div id="schema-list-parts" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL FOR SCHEMA -->
+    <div id="schema-modal"
+        class="fixed inset-0 z-[200] bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="text-xl font-black">New Field Definition</h3>
+                <button onclick="closeSchemaModal()" class="text-slate-400 hover:text-slate-900"><i
+                        class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-8 space-y-5">
+                <div>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Field
+                        Label</label>
+                    <input id="modal-field-name" type="text" placeholder="e.g. Frame Weight"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label
+                        class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Category</label>
+                    <select id="modal-field-cat"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Bicycle">Bicycle</option>
+                        <option value="Parts">Parts</option>
+                    </select>
+                </div>
+                <button onclick="saveNewField()"
+                    class="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-blue-700 transition-all mt-4">Create
+                    Field</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA INITIALIZATION ---
+        let appState = {
+            view: 'user', // user or admin
+            adminTab: 'inventory',
+            attributes: [
+                { id: 'a1', name: 'Frame Material', category: 'Bicycle' },
+                { id: 'a2', name: 'Weight', category: 'Bicycle' },
+                { id: 'a3', name: 'Compatibility', category: 'Parts' }
+            ],
+            products: [
+                {
+                    id: 1,
+                    name: 'S-Works Tarmac SL8',
+                    category: 'Bicycle',
+                    price: 14000,
+                    image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&q=80&w=800',
+                    desc: 'The lightest, most aerodynamic road bike we have ever made.',
+                    values: { 'a1': 'Fact 12r Carbon', 'a2': '6.8kg' }
+                },
+                {
+                    id: 2,
+                    name: 'Rockhopper Comp 29',
+                    category: 'Bicycle',
+                    price: 950,
+                    image: 'https://images.unsplash.com/photo-1532298229144-0ee05051da69?auto=format&fit=crop&q=80&w=800',
+                    desc: 'A summer-long of trail-ready performance.',
+                    values: { 'a1': 'A1 Alloy', 'a2': '13.2kg' }
+                },
+                {
+                    id: 3,
+                    name: 'Shimano Ultegra Chain',
+                    category: 'Parts',
+                    price: 65,
+                    image: 'https://images.unsplash.com/photo-1544133782-96420be44061?auto=format&fit=crop&q=80&w=800',
+                    desc: 'Smooth shifting and durable 11-speed chain.',
+                    values: { 'a3': '11-Speed Shimano' }
+                }
+            ]
+        };
+
+        // --- CORE FUNCTIONS ---
+
+        function renderAll() {
+            renderUserProducts();
+            renderAdminInventory();
+            renderAdminSchema();
+        }
+
+        function renderUserProducts() {
+            const grid = document.getElementById('user-product-grid');
+            grid.innerHTML = appState.products.map(p => {
+                const specs = appState.attributes
+                    .filter(a => a.category === p.category && p.values[a.id])
+                    .map(attr => `
+                        <div class="bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl">
+                            <span class="text-[9px] text-slate-400 font-black uppercase block leading-tight">${attr.name}</span>
+                            <span class="text-[11px] font-bold text-slate-700">${p.values[attr.id]}</span>
+                        </div>
+                    `).join('');
+
+                return `
+                    <div class="product-card group bg-white rounded-[2.5rem] border border-slate-100 p-3 shadow-sm hover:shadow-2xl transition-all duration-500">
+                        <div class="aspect-square rounded-[2rem] overflow-hidden relative">
+                            <img src="${p.image}" class="w-full h-full object-cover hover-zoom transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+                                ${p.category}
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-extrabold">${p.name}</h3>
+                                <span class="text-xl font-black text-blue-600">$${p.price.toLocaleString()}</span>
+                            </div>
+                            <p class="text-slate-400 text-xs mb-6 line-clamp-2">${p.desc}</p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-8">
+                                ${specs}
+                            </div>
+
+                            <div class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-center">
+                                View Details
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAdminInventory() {
+            const list = document.getElementById('admin-product-list');
+            list.innerHTML = appState.products.map(p => {
+                const fields = appState.attributes
+                    .filter(a => a.category === p.category)
+                    .map(attr => `
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${attr.name}</label>
+                            <input type="text" 
+                                value="${p.values[attr.id] || ''}" 
+                                onchange="updateProductValue(${p.id}, '${attr.id}', this.value)"
+                                placeholder="Enter ${attr.name}..."
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                            >
+                        </div>
+                    `).join('');
+
+                return `
+                    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                        <div class="grid lg:grid-cols-4 gap-10">
+                            <div class="flex gap-5 col-span-1">
+                                <img src="${p.image}" class="w-24 h-24 object-cover rounded-2xl">
+                                <div>
+                                    <h4 class="font-black">${p.name}</h4>
+                                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${p.category}</span>
+                                    <p class="text-xl font-black mt-2">$${p.price}</p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-3">
+                                <p class="text-xs font-black text-slate-300 uppercase tracking-widest mb-4">Live Product Specifications</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    ${fields || '<p class="text-slate-400 text-sm italic col-span-3">No custom fields defined for this category.</p>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAdminSchema() {
+            ['Bicycle', 'Parts'].forEach(cat => {
+                const list = document.getElementById(`schema-list-${cat.toLowerCase()}`);
+                list.innerHTML = appState.attributes
+                    .filter(a => a.category === cat)
+                    .map(attr => `
+                        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
+                            <div>
+                                <p class="font-bold text-slate-900">${attr.name}</p>
+                                <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest">Text Input Field</p>
+                            </div>
+                            <button onclick="removeField('${attr.id}')" class="text-slate-300 hover:text-red-500 transition-colors p-2">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `).join('');
+            });
+        }
+
+        // --- ACTIONS ---
+
+        function switchView(target) {
+            appState.view = target;
+            const userView = document.getElementById('user-side');
+            const adminView = document.getElementById('admin-side');
+            const btnUser = document.getElementById('btn-user-view');
+            const btnAdmin = document.getElementById('btn-admin-view');
+
+            if (target === 'user') {
+                userView.classList.remove('hidden-view');
+                adminView.classList.add('hidden-view');
+                btnUser.className = 'px-6 py-2.5 rounded-full text-sm font-bold transition-all bg-blue-600 text-white shadow-lg';
+                btnAdmin.className = 'px-6 py-2.5 rounded-full text-sm font-bold transition-all text-slate-600 hover:bg-slate-100';
+                renderUserProducts();
+            } else {
+                userView.classList.add('hidden-view');
+                adminView.classList.remove('hidden-view');
+                btnAdmin.className = 'px-6 py-2.5 rounded-full text-sm font-bold transition-all bg-slate-800 text-white shadow-lg';
+                btnUser.className = 'px-6 py-2.5 rounded-full text-sm font-bold transition-all text-slate-600 hover:bg-slate-100';
+                renderAdminInventory();
+            }
+        }
+
+        function switchAdminTab(target) {
+            appState.adminTab = target;
+            const inventory = document.getElementById('admin-inventory-view');
+            const schema = document.getElementById('admin-schema-view');
+            const tabInv = document.getElementById('tab-inventory');
+            const tabSch = document.getElementById('tab-schema');
+
+            if (target === 'inventory') {
+                inventory.classList.remove('hidden-view');
+                schema.classList.add('hidden-view');
+                tabInv.classList.add('admin-sidebar-active');
+                tabSch.classList.remove('admin-sidebar-active');
+                renderAdminInventory();
+            } else {
+                inventory.classList.add('hidden-view');
+                schema.classList.remove('hidden-view');
+                tabSch.classList.add('admin-sidebar-active');
+                tabInv.classList.remove('admin-sidebar-active');
+                renderAdminSchema();
+            }
+        }
+
+        function updateProductValue(prodId, attrId, val) {
+            const prod = appState.products.find(p => p.id === prodId);
+            if (prod) {
+                prod.values[attrId] = val;
+            }
+        }
+
+        function openSchemaModal() {
+            document.getElementById('schema-modal').classList.remove('hidden');
+        }
+
+        function closeSchemaModal() {
+            document.getElementById('schema-modal').classList.add('hidden');
+        }
+
+        function saveNewField() {
+            const name = document.getElementById('modal-field-name').value;
+            const cat = document.getElementById('modal-field-cat').value;
+
+            if (!name) return;
+
+            const newAttr = {
+                id: 'a' + Date.now(),
+                name: name,
+                category: cat
+            };
+
+            appState.attributes.push(newAttr);
+            document.getElementById('modal-field-name').value = '';
+            closeSchemaModal();
+            renderAdminSchema();
+        }
+
+        function removeField(id) {
+            appState.attributes = appState.attributes.filter(a => a.id !== id);
+            // Cleanup product values
+            appState.products.forEach(p => delete p.values[id]);
+            renderAdminSchema();
+        }
+
+        // Init
+        window.onload = renderAll;
+
+    </script>
+</body>
+
+</html>

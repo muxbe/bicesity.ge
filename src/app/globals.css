@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  body {
+    @apply font-sans text-slate-900 bg-slate-50;
+  }
+}
+
+@layer components {
+  .glass-nav {
+    @apply bg-white/75 backdrop-blur-xl;
+  }
+  .btn-primary {
+    @apply bg-blue-600 text-white font-bold rounded-2xl shadow-lg hover:bg-blue-700 transition-all;
+  }
+  .btn-dark {
+    @apply bg-slate-900 text-white font-bold rounded-2xl shadow-xl hover:bg-slate-800 transition-all;
+  }
+  .card {
+    @apply bg-white rounded-[2.5rem] border border-slate-100 shadow-sm;
+  }
+  .admin-sidebar-active {
+    @apply bg-blue-600 text-white shadow-lg shadow-blue-600/20;
+  }
+}

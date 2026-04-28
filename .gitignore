@@ -1,0 +1,9 @@
+.next/
+node_modules/
+*.tsbuildinfo
+next-env.d.ts
+*.log
+.env
+.env.*
+!.env.example
+.local-app-settings.json

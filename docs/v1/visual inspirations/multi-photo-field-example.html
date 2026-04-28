@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi Photo Field Example</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --line: #d1d5db;
+      --ink: #0f172a;
+      --muted: #475569;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 24px;
+    }
+
+    .panel {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    .photo-card,
+    .add-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+      min-height: 190px;
+      position: relative;
+    }
+
+    .photo-preview {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .photo-footer {
+      padding: 8px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      height: 32px;
+      padding: 0 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #f8fafc;
+    }
+
+    .btn-primary {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-danger {
+      border-color: #fecaca;
+      color: var(--danger);
+    }
+
+    .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .add-card {
+      border-style: dashed;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+    }
+
+    .add-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .plus {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 26px;
+      line-height: 38px;
+      font-weight: 700;
+    }
+
+    .add-text {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <h1>Product Images</h1>
+    <p class="subtitle">
+      One photo field with multiple uploads. The Add button always stays visible.
+    </p>
+
+    <div class="top-row">
+      <span class="pill" id="count-pill">0 images</span>
+      <span class="pill">First image = Primary</span>
+      <span class="pill">Max 12 images</span>
+    </div>
+
+    <input id="file-input" type="file" accept="image/*" multiple hidden />
+
+    <section class="grid" id="photos-grid"></section>
+
+    <p class="hint">
+      Typical best practice: one multi-photo field, not separate photo1/photo2/photo3 fields.
+    </p>
+  </main>
+
+  <script>
+    const MAX_IMAGES = 12;
+    const state = { items: [] };
+
+    const fileInput = document.getElementById('file-input');
+    const grid = document.getElementById('photos-grid');
+    const countPill = document.getElementById('count-pill');
+
+    function updateCount() {
+      const count = state.items.length;
+      countPill.textContent = count + (count === 1 ? ' image' : ' images');
+    }
+
+    function removeImage(index) {
+      URL.revokeObjectURL(state.items[index].url);
+      state.items.splice(index, 1);
+      render();
+    }
+
+    function makePrimary(index) {
+      if (index === 0) return;
+      const selected = state.items[index];
+      state.items.splice(index, 1);
+      state.items.unshift(selected);
+      render();
+    }
+
+    function openPicker() {
+      if (state.items.length >= MAX_IMAGES) return;
+      fileInput.click();
+    }
+
+    function render() {
+      updateCount();
+      grid.innerHTML = '';
+
+      state.items.forEach((item, index) => {
+        const card = document.createElement('article');
+        card.className = 'photo-card';
+
+        const img = document.createElement('img');
+        img.src = item.url;
+        img.alt = item.name;
+        img.className = 'photo-preview';
+        card.appendChild(img);
+
+        if (index === 0) {
+          const badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = 'Primary';
+          card.appendChild(badge);
+        }
+
+        const footer = document.createElement('div');
+        footer.className = 'photo-footer';
+
+        const primaryBtn = document.createElement('button');
+        primaryBtn.type = 'button';
+        primaryBtn.className = index === 0 ? 'btn btn-primary' : 'btn';
+        primaryBtn.textContent = index === 0 ? 'Primary' : 'Make Primary';
+        primaryBtn.disabled = index === 0;
+        primaryBtn.onclick = () => makePrimary(index);
+        footer.appendChild(primaryBtn);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-danger';
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = () => removeImage(index);
+        footer.appendChild(removeBtn);
+
+        card.appendChild(footer);
+        grid.appendChild(card);
+      });
+
+      const addCard = document.createElement('button');
+      addCard.type = 'button';
+      addCard.className = 'add-card';
+      addCard.onclick = openPicker;
+      addCard.disabled = state.items.length >= MAX_IMAGES;
+
+      const inner = document.createElement('div');
+      inner.className = 'add-inner';
+
+      const plus = document.createElement('div');
+      plus.className = 'plus';
+      plus.textContent = '+';
+      inner.appendChild(plus);
+
+      const text = document.createElement('div');
+      text.className = 'add-text';
+      text.textContent =
+        state.items.length >= MAX_IMAGES
+          ? 'Maximum reached'
+          : 'Add photos';
+      inner.appendChild(text);
+
+      addCard.appendChild(inner);
+      grid.appendChild(addCard);
+    }
+
+    fileInput.addEventListener('change', (event) => {
+      const files = Array.from(event.target.files || []);
+      const freeSlots = MAX_IMAGES - state.items.length;
+      files.slice(0, freeSlots).forEach((file) => {
+        state.items.push({ name: file.name, url: URL.createObjectURL(file) });
+      });
+      fileInput.value = '';
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
