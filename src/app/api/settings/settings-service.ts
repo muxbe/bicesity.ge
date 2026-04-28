@@ -22,7 +22,10 @@ type SettingsRow = {
 export const SETTINGS_ID = "global";
 export const SETTINGS_SELECT = "id,shop_name,currency,messenger_url,public_contact_info,updated_at";
 
-const LOCAL_SETTINGS_PATH = path.join(process.cwd(), ".local-app-settings.json");
+const LOCAL_SETTINGS_PATH =
+  process.env.VERCEL === "1"
+    ? path.join("/tmp", ".local-app-settings.json")
+    : path.join(process.cwd(), ".local-app-settings.json");
 
 function envMessengerUrl() {
   return (
