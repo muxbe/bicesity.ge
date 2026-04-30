@@ -43,7 +43,10 @@ Before production deployment:
 2. Confirm the storage bucket from `NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET` exists or let the admin upload endpoint create it.
 3. Create at least one admin user/profile.
 4. In Supabase Auth, allow the Vercel production domain as an auth redirect URL.
-5. Keep `ALLOW_INSECURE_ROLE_HEADER=false` on Vercel.
+5. Add password reset redirect URLs in Supabase Auth:
+   - `https://your-domain.com/reset-password`
+   - `http://localhost:3000/reset-password` for local testing
+6. Keep `ALLOW_INSECURE_ROLE_HEADER=false` on Vercel.
 
 ## Local Verification
 

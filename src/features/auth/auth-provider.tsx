@@ -20,6 +20,10 @@ type SignInResult =
   | { ok: true; role: AppRole; message?: string; needsEmailConfirmation?: boolean }
   | { ok: false; message: string };
 
+type PasswordResetResult =
+  | { ok: true; message?: string }
+  | { ok: false; message: string };
+
 type AuthContextValue = {
   status: AuthStatus;
   session: Session | null;
@@ -32,6 +36,7 @@ type AuthContextValue = {
   signIn: (email: string, password: string) => Promise<SignInResult>;
   signUp: (email: string, password: string) => Promise<SignInResult>;
   signInWithFacebook: (redirectTo: string) => Promise<SignInResult>;
+  resetPasswordForEmail: (email: string, redirectTo: string) => Promise<PasswordResetResult>;
   signOut: () => Promise<void>;
 };
 
@@ -318,6 +323,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { ok: true, role: "user" };
   }, []);
 
+  const resetPasswordForEmail = useCallback(
+    async (email: string, redirectTo: string): Promise<PasswordResetResult> => {
+      if (!hasSupabasePublicEnv()) {
+        return {
+          ok: false,
+          message: "Supabase public URL and publishable key are required for password reset.",
+        };
+      }
+
+      const { error } = await getBrowserSupabaseClient().auth.resetPasswordForEmail(
+        email.trim(),
+        { redirectTo }
+      );
+
+      if (error) {
+        return { ok: false, message: error.message };
+      }
+
+      return { ok: true };
+    },
+    []
+  );
+
   const refreshProfile = useCallback(async (): Promise<AppRole | null> => {
     return applySession(session, { syncClientSignOut: true });
   }, [applySession, session]);
@@ -342,6 +370,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signUp,
       signInWithFacebook,
+      resetPasswordForEmail,
       signOut,
     }),
     [
@@ -353,6 +382,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       signIn,
       signInWithFacebook,
+      resetPasswordForEmail,
       signOut,
       signUp,
       status,

@@ -69,6 +69,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
     signIn,
     signUp,
     signInWithFacebook,
+    resetPasswordForEmail,
     signOut,
     status,
     role,
@@ -82,12 +83,13 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
   const [notice, setNotice] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOauthSubmitting, setIsOauthSubmitting] = useState(false);
+  const [isResetSubmitting, setIsResetSubmitting] = useState(false);
   const nextRoute = useMemo(() => searchParams.get("next"), [searchParams]);
   const nextRouteIsStaffPage = Boolean(
     nextRoute?.startsWith("/admin") || nextRoute?.startsWith("/seller")
   );
   const supabaseReady = hasSupabasePublicEnv();
-  const isBusy = isSubmitting || isOauthSubmitting || status === "loading";
+  const isBusy = isSubmitting || isOauthSubmitting || isResetSubmitting || status === "loading";
 
   useEffect(() => {
     setMode(initialMode);
@@ -159,6 +161,29 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
     if (!result.ok) {
       setError(result.message);
       setIsOauthSubmitting(false);
+    }
+  };
+
+  const requestPasswordReset = async () => {
+    setError(null);
+    setNotice(null);
+
+    if (!email.trim()) {
+      setError(t("login.enterEmailForReset"));
+      return;
+    }
+
+    setIsResetSubmitting(true);
+    try {
+      const redirectTo = `${window.location.origin}/reset-password`;
+      const result = await resetPasswordForEmail(email, redirectTo);
+      if (!result.ok) {
+        setError(result.message);
+        return;
+      }
+      setNotice(t("login.resetEmailSent"));
+    } finally {
+      setIsResetSubmitting(false);
     }
   };
 
@@ -346,8 +371,18 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-xs font-black uppercase tracking-widest text-zinc-500">
-                  {t("login.password")}
+                <span className="mb-2 flex items-center justify-between gap-3 text-xs font-black uppercase tracking-widest text-zinc-500">
+                  <span>{t("login.password")}</span>
+                  {mode === "signin" && (
+                    <button
+                      type="button"
+                      onClick={() => void requestPasswordReset()}
+                      disabled={isBusy || !supabaseReady}
+                      className="text-[11px] font-black normal-case tracking-normal text-emerald-700 hover:text-emerald-900 disabled:text-zinc-400"
+                    >
+                      {isResetSubmitting ? t("login.sendingReset") : t("login.forgotPassword")}
+                    </button>
+                  )}
                 </span>
                 <input
                   type="password"
