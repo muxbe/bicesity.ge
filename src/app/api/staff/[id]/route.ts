@@ -7,6 +7,7 @@ type UpdateStaffPayload = {
   fullName?: string;
   role?: StaffRole;
   isActive?: boolean;
+  password?: string;
 };
 
 type ProfileRow = {
@@ -78,7 +79,15 @@ export async function PATCH(
       updated_by_actor_id: auth.user.id,
     };
     const fullName = parseString(payload.fullName);
+    const password = parseString(payload.password);
     const nextRole = parseRole(payload.role);
+
+    if (password !== null && password.length > 0 && password.length < 6) {
+      return NextResponse.json(
+        { error: "Password must be at least 6 characters." },
+        { status: 400 }
+      );
+    }
 
     if (fullName !== null) {
       patch.full_name = fullName;
@@ -103,6 +112,12 @@ export async function PATCH(
           { status: 400 }
         );
       }
+      if (password) {
+        return NextResponse.json(
+          { error: "Use verified password reset for your own account." },
+          { status: 400 }
+        );
+      }
     }
 
     const { data: updatedProfile, error: updateError } = await supabase
@@ -123,6 +138,7 @@ export async function PATCH(
     const userUpdate: {
       app_metadata?: Record<string, unknown>;
       user_metadata?: Record<string, unknown>;
+      password?: string;
     } = {};
     if (nextRole) {
       userUpdate.app_metadata = { app_role: nextRole };
@@ -130,8 +146,20 @@ export async function PATCH(
     if (fullName !== null) {
       userUpdate.user_metadata = { full_name: fullName };
     }
+    if (password) {
+      userUpdate.password = password;
+    }
     if (Object.keys(userUpdate).length > 0) {
-      await supabase.auth.admin.updateUserById(updated.user_id, userUpdate);
+      const { error: userError } = await supabase.auth.admin.updateUserById(
+        updated.user_id,
+        userUpdate
+      );
+      if (userError) {
+        return NextResponse.json(
+          { error: "Staff profile was updated but Auth user update failed.", details: userError },
+          { status: 500 }
+        );
+      }
     }
 
     return NextResponse.json({ data: mapProfile(updated) });

@@ -79,6 +79,45 @@ function mapProfile(row: ProfileRow): StaffProfile {
   };
 }
 
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  const payload = token.split(".")[1];
+  if (!payload) {
+    return null;
+  }
+
+  try {
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    return JSON.parse(Buffer.from(padded, "base64").toString("utf8")) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function readAuthMethod(entry: unknown): string | null {
+  if (typeof entry === "string") {
+    return entry.trim().toLowerCase() || null;
+  }
+
+  if (entry && typeof entry === "object" && "method" in entry) {
+    const method = (entry as { method?: unknown }).method;
+    return typeof method === "string" ? method.trim().toLowerCase() || null : null;
+  }
+
+  return null;
+}
+
+function authMethodsFromToken(token: string): Set<string> {
+  const payload = decodeJwtPayload(token);
+  const amr = payload?.amr;
+  const entries = Array.isArray(amr) ? amr : amr ? [amr] : [];
+  return new Set(entries.map(readAuthMethod).filter((method): method is string => Boolean(method)));
+}
+
+function hasPasswordAuthMethod(token: string): boolean {
+  return authMethodsFromToken(token).has("password");
+}
+
 export async function getProfileByUserId(userId: string): Promise<ProfileLookup> {
   const supabase = getServerSupabaseAdminClient();
   const { data, error } = await supabase
@@ -112,13 +151,14 @@ export async function getRequestAuth(request: NextRequest): Promise<RequestAuth 
     return null;
   }
 
+  const isPasswordSession = hasPasswordAuthMethod(token);
   const lookup = await getProfileByUserId(data.user.id);
   if (lookup.ok) {
     if (lookup.profile) {
       return {
         user: data.user,
         profile: lookup.profile,
-        role: lookup.profile.isActive ? lookup.profile.role : "user",
+        role: isPasswordSession && lookup.profile.isActive ? lookup.profile.role : "user",
       };
     }
 
@@ -129,7 +169,9 @@ export async function getRequestAuth(request: NextRequest): Promise<RequestAuth 
     };
   }
 
-  const metadataRole = readAppRoleFromMetadata(data.user.app_metadata, data.user.user_metadata);
+  const metadataRole = isPasswordSession
+    ? readAppRoleFromMetadata(data.user.app_metadata, data.user.user_metadata)
+    : "user";
   return {
     user: data.user,
     profile: null,

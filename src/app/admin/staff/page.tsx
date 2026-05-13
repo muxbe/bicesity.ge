@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Loader2, RefreshCw, UserPlus } from "lucide-react";
+import { KeyRound, Loader2, RefreshCw, UserPlus } from "lucide-react";
+import { useAuth } from "@/features/auth";
 import { getAuthHeaders, getJsonAuthHeaders } from "@/lib/auth/request-headers";
 import type { StaffRole } from "@/lib/auth/app-role";
 import { useI18n } from "@/lib/i18n";
@@ -40,11 +41,13 @@ function parseApiError(payload: ApiResponse<unknown> | null, fallback: string) {
 
 export default function StaffPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [staff, setStaff] = useState<StaffProfile[]>([]);
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<StaffRole>("seller");
+  const [resetPasswords, setResetPasswords] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [workingProfileId, setWorkingProfileId] = useState<string | null>(null);
@@ -96,12 +99,16 @@ export default function StaffPage() {
         throw new Error(parseApiError(payload, t("staff.createFailed")));
       }
 
-      setStaff((current) => [payload.data as StaffProfile, ...current]);
+      setStaff((current) => {
+        const next = payload.data as StaffProfile;
+        const withoutDuplicate = current.filter((item) => item.id !== next.id);
+        return [next, ...withoutDuplicate];
+      });
       setEmail("");
       setFullName("");
       setPassword("");
       setRole("seller");
-      setSuccess(t("staff.createdMessage", { email: payload.data.email }));
+      setSuccess(t("staff.savedMessage", { email: payload.data.email }));
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : t("staff.createFailed"));
     } finally {
@@ -111,7 +118,7 @@ export default function StaffPage() {
 
   const updateStaff = async (
     profile: StaffProfile,
-    patch: Partial<Pick<StaffProfile, "role" | "isActive" | "fullName">>
+    patch: Partial<Pick<StaffProfile, "role" | "isActive" | "fullName">> & { password?: string }
   ) => {
     setError(null);
     setSuccess(null);
@@ -131,10 +138,31 @@ export default function StaffPage() {
         current.map((item) => (item.id === payload.data?.id ? (payload.data as StaffProfile) : item))
       );
       setSuccess(t("staff.updatedMessage", { email: payload.data.email }));
+      return true;
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : t("staff.updateFailed"));
+      return false;
     } finally {
       setWorkingProfileId(null);
+    }
+  };
+
+  const resetStaffPassword = async (profile: StaffProfile) => {
+    const nextPassword = (resetPasswords[profile.id] ?? "").trim();
+    if (profile.userId === user?.id) {
+      setError(t("staff.selfPasswordResetBlocked"));
+      setSuccess(null);
+      return;
+    }
+    if (nextPassword.length < 6) {
+      setError(t("staff.passwordTooShort"));
+      setSuccess(null);
+      return;
+    }
+
+    const wasUpdated = await updateStaff(profile, { password: nextPassword });
+    if (wasUpdated) {
+      setResetPasswords((current) => ({ ...current, [profile.id]: "" }));
     }
   };
 
@@ -184,10 +212,9 @@ export default function StaffPage() {
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder={t("staff.tempPassword")}
+            placeholder={t("staff.passwordOptional")}
             className="h-11 rounded-lg border border-slate-300 px-3 text-sm"
             minLength={6}
-            required
           />
           <select
             value={role}
@@ -203,7 +230,7 @@ export default function StaffPage() {
             className="flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700 disabled:bg-slate-300"
           >
             {isSaving ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
-            {t("staff.create")}
+            {t("staff.createOrPromote")}
           </button>
         </form>
       </section>
@@ -234,6 +261,8 @@ export default function StaffPage() {
               <tbody>
                 {staff.map((profile) => {
                   const isWorking = workingProfileId === profile.id;
+                  const isSelf = profile.userId === user?.id;
+                  const resetPassword = resetPasswords[profile.id] ?? "";
                   return (
                     <tr key={profile.id} className="border-t border-slate-100">
                       <td className="px-5 py-4">
@@ -268,19 +297,52 @@ export default function StaffPage() {
                         {new Date(profile.createdAt).toLocaleString()}
                       </td>
                       <td className="px-5 py-4">
-                        <button
-                          type="button"
-                          disabled={isWorking}
-                          onClick={() => void updateStaff(profile, { isActive: !profile.isActive })}
-                          className={`inline-flex h-9 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-semibold disabled:opacity-50 ${
-                            profile.isActive
-                              ? "border-rose-200 text-rose-700 hover:bg-rose-50"
-                              : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                          }`}
-                        >
-                          {isWorking && <Loader2 size={14} className="animate-spin" />}
-                          {profile.isActive ? t("staff.deactivate") : t("staff.reactivate")}
-                        </button>
+                        <div className="flex min-w-[280px] flex-col gap-2">
+                          <button
+                            type="button"
+                            disabled={isWorking}
+                            onClick={() => void updateStaff(profile, { isActive: !profile.isActive })}
+                            className={`inline-flex h-9 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-semibold disabled:opacity-50 ${
+                              profile.isActive
+                                ? "border-rose-200 text-rose-700 hover:bg-rose-50"
+                                : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                            }`}
+                          >
+                            {isWorking && <Loader2 size={14} className="animate-spin" />}
+                            {profile.isActive ? t("staff.deactivate") : t("staff.reactivate")}
+                          </button>
+                          <div className="flex gap-2">
+                            <input
+                              type="password"
+                              value={resetPassword}
+                              onChange={(event) =>
+                                setResetPasswords((current) => ({
+                                  ...current,
+                                  [profile.id]: event.target.value,
+                                }))
+                              }
+                              placeholder={t("staff.newPassword")}
+                              minLength={6}
+                              disabled={isWorking || isSelf}
+                              title={isSelf ? t("staff.selfPasswordResetBlocked") : undefined}
+                              className="h-9 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm disabled:bg-slate-100"
+                            />
+                            <button
+                              type="button"
+                              disabled={isWorking || isSelf || resetPassword.trim().length < 6}
+                              title={isSelf ? t("staff.selfPasswordResetBlocked") : undefined}
+                              onClick={() => void resetStaffPassword(profile)}
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-blue-200 px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+                            >
+                              {isWorking ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <KeyRound size={14} />
+                              )}
+                              {t("staff.resetPassword")}
+                            </button>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   );

@@ -21,9 +21,9 @@ function readMetadataRole(metadata: Metadata): AppRole | null {
 
 export function readAppRoleFromMetadata(
   appMetadata: Metadata,
-  userMetadata: Metadata
+  _userMetadata?: Metadata
 ): AppRole {
-  return readMetadataRole(appMetadata) ?? readMetadataRole(userMetadata) ?? "user";
+  return readMetadataRole(appMetadata) ?? "user";
 }
 
 export function isStaffRole(role: AppRole | null | undefined): role is StaffRole {

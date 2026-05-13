@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { readAppRoleFromMetadata, type AppRole } from "@/lib/auth/app-role";
+import type { AppRole } from "@/lib/auth/app-role";
 import { getBrowserSupabaseClient, hasSupabasePublicEnv } from "@/lib/supabase/client";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
@@ -35,19 +35,12 @@ type AuthContextValue = {
   refreshProfile: () => Promise<AppRole | null>;
   signIn: (email: string, password: string) => Promise<SignInResult>;
   signUp: (email: string, password: string) => Promise<SignInResult>;
-  signInWithFacebook: (redirectTo: string) => Promise<SignInResult>;
+  signInWithGoogle: (redirectTo: string) => Promise<SignInResult>;
   resetPasswordForEmail: (email: string, redirectTo: string) => Promise<PasswordResetResult>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-function roleFromUser(user: User | null): AppRole | null {
-  if (!user) {
-    return null;
-  }
-  return readAppRoleFromMetadata(user.app_metadata, user.user_metadata);
-}
 
 async function fetchProfileRole(session: Session): Promise<{ role: AppRole; fullName: string } | null> {
   const response = await fetch("/api/auth/me", {
@@ -190,7 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const nextRole =
         profileResult.kind === "ok"
           ? profileResult.role
-          : roleRef.current ?? roleFromUser(nextSession.user) ?? "user";
+          : "user";
       const nextFullName =
         profileResult.kind === "ok" ? profileResult.fullName : fullNameRef.current;
 
@@ -266,7 +259,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const nextSession = data.session ?? null;
     const nextRole = await applySession(nextSession);
 
-    return { ok: true, role: nextRole ?? roleFromUser(data.user) ?? "user" };
+    return { ok: true, role: nextRole ?? "user" };
   }, [applySession]);
 
   const signUp = useCallback(async (email: string, password: string): Promise<SignInResult> => {
@@ -301,16 +294,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { ok: true, role: nextRole ?? "user" };
   }, [applySession]);
 
-  const signInWithFacebook = useCallback(async (redirectTo: string): Promise<SignInResult> => {
+  const signInWithGoogle = useCallback(async (redirectTo: string): Promise<SignInResult> => {
     if (!hasSupabasePublicEnv()) {
       return {
         ok: false,
-        message: "Supabase public URL and publishable key are required for Facebook login.",
+        message: "Supabase public URL and publishable key are required for Google login.",
       };
     }
 
     const { error } = await getBrowserSupabaseClient().auth.signInWithOAuth({
-      provider: "facebook",
+      provider: "google",
       options: {
         redirectTo,
       },
@@ -369,7 +362,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshProfile,
       signIn,
       signUp,
-      signInWithFacebook,
+      signInWithGoogle,
       resetPasswordForEmail,
       signOut,
     }),
@@ -381,7 +374,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       role,
       session,
       signIn,
-      signInWithFacebook,
+      signInWithGoogle,
       resetPasswordForEmail,
       signOut,
       signUp,

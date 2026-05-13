@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { getRequestAuth, type StaffProfile } from "@/lib/auth/server";
 import type { StaffRole } from "@/lib/auth/app-role";
 import { getServerSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -46,6 +47,70 @@ function parseRole(value: unknown): StaffRole {
 
 function parseString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function readMetadataName(user: User | null): string {
+  const value = user?.user_metadata?.full_name ?? user?.user_metadata?.name;
+  return typeof value === "string" ? value.trim() : "";
+}
+
+async function findAuthUserByEmail(supabase: SupabaseClient, email: string): Promise<User | null> {
+  const normalizedEmail = email.toLowerCase();
+  const perPage = 1000;
+  let page = 1;
+
+  while (page <= 20) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+    if (error) {
+      throw error;
+    }
+
+    const users = data.users ?? [];
+    const match = users.find((user) => user.email?.toLowerCase() === normalizedEmail);
+    if (match) {
+      return match;
+    }
+    if (users.length < perPage) {
+      return null;
+    }
+    page += 1;
+  }
+
+  return null;
+}
+
+async function updateAuthUserForStaff(
+  supabase: SupabaseClient,
+  user: User,
+  role: StaffRole,
+  fullName: string,
+  password: string
+) {
+  const userMetadata = {
+    ...(user.user_metadata ?? {}),
+    full_name: fullName || readMetadataName(user),
+  };
+  const appMetadata = {
+    ...(user.app_metadata ?? {}),
+    app_role: role,
+  };
+  const attributes: {
+    app_metadata: Record<string, unknown>;
+    user_metadata: Record<string, unknown>;
+    password?: string;
+  } = {
+    app_metadata: appMetadata,
+    user_metadata: userMetadata,
+  };
+
+  if (password) {
+    attributes.password = password;
+  }
+
+  const { error } = await supabase.auth.admin.updateUserById(user.id, attributes);
+  if (error) {
+    throw error;
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -98,7 +163,7 @@ export async function POST(request: NextRequest) {
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Valid email is required." }, { status: 400 });
     }
-    if (password.length < 6) {
+    if (password && password.length < 6) {
       return NextResponse.json(
         { error: "Password must be at least 6 characters." },
         { status: 400 }
@@ -106,33 +171,49 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getServerSupabaseAdminClient();
-    const { data: created, error: createError } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name: fullName },
-      app_metadata: { app_role: role },
-    });
+    let staffUser = await findAuthUserByEmail(supabase, email);
+    const existingName = readMetadataName(staffUser);
+    const profileFullName = fullName || existingName;
 
-    if (createError || !created.user) {
-      return NextResponse.json(
-        {
-          error: createError?.message ?? "Failed to create staff user.",
-          details: createError ?? null,
-        },
-        { status: 400 }
-      );
+    if (!staffUser) {
+      if (password.length < 6) {
+        return NextResponse.json(
+          { error: "Password is required for new staff users and must be at least 6 characters." },
+          { status: 400 }
+        );
+      }
+
+      const { data: created, error: createError } = await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { full_name: profileFullName },
+        app_metadata: { app_role: role },
+      });
+
+      if (createError || !created.user) {
+        return NextResponse.json(
+          {
+            error: createError?.message ?? "Failed to create staff user.",
+            details: createError ?? null,
+          },
+          { status: 400 }
+        );
+      }
+
+      staffUser = created.user;
+      createdUserId = created.user.id;
+    } else {
+      await updateAuthUserForStaff(supabase, staffUser, role, profileFullName, password);
     }
-
-    createdUserId = created.user.id;
 
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .upsert(
         {
-          user_id: created.user.id,
-          email: created.user.email ?? email,
-          full_name: fullName,
+          user_id: staffUser.id,
+          email: staffUser.email ?? email,
+          full_name: profileFullName,
           role,
           is_active: true,
           created_by_actor_id: auth.user.id,
@@ -144,11 +225,16 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (profileError || !profile) {
-      await supabase.auth.admin.deleteUser(created.user.id);
+      const wasCreated = Boolean(createdUserId);
+      if (createdUserId) {
+        await supabase.auth.admin.deleteUser(createdUserId);
+      }
       createdUserId = null;
       return NextResponse.json(
         {
-          error: "Staff user was created but profile setup failed.",
+          error: wasCreated
+            ? "Staff user was created but profile setup failed."
+            : "Staff profile setup failed.",
           details: profileError ?? null,
         },
         { status: 500 }

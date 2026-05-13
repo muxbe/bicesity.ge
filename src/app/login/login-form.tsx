@@ -68,7 +68,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
   const {
     signIn,
     signUp,
-    signInWithFacebook,
+    signInWithGoogle,
     resetPasswordForEmail,
     signOut,
     status,
@@ -145,19 +145,19 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
     }
   };
 
-  const facebookLogin = async () => {
+  const googleLogin = async () => {
     setError(null);
     setNotice(null);
 
     if (nextRouteIsStaffPage) {
-      setError(t("login.facebookCustomerOnly"));
+      setError(t("login.googleCustomerOnly"));
       return;
     }
 
     setIsOauthSubmitting(true);
     const next = nextRoute ?? "/";
     const redirectTo = `${window.location.origin}/login?next=${encodeURIComponent(next)}`;
-    const result = await signInWithFacebook(redirectTo);
+    const result = await signInWithGoogle(redirectTo);
     if (!result.ok) {
       setError(result.message);
       setIsOauthSubmitting(false);
@@ -303,18 +303,18 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
             {!nextRouteIsStaffPage && (
               <button
                 type="button"
-                onClick={() => void facebookLogin()}
+                onClick={() => void googleLogin()}
                 disabled={isBusy || !supabaseReady}
-                className="mb-4 flex h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#1877f2] px-4 text-sm font-black text-white hover:bg-[#166fe5] disabled:bg-zinc-300"
+                className="mb-4 flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-zinc-300 bg-white px-4 text-sm font-black text-zinc-800 hover:bg-zinc-100 disabled:bg-zinc-100 disabled:text-zinc-400"
               >
                 {isOauthSubmitting ? (
                   <Loader2 size={16} className="animate-spin" />
                 ) : (
-                  <span className="flex h-6 w-6 items-center justify-center rounded bg-white text-base font-black text-[#1877f2]">
-                    f
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-zinc-300 bg-white text-base font-black text-zinc-950">
+                    G
                   </span>
                 )}
-                {t("login.continueFacebook")}
+                {t("login.continueGoogle")}
               </button>
             )}
 
