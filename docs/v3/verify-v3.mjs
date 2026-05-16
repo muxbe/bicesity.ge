@@ -6,10 +6,18 @@ const routePath = join(dirname(fileURLToPath(import.meta.url)), "index.html");
 const html = readFileSync(routePath, "utf8");
 
 const requiredSnippets = [
-  "V3 PC Page Visuals",
+  "V3 PC, Tablet, and Mobile Page Visuals",
   "279399999_116543327705069_5323243531129900723_n.jpg",
   "Bike City Biking Store logo",
   "data-viewport=\"pc\"",
+  "data-viewport=\"tablet\"",
+  "data-viewport=\"mobile\"",
+  "viewport-tablet",
+  "viewport-mobile",
+  "activeViewport",
+  "function viewportLabel()",
+  "activeViewport === \"mobile\"",
+  "activeViewport === \"tablet\" ? \"Tablet\" : \"PC\"",
   "{ id: \"all\", label: \"All pages\" }",
   "id=\"filter-query\"",
   "id=\"filter-category\"",
@@ -33,7 +41,15 @@ const requiredSnippets = [
   "Bicycle Fields",
   "--sidebar-active",
   ".detail-panel .field",
-  ".fake-select::after"
+  ".fake-select::after",
+  ".viewport-tablet .admin-shell",
+  ".viewport-tablet .product-grid",
+  ".viewport-tablet .detail-page",
+  ".viewport-tablet .auth-grid",
+  ".viewport-mobile .admin-shell",
+  ".viewport-mobile .product-grid",
+  ".viewport-mobile .detail-page",
+  ".viewport-mobile .auth-grid"
 ];
 
 const missing = requiredSnippets.filter((snippet) => !html.includes(snippet));

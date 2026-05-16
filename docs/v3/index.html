@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>V3 PC Page Visuals</title>
+  <title>V3 PC, Tablet, and Mobile Page Visuals</title>
   <style>
     :root {
       --ink: #0f1a33;
@@ -1344,6 +1344,605 @@
       background: #fff;
     }
 
+    .preview-stage.viewport-tablet {
+      width: min(960px, calc(100% - 28px));
+    }
+
+    .viewport-tablet .pc-board {
+      gap: 22px;
+    }
+
+    .viewport-tablet .pc-page {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .viewport-tablet .pc-canvas {
+      min-height: 820px;
+    }
+
+    .viewport-tablet .shop-nav {
+      min-height: 68px;
+      padding: 0 24px;
+      gap: 14px;
+    }
+
+    .viewport-tablet .logo-image {
+      width: 128px;
+      height: 48px;
+    }
+
+    .viewport-tablet .logo-wordmark {
+      display: none;
+    }
+
+    .viewport-tablet .nav-links {
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .viewport-tablet .account-block {
+      gap: 7px;
+    }
+
+    .viewport-tablet .role-pill:last-child {
+      display: none;
+    }
+
+    .viewport-tablet .hero,
+    .viewport-tablet .detail-page,
+    .viewport-tablet .rent-layout,
+    .viewport-tablet .auth-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .viewport-tablet .hero {
+      padding: 30px 28px 28px;
+      gap: 22px;
+    }
+
+    .viewport-tablet .hero h1 {
+      max-width: 720px;
+      font-size: 44px;
+      line-height: 1.05;
+    }
+
+    .viewport-tablet .hero p {
+      max-width: 680px;
+    }
+
+    .viewport-tablet .hero-image,
+    .viewport-tablet .rent-image {
+      min-height: 300px;
+    }
+
+    .viewport-tablet .catalog-tools,
+    .viewport-tablet .catalog-section,
+    .viewport-tablet .detail-page,
+    .viewport-tablet .rent-layout {
+      padding-right: 28px;
+      padding-left: 28px;
+    }
+
+    .viewport-tablet .tool-row,
+    .viewport-tablet .detail-filter-row,
+    .viewport-tablet .admin-filter-grid,
+    .viewport-tablet .detail-key-specs,
+    .viewport-tablet .detail-spec-grid,
+    .viewport-tablet .product-grid,
+    .viewport-tablet .fields-grid,
+    .viewport-tablet .settings-grid,
+    .viewport-tablet .report-grid,
+    .viewport-tablet .rent-card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .viewport-tablet .tool-row .fake-input,
+    .viewport-tablet .admin-filter-grid .fake-input {
+      grid-column: 1 / -1;
+    }
+
+    .viewport-tablet .section-heading,
+    .viewport-tablet .admin-head,
+    .viewport-tablet .bulk-row {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .viewport-tablet .detail-page {
+      gap: 24px;
+    }
+
+    .viewport-tablet .gallery-main {
+      aspect-ratio: 16 / 10;
+    }
+
+    .viewport-tablet .detail-copy h1 {
+      font-size: 34px;
+    }
+
+    .viewport-tablet .purchase-card {
+      grid-template-columns: 1fr auto;
+    }
+
+    .viewport-tablet .admin-shell {
+      grid-template-columns: 88px minmax(0, 1fr);
+      min-height: 860px;
+    }
+
+    .viewport-tablet .side-nav {
+      min-height: 860px;
+    }
+
+    .viewport-tablet .side-brand {
+      padding: 18px 12px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .viewport-tablet .side-logo {
+      width: 58px;
+      height: 46px;
+    }
+
+    .viewport-tablet .side-brand div,
+    .viewport-tablet .side-footer {
+      display: none;
+    }
+
+    .viewport-tablet .side-links {
+      padding: 14px 10px;
+      gap: 7px;
+    }
+
+    .viewport-tablet .side-link {
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 8px;
+      font-size: 0;
+    }
+
+    .viewport-tablet .side-link::first-letter {
+      font-size: 0;
+    }
+
+    .viewport-tablet .side-link::before {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: currentColor;
+      content: "";
+    }
+
+    .viewport-tablet .admin-main {
+      padding: 24px;
+    }
+
+    .viewport-tablet .admin-head h1 {
+      font-size: 30px;
+    }
+
+    .viewport-tablet .metric-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .viewport-tablet .inventory-item {
+      grid-template-columns: 84px minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .viewport-tablet .inventory-thumb {
+      width: 84px;
+      height: 74px;
+    }
+
+    .viewport-tablet .status-stack {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      justify-items: stretch;
+      min-width: 0;
+    }
+
+    .viewport-tablet .status-stack .tiny-button {
+      justify-content: center;
+    }
+
+    .viewport-tablet .fields-toolbar {
+      grid-template-columns: 1fr;
+    }
+
+    .viewport-tablet .field-actions,
+    .viewport-tablet .table-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .viewport-tablet .auth-grid {
+      padding: 34px 28px !important;
+    }
+
+    .viewport-tablet .auth-panel {
+      width: min(520px, 100%);
+      margin: 18px auto;
+    }
+
+    .preview-stage.viewport-mobile {
+      width: min(430px, calc(100% - 20px));
+    }
+
+    .viewport-mobile .pc-board {
+      gap: 20px;
+    }
+
+    .viewport-mobile .pc-page {
+      max-width: 390px;
+      margin: 0 auto;
+      border-radius: 8px;
+    }
+
+    .viewport-mobile .pc-titlebar {
+      min-height: 40px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .viewport-mobile .pc-canvas {
+      min-height: 720px;
+    }
+
+    .viewport-mobile .shop-nav {
+      min-height: auto;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    .viewport-mobile .logo {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .viewport-mobile .logo-image {
+      width: 108px;
+      height: 42px;
+      border-radius: 8px;
+    }
+
+    .viewport-mobile .logo-wordmark,
+    .viewport-mobile .role-pill {
+      display: none;
+    }
+
+    .viewport-mobile .account-block {
+      margin-left: auto;
+      gap: 6px;
+    }
+
+    .viewport-mobile .language-pill {
+      min-height: 34px;
+      padding: 7px 9px;
+      font-size: 11px;
+    }
+
+    .viewport-mobile .nav-links {
+      order: 3;
+      width: 100%;
+      gap: 13px;
+      overflow-x: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .viewport-mobile .hero,
+    .viewport-mobile .detail-page,
+    .viewport-mobile .rent-layout,
+    .viewport-mobile .auth-grid,
+    .viewport-mobile .settings-grid,
+    .viewport-mobile .report-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .viewport-mobile .hero {
+      padding: 22px 18px 18px;
+      gap: 18px;
+    }
+
+    .viewport-mobile .hero h1 {
+      max-width: 100%;
+      font-size: 32px;
+      line-height: 1.08;
+    }
+
+    .viewport-mobile .hero p {
+      margin-top: 12px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .viewport-mobile .hero-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      margin-top: 16px;
+    }
+
+    .viewport-mobile .button-primary,
+    .viewport-mobile .button-secondary {
+      width: 100%;
+    }
+
+    .viewport-mobile .hero-image,
+    .viewport-mobile .rent-image {
+      min-height: 230px;
+      border-radius: 8px;
+    }
+
+    .viewport-mobile .floating-card {
+      right: 10px;
+      bottom: 10px;
+      width: calc(100% - 20px);
+      padding: 12px;
+    }
+
+    .viewport-mobile .catalog-tools,
+    .viewport-mobile .catalog-section,
+    .viewport-mobile .detail-page,
+    .viewport-mobile .rent-layout {
+      padding-right: 16px;
+      padding-left: 16px;
+    }
+
+    .viewport-mobile .catalog-tools {
+      padding-top: 14px;
+      padding-bottom: 14px;
+    }
+
+    .viewport-mobile .tool-row,
+    .viewport-mobile .detail-filter-row,
+    .viewport-mobile .admin-filter-grid,
+    .viewport-mobile .detail-spec-grid,
+    .viewport-mobile .product-grid,
+    .viewport-mobile .fields-toolbar,
+    .viewport-mobile .fields-grid,
+    .viewport-mobile .settings-grid,
+    .viewport-mobile .report-grid,
+    .viewport-mobile .rent-card-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .viewport-mobile .fake-input,
+    .viewport-mobile .fake-select,
+    .viewport-mobile .fake-button {
+      min-height: 42px;
+      font-size: 12px;
+    }
+
+    .viewport-mobile .detail-filter-row {
+      margin-top: 10px;
+      padding: 10px;
+      border: 0;
+      background: #eefaff;
+    }
+
+    .viewport-mobile .catalog-section {
+      padding-top: 24px;
+      padding-bottom: 32px;
+    }
+
+    .viewport-mobile .section-heading,
+    .viewport-mobile .admin-head,
+    .viewport-mobile .bulk-row {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .viewport-mobile .section-heading {
+      margin-bottom: 18px;
+    }
+
+    .viewport-mobile .section-heading h2,
+    .viewport-mobile .admin-head h1 {
+      font-size: 28px;
+      line-height: 1.12;
+    }
+
+    .viewport-mobile .product-grid {
+      gap: 20px;
+    }
+
+    .viewport-mobile .product-photo {
+      aspect-ratio: 4 / 3;
+    }
+
+    .viewport-mobile .product-card {
+      gap: 12px;
+    }
+
+    .viewport-mobile .detail-page {
+      gap: 18px;
+      padding-top: 18px;
+      padding-bottom: 24px;
+    }
+
+    .viewport-mobile .gallery-main {
+      aspect-ratio: 4 / 3;
+    }
+
+    .viewport-mobile .thumb-row {
+      gap: 8px;
+    }
+
+    .viewport-mobile .thumb {
+      min-height: 56px;
+    }
+
+    .viewport-mobile .detail-copy h1 {
+      font-size: 27px;
+      line-height: 1.12;
+    }
+
+    .viewport-mobile .purchase-card {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .viewport-mobile .purchase-card strong {
+      font-size: 28px;
+    }
+
+    .viewport-mobile .detail-key-specs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .viewport-mobile .key-spec,
+    .viewport-mobile .detail-spec-cell {
+      min-height: 64px;
+    }
+
+    .viewport-mobile .admin-shell {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: 760px;
+    }
+
+    .viewport-mobile .side-nav {
+      min-height: auto;
+      grid-template-rows: auto auto;
+    }
+
+    .viewport-mobile .side-brand {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    .viewport-mobile .side-logo {
+      width: 78px;
+      height: 40px;
+    }
+
+    .viewport-mobile .side-brand strong {
+      font-size: 14px;
+    }
+
+    .viewport-mobile .side-brand span {
+      font-size: 11px;
+    }
+
+    .viewport-mobile .side-footer {
+      display: none;
+    }
+
+    .viewport-mobile .side-links {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 12px 12px;
+    }
+
+    .viewport-mobile .side-link {
+      flex: 0 0 auto;
+      min-height: 34px;
+      padding: 8px 10px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .viewport-mobile .admin-main {
+      padding: 16px;
+    }
+
+    .viewport-mobile .admin-actions,
+    .viewport-mobile .bulk-actions,
+    .viewport-mobile .tabs {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    .viewport-mobile .metric-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .viewport-mobile .metric strong {
+      font-size: 23px;
+    }
+
+    .viewport-mobile .inventory-tools,
+    .viewport-mobile .bulk-row,
+    .viewport-mobile .panel,
+    .viewport-mobile .field-card {
+      padding: 12px;
+    }
+
+    .viewport-mobile .inventory-item {
+      grid-template-columns: 74px minmax(0, 1fr);
+      align-items: start;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .viewport-mobile .inventory-thumb {
+      width: 74px;
+      height: 66px;
+    }
+
+    .viewport-mobile .status-stack {
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr;
+      justify-items: stretch;
+      min-width: 0;
+    }
+
+    .viewport-mobile .status-stack .tiny-button,
+    .viewport-mobile .field-actions .tiny-button {
+      justify-content: center;
+    }
+
+    .viewport-mobile .bar-chart {
+      height: 170px;
+      gap: 6px;
+    }
+
+    .viewport-mobile .table-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    .viewport-mobile .fields-tabs {
+      gap: 18px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .viewport-mobile .field-card-top {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .viewport-mobile .field-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .viewport-mobile .auth-grid {
+      padding: 18px 16px !important;
+      min-height: 680px !important;
+    }
+
+    .viewport-mobile .auth-panel {
+      width: 100%;
+      margin: 12px auto;
+      padding: 18px;
+    }
+
+    .viewport-mobile .rent-layout {
+      gap: 18px;
+      padding-top: 22px;
+      padding-bottom: 26px;
+    }
+
     @media (max-width: 1120px) {
       .filter-grid,
       .tool-row,
@@ -1389,12 +1988,14 @@
           <div class="brand">
             <div class="brand-mark">V3</div>
             <div>
-              <strong>PC page visuals</strong>
+              <strong>Responsive page visuals</strong>
               <span>Bicycle Shop docs preview</span>
             </div>
           </div>
           <div class="view-actions">
             <button class="mode-button active" type="button" data-viewport="pc">PC first</button>
+            <button class="mode-button" type="button" data-viewport="tablet">Tablet</button>
+            <button class="mode-button" type="button" data-viewport="mobile">Mobile</button>
             <button class="mode-button" type="button" data-view-mode="full">Full page</button>
           </div>
         </div>
@@ -1685,6 +2286,7 @@
     ];
 
     let activePage = "all";
+    let activeViewport = "pc";
 
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -1810,11 +2412,24 @@
       });
     }
 
+    function viewportLabel() {
+      if (activeViewport === "mobile") {
+        return "Mobile";
+      }
+
+      return activeViewport === "tablet" ? "Tablet" : "PC";
+    }
+
+    function pageTitle(title) {
+      return title.replace(/^PC \//, `${viewportLabel()} /`);
+    }
+
     function renderShell(title, body) {
+      const nextTitle = pageTitle(title);
       return `
-        <section class="pc-page" data-page-preview="${escapeHtml(title)}">
+        <section class="pc-page" data-page-preview="${escapeHtml(nextTitle)}">
           <div class="pc-titlebar">
-            <span>${escapeHtml(title)}</span>
+            <span>${escapeHtml(nextTitle)}</span>
             <span class="pc-dots" aria-hidden="true"><span></span><span></span><span></span></span>
           </div>
           <div class="pc-canvas">${body}</div>
@@ -2251,6 +2866,10 @@
       const list = filteredProducts();
       resultCount.textContent = list.length + (list.length === 1 ? " product" : " products");
       renderPageButtons();
+      stage.className = `preview-stage viewport-${activeViewport}`;
+      document.querySelectorAll("[data-viewport]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.viewport === activeViewport);
+      });
 
       if (activePage === "all") {
         const allPageIds = pages.map((page) => page.id).filter((id) => id !== "all");
@@ -2279,6 +2898,13 @@
     });
 
     clearFiltersButton.addEventListener("click", resetFilters);
+
+    document.querySelectorAll("[data-viewport]").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeViewport = button.dataset.viewport || "pc";
+        render();
+      });
+    });
 
     [filters.query, filters.category, filters.stock, filters.bikeType, filters.minPrice, filters.maxPrice, ...filters.attributes].forEach((control) => {
       control.addEventListener("input", render);
