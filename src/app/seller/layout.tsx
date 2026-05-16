@@ -102,9 +102,6 @@ export default function SellerLayout({
               </p>
             </div>
           </div>
-          <div className="mt-4">
-            <LanguageSwitcher compact />
-          </div>
           <button
             type="button"
             onClick={() => void logout()}
@@ -149,7 +146,6 @@ export default function SellerLayout({
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--brand-blue)] text-[var(--brand-navy)]" title={user?.email ?? t('seller.user')}>
             <User size={20} />
           </div>
-          <LanguageSwitcher compact />
           <button
             type="button"
             onClick={() => void logout()}
@@ -172,7 +168,6 @@ export default function SellerLayout({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <LanguageSwitcher compact />
             <button
               type="button"
               onClick={() => void logout()}
@@ -208,7 +203,12 @@ export default function SellerLayout({
       </header>
 
       <div className="min-h-screen flex-1 md:ml-24 xl:ml-72 xl:h-screen xl:overflow-y-auto">
-        <div className="p-4 sm:p-6 xl:p-10">{children}</div>
+        <div className="p-4 sm:p-6 xl:p-10">
+          <div className="mb-5 flex justify-start">
+            <LanguageSwitcher />
+          </div>
+          {children}
+        </div>
       </div>
     </div>
   );

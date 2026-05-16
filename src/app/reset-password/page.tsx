@@ -124,11 +124,13 @@ export default function ResetPasswordPage() {
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-8 text-zinc-950 sm:px-6">
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md flex-col justify-center">
-        <div className="mb-8 flex items-center justify-between gap-3">
+        <div className="mb-4 flex items-center justify-start">
           <Link href="/" className="inline-flex items-center">
             <BikeCityLogo imageClassName="h-12 w-36" priority />
           </Link>
-          <LanguageSwitcher compact />
+        </div>
+        <div className="mb-8 flex justify-start">
+          <LanguageSwitcher />
         </div>
 
         <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6">

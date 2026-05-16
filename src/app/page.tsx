@@ -662,7 +662,6 @@ export default function Home() {
           </div>
 
           <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
-            <LanguageSwitcher compact />
             <div className="hidden sm:block text-right">
               <p className="text-xs font-bold text-slate-900">{user?.email ?? t('common.account')}</p>
               <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
@@ -731,6 +730,12 @@ export default function Home() {
             >
               {t('nav.rent')}
             </button>
+          </div>
+        </div>
+
+        <div className="border-t border-cyan-100/80 bg-white/80">
+          <div className="max-w-7xl mx-auto flex justify-start px-4 py-2.5 sm:px-6">
+            <LanguageSwitcher />
           </div>
         </div>
 

@@ -219,11 +219,13 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
 
         <div className="flex items-center justify-center px-6 py-10 sm:px-8">
           <div className="w-full max-w-md">
-            <div className="mb-8 flex items-center justify-between gap-3">
+            <div className="mb-4 flex items-center justify-start">
               <Link href="/" className="inline-flex items-center">
                 <BikeCityLogo imageClassName="h-12 w-36" priority />
               </Link>
-              <LanguageSwitcher compact />
+            </div>
+            <div className="mb-8 flex justify-start">
+              <LanguageSwitcher />
             </div>
 
             <div className="mb-8">

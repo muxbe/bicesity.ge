@@ -459,7 +459,6 @@ export default function ProductDetailPage() {
                 {t('common.refreshingAccess')}
               </span>
             )}
-            <LanguageSwitcher compact />
             <div className="hidden sm:block text-right">
               <p className="text-xs font-bold text-slate-900">{user?.email ?? t('common.account')}</p>
               <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
@@ -478,6 +477,11 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </nav>
+      <div className="border-b border-cyan-100 bg-white">
+        <div className="max-w-7xl mx-auto flex justify-start px-4 py-2.5 sm:px-6">
+          <LanguageSwitcher />
+        </div>
+      </div>
 
       {/* Product Detail */}
       <section className="max-w-7xl mx-auto grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] lg:gap-12 lg:py-12">
