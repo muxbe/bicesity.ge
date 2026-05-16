@@ -502,7 +502,7 @@ export default function Home() {
 
   const handleBasicSearch = (event: FormEvent) => {
     event.preventDefault();
-    applyFilters(false);
+    applyFilters(true);
   };
 
   const handleDetailedSearch = (event: FormEvent) => {
@@ -820,126 +820,135 @@ export default function Home() {
             {error && <p className="text-xs text-rose-600 mt-2">{error}</p>}
           </div>
 
-          <div
-            className={`transition-all duration-300 ${
-              isDetailedOpen
-                ? 'max-h-[80vh] overflow-y-auto border-t border-cyan-100'
-                : 'max-h-0 overflow-hidden'
-            }`}
-          >
-            <div className="brand-filter-panel max-w-7xl mx-auto border-x px-4 py-5 sm:px-6 sm:py-6">
-              <form onSubmit={handleDetailedSearch}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.bikeType')}</label>
+        </div>
+        )}
+      </nav>
+
+      {activeView === 'products' && isDetailedOpen && (
+        <div className="border-b border-cyan-100 bg-white">
+          <div className="brand-filter-panel max-w-7xl mx-auto border-x px-4 py-5 sm:px-6 sm:py-6">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-slate-900">{t('home.detailed')}</p>
+              <button
+                type="button"
+                onClick={() => setIsDetailedOpen(false)}
+                aria-label={t('common.close')}
+                className="brand-control inline-flex h-9 items-center rounded-lg border px-3 text-xs font-bold text-slate-700 transition hover:bg-cyan-50"
+              >
+                {t('common.close')}
+              </button>
+            </div>
+
+            <form onSubmit={handleDetailedSearch}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.bikeType')}</label>
+                  <select
+                    value={draftFilters.bikeType}
+                    onChange={(event) =>
+                      updateDraftFilters({ bikeType: event.target.value as BikeTypeFilter })
+                    }
+                    disabled={draftFilters.category === 'Parts'}
+                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm disabled:bg-slate-100 disabled:text-slate-400"
+                  >
+                    <option value="All">{t('home.allTypes')}</option>
+                    {bikeTypeOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {driveTypeLabel(option, t)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.minPrice')}</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={draftFilters.minPrice}
+                    onChange={(event) => updateDraftFilters({ minPrice: event.target.value })}
+                    placeholder="0"
+                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.maxPrice')}</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={draftFilters.maxPrice}
+                    onChange={(event) => updateDraftFilters({ maxPrice: event.target.value })}
+                    placeholder="15000"
+                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('shop.stock')}</label>
+                  <select
+                    value={draftFilters.stock}
+                    onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
+                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
+                  >
+                    <option value="All">{t('home.allStock')}</option>
+                    <option value="In Stock">{t('common.inStock')}</option>
+                    <option value="Out of Stock">{t('common.outOfStock')}</option>
+                  </select>
+                </div>
+
+                {visibleAttributes.map((attribute) => (
+                  <div key={attribute.id}>
+                    <label className="block text-xs font-semibold text-slate-500 mb-2">
+                      {fieldNameLabel(attribute, locale)}
+                    </label>
                     <select
-                      value={draftFilters.bikeType}
+                      value={draftFilters.attributeValues[attribute.id] ?? ''}
                       onChange={(event) =>
-                        updateDraftFilters({ bikeType: event.target.value as BikeTypeFilter })
+                        setDraftFilters((current) => ({
+                          ...current,
+                          attributeValues: {
+                            ...current.attributeValues,
+                            [attribute.id]: event.target.value,
+                          },
+                        }))
                       }
-                      disabled={draftFilters.category === 'Parts'}
-                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm disabled:bg-slate-100 disabled:text-slate-400"
+                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
                     >
-                      <option value="All">{t('home.allTypes')}</option>
-                      {bikeTypeOptions.map((option) => (
-                        <option key={option} value={option}>
-                          {driveTypeLabel(option, t)}
+                      <option value="">{t('common.any')}</option>
+                      {(detailedAttributeOptions[attribute.id] ?? []).map((value) => (
+                        <option key={value} value={value}>
+                          {value}
                         </option>
                       ))}
                     </select>
                   </div>
+                ))}
+              </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.minPrice')}</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={draftFilters.minPrice}
-                      onChange={(event) => updateDraftFilters({ minPrice: event.target.value })}
-                      placeholder="0"
-                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.maxPrice')}</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={draftFilters.maxPrice}
-                      onChange={(event) => updateDraftFilters({ maxPrice: event.target.value })}
-                      placeholder="15000"
-                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-2">{t('shop.stock')}</label>
-                    <select
-                      value={draftFilters.stock}
-                      onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
-                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                    >
-                      <option value="All">{t('home.allStock')}</option>
-                      <option value="In Stock">{t('common.inStock')}</option>
-                      <option value="Out of Stock">{t('common.outOfStock')}</option>
-                    </select>
-                  </div>
-
-                  {visibleAttributes.map((attribute) => (
-                    <div key={attribute.id}>
-                      <label className="block text-xs font-semibold text-slate-500 mb-2">
-                        {fieldNameLabel(attribute, locale)}
-                      </label>
-                      <select
-                        value={draftFilters.attributeValues[attribute.id] ?? ''}
-                        onChange={(event) =>
-                          setDraftFilters((current) => ({
-                            ...current,
-                            attributeValues: {
-                              ...current.attributeValues,
-                              [attribute.id]: event.target.value,
-                            },
-                          }))
-                        }
-                        className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                      >
-                        <option value="">{t('common.any')}</option>
-                        {(detailedAttributeOptions[attribute.id] ?? []).map((value) => (
-                          <option key={value} value={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
-                  <button
-                    type="submit"
-                    className="brand-primary h-11 rounded-xl px-6 text-sm font-semibold transition"
-                  >
-                    {t('common.search')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDraftFilters(INITIAL_FILTERS);
-                      setAppliedFilters(INITIAL_FILTERS);
-                      setIsDetailedOpen(false);
-                    }}
-                    className="brand-control h-11 rounded-xl border px-6 text-sm font-semibold text-slate-700 transition hover:bg-cyan-50"
-                  >
-                    {t('common.clearAll')}
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
+                <button
+                  type="submit"
+                  className="brand-primary h-11 rounded-xl px-6 text-sm font-semibold transition"
+                >
+                  {t('common.search')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDraftFilters(INITIAL_FILTERS);
+                    setAppliedFilters(INITIAL_FILTERS);
+                    setIsDetailedOpen(false);
+                  }}
+                  className="brand-control h-11 rounded-xl border px-6 text-sm font-semibold text-slate-700 transition hover:bg-cyan-50"
+                >
+                  {t('common.clearAll')}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        )}
-      </nav>
+      )}
 
       {activeView === 'rent' ? (
         <RentView

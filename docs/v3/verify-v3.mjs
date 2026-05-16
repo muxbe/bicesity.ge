@@ -49,7 +49,8 @@ const requiredSnippets = [
   ".viewport-mobile .admin-shell",
   ".viewport-mobile .product-grid",
   ".viewport-mobile .detail-page",
-  ".viewport-mobile .auth-grid"
+  ".viewport-mobile .auth-grid",
+  ".viewport-mobile .detail-filter-row"
 ];
 
 const missing = requiredSnippets.filter((snippet) => !html.includes(snippet));
