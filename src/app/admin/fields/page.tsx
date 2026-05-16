@@ -518,7 +518,7 @@ export default function FieldSettingsPage() {
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`py-4 px-1 font-semibold transition-colors relative ${
-              activeTab === tab ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900'
+              activeTab === tab ? 'text-[var(--brand-cyan-dark)]' : 'text-slate-600 hover:text-slate-900'
             }`}
             style={{ borderBottomWidth: activeTab === tab ? '3px' : '0px' }}
           >
@@ -535,13 +535,13 @@ export default function FieldSettingsPage() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t('fields.searchPlaceholder')}
-            className="h-11 w-full rounded-xl border border-slate-300 pl-9 pr-3 text-sm"
+            className="brand-control h-11 w-full rounded-xl border pl-9 pr-3 text-sm"
           />
         </div>
         <select
           value={visibilityFilter}
           onChange={(event) => setVisibilityFilter(event.target.value as VisibilityFilter)}
-          className="h-11 rounded-xl border border-slate-300 px-3 text-sm bg-white"
+          className="brand-control h-11 rounded-xl border px-3 text-sm"
         >
           <option value="all">{t('fields.allVisibility')}</option>
           <option value="public">{t('fields.publicOnly')}</option>
@@ -609,7 +609,7 @@ export default function FieldSettingsPage() {
             }}
             className={`rounded-2xl border bg-white p-4 transition-colors sm:rounded-[2rem] sm:p-6 ${
               dragOverFieldId === item.id
-                ? 'border-blue-500 ring-2 ring-blue-100'
+                ? 'border-cyan-500 ring-2 ring-cyan-100'
                 : 'border-slate-200 hover:border-slate-300'
             } ${canReorderFields ? 'cursor-grab active:cursor-grabbing' : ''} ${
               draggingFieldId === item.id ? 'opacity-60' : ''
@@ -631,7 +631,7 @@ export default function FieldSettingsPage() {
                   aria-label={item.isPublic ? t('fields.makeFieldInternal', { name: fieldName }) : t('fields.makeFieldVisible', { name: fieldName })}
                 >
                   {item.isPublic ? (
-                    <Eye size={20} className="text-blue-600" />
+                    <Eye size={20} className="text-[var(--brand-cyan-dark)]" />
                   ) : (
                     <EyeOff size={20} className="text-amber-500" />
                   )}
@@ -711,7 +711,7 @@ export default function FieldSettingsPage() {
               <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold">
                 {item.isPublic ? t('fields.visible') : t('inventory.internal')}
               </span>
-              <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+              <span className="inline-block px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-xs font-semibold">
                 {dataType}
               </span>
               <span className="inline-block px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-semibold">
@@ -739,16 +739,16 @@ export default function FieldSettingsPage() {
 
         <button
           onClick={() => setShowModal(true)}
-          className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-4 border-dashed border-slate-300 p-6 transition-all hover:border-blue-600 hover:bg-blue-50 sm:rounded-[3rem]"
+          className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-4 border-dashed border-cyan-200 p-6 transition-all hover:border-[var(--brand-cyan-dark)] hover:bg-cyan-50 sm:rounded-[3rem]"
         >
           <div className="p-3 bg-slate-50 rounded-xl mb-3 group-hover:bg-blue-100 transition-colors">
             {isLoading ? (
               <Loader2 size={24} className="animate-spin text-slate-400" />
             ) : (
-              <Plus size={24} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
+              <Plus size={24} className="text-slate-400 group-hover:text-[var(--brand-cyan-dark)] transition-colors" />
             )}
           </div>
-          <p className="text-sm font-semibold text-slate-600 group-hover:text-blue-600 transition-colors">
+          <p className="text-sm font-semibold text-slate-600 group-hover:text-[var(--brand-cyan-dark)] transition-colors">
             {t('fields.addField')}
           </p>
         </button>
@@ -843,7 +843,7 @@ export default function FieldSettingsPage() {
                         setNewFieldOptionDrafts(['']);
                       }
                     }}
-                    className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-blue-600"
+                    className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
                   />
                   <span className="text-sm font-semibold text-slate-900">
                     {t('fields.addFixedOptions')}
@@ -859,7 +859,7 @@ export default function FieldSettingsPage() {
                       <button
                         type="button"
                         onClick={() => setNewFieldOptionDrafts((current) => [...current, ''])}
-                        className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-white"
+                        className="brand-control rounded-lg border px-3 py-2 text-xs font-bold text-slate-700 hover:bg-white"
                       >
                         {t('fields.addOption')}
                       </button>
@@ -871,7 +871,7 @@ export default function FieldSettingsPage() {
                           value={option}
                           onChange={(event) => updateNewFieldOptionDraft(index, event.target.value)}
                           placeholder={t('fields.optionPlaceholder', { number: index + 1 })}
-                          className="h-11 rounded-xl border border-slate-300 px-3 text-sm"
+                          className="brand-control h-11 rounded-xl border px-3 text-sm"
                         />
                         <button
                           type="button"
@@ -892,7 +892,7 @@ export default function FieldSettingsPage() {
                   id="isPublic"
                   checked={isPublic}
                   onChange={(event) => setIsPublic(event.target.checked)}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-blue-600"
+                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
                 />
                 <label htmlFor="isPublic" className="text-sm font-semibold text-slate-900 cursor-pointer">
                   {t('fields.publicVisibility')}
@@ -903,7 +903,7 @@ export default function FieldSettingsPage() {
                 <button
                   type="submit"
                   disabled={workingFieldId === 'creating' || !newFieldName.trim()}
-                  className="flex-1 bg-blue-600 text-white font-semibold py-3 rounded-2xl hover:bg-blue-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+                  className="brand-primary flex-1 py-3 rounded-2xl font-semibold transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
                 >
                   {workingFieldId === 'creating' ? t('fields.creating') : t('fields.createField')}
                 </button>
@@ -958,7 +958,7 @@ export default function FieldSettingsPage() {
                   type="checkbox"
                   checked={coreFieldIsPublic}
                   onChange={(event) => setCoreFieldIsPublic(event.target.checked)}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-blue-600"
+                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
                 />
                 <span className="text-sm font-semibold text-slate-900">
                   {t('fields.publicVisibility')}
@@ -975,7 +975,7 @@ export default function FieldSettingsPage() {
                       <button
                         type="button"
                         onClick={() => setCoreOptionDrafts((current) => [...current, ''])}
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                        className="brand-control rounded-lg border px-3 py-2 text-xs font-bold text-slate-700 hover:bg-cyan-50"
                       >
                         {t('fields.addOption')}
                       </button>
@@ -994,7 +994,7 @@ export default function FieldSettingsPage() {
                         value={option}
                         onChange={(event) => updateCoreOptionDraft(index, event.target.value)}
                         placeholder={t('fields.optionPlaceholder', { number: index + 1 })}
-                        className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm"
+                        className="brand-control h-11 rounded-xl border px-3 text-sm"
                       />
                       {coreFieldEditor.field.key === 'category' ? (
                         <span className="inline-flex h-11 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-slate-500">
@@ -1019,7 +1019,7 @@ export default function FieldSettingsPage() {
                   type="button"
                   onClick={saveCoreEditor}
                   disabled={!coreFieldName.trim()}
-                  className="flex-1 bg-blue-600 text-white font-semibold py-3 rounded-2xl hover:bg-blue-700 transition-colors disabled:bg-slate-300"
+                  className="brand-primary flex-1 py-3 rounded-2xl font-semibold transition-colors disabled:bg-slate-300"
                 >
                   {t('fields.saveField')}
                 </button>
@@ -1117,7 +1117,7 @@ export default function FieldSettingsPage() {
                   type="checkbox"
                   checked={optionsFieldIsPublic}
                   onChange={(event) => setOptionsFieldIsPublic(event.target.checked)}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-blue-600"
+                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
                 />
                 <span className="text-sm font-semibold text-slate-900">
                   {t('fields.publicVisibility')}
@@ -1134,7 +1134,7 @@ export default function FieldSettingsPage() {
                       setOptionDrafts(['']);
                     }
                   }}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-blue-600"
+                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
                 />
                 <span className="text-sm font-semibold text-slate-900">
                   {t('fields.useFixedOptions')}
@@ -1150,7 +1150,7 @@ export default function FieldSettingsPage() {
                     <button
                       type="button"
                       onClick={() => setOptionDrafts((current) => [...current, ''])}
-                      className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                      className="brand-control rounded-lg border px-3 py-2 text-xs font-bold text-slate-700 hover:bg-cyan-50"
                     >
                       {t('fields.addOption')}
                     </button>
@@ -1162,7 +1162,7 @@ export default function FieldSettingsPage() {
                         value={option}
                         onChange={(event) => updateOptionDraft(index, event.target.value)}
                         placeholder={t('fields.optionPlaceholder', { number: index + 1 })}
-                        className="h-11 rounded-xl border border-slate-300 px-3 text-sm"
+                        className="brand-control h-11 rounded-xl border px-3 text-sm"
                       />
                       <div className="flex items-center gap-1">
                         <button
@@ -1203,7 +1203,7 @@ export default function FieldSettingsPage() {
                   type="button"
                   onClick={() => void saveOptions()}
                   disabled={workingFieldId === optionsField.id || !optionsFieldName.trim()}
-                  className="flex-1 bg-blue-600 text-white font-semibold py-3 rounded-2xl hover:bg-blue-700 transition-colors disabled:bg-slate-300"
+                  className="brand-primary flex-1 py-3 rounded-2xl font-semibold transition-colors disabled:bg-slate-300"
                 >
                   {workingFieldId === optionsField.id ? t('common.saving') : t('fields.saveField')}
                 </button>

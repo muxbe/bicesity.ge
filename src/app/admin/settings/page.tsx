@@ -110,7 +110,7 @@ export default function AdminSettingsPage() {
         <button
           type="button"
           onClick={() => void loadSettings()}
-          className="flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="brand-control flex h-11 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold text-slate-700 hover:bg-cyan-50"
         >
           <RefreshCw size={16} />
           {t("common.reload")}
@@ -133,7 +133,7 @@ export default function AdminSettingsPage() {
                 id="shop-name"
                 value={draft.shopName}
                 onChange={(event) => setDraft((current) => ({ ...current, shopName: event.target.value }))}
-                className="h-12 w-full rounded-xl border border-slate-300 px-3 text-sm text-slate-900"
+                className="brand-control h-12 w-full rounded-xl border px-3 text-sm text-slate-900"
                 placeholder={t("settings.shopNamePlaceholder")}
               />
             </div>
@@ -147,7 +147,7 @@ export default function AdminSettingsPage() {
                   id="currency"
                   value={draft.currency}
                   onChange={(event) => setDraft((current) => ({ ...current, currency: event.target.value }))}
-                  className="h-12 w-full rounded-xl border border-slate-300 px-3 text-sm uppercase text-slate-900"
+                  className="brand-control h-12 w-full rounded-xl border px-3 text-sm uppercase text-slate-900"
                   placeholder="GEL"
                 />
               </div>
@@ -161,7 +161,7 @@ export default function AdminSettingsPage() {
                   type="url"
                   value={draft.messengerUrl}
                   onChange={(event) => setDraft((current) => ({ ...current, messengerUrl: event.target.value }))}
-                  className="h-12 w-full rounded-xl border border-slate-300 px-3 text-sm text-slate-900"
+                  className="brand-control h-12 w-full rounded-xl border px-3 text-sm text-slate-900"
                   placeholder="https://m.me/your-page"
                 />
               </div>
@@ -178,7 +178,7 @@ export default function AdminSettingsPage() {
                 onChange={(event) =>
                   setDraft((current) => ({ ...current, publicContactInfo: event.target.value }))
                 }
-                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+                className="brand-control w-full rounded-xl border px-3 py-2 text-sm text-slate-900"
                 placeholder={t("settings.publicContactPlaceholder")}
               />
             </div>
@@ -196,7 +196,7 @@ export default function AdminSettingsPage() {
                     href={settings.messengerUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                    className="brand-control flex h-11 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold text-slate-700 hover:bg-cyan-50"
                   >
                     <ExternalLink size={16} />
                     {t("settings.openLink")}
@@ -205,7 +205,7 @@ export default function AdminSettingsPage() {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700 disabled:bg-slate-300"
+                  className="brand-primary flex h-11 items-center justify-center gap-2 rounded-lg px-5 text-sm font-bold disabled:bg-slate-300"
                 >
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   {t("settings.saveSettings")}

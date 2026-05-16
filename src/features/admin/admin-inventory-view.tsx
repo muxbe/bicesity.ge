@@ -283,7 +283,7 @@ function ReservationCustomerSummary({ reservation }: { reservation: ReservationD
                 href={value}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="break-all text-sm font-semibold text-blue-700 hover:underline"
+                className="break-all text-sm font-semibold text-cyan-700 hover:underline"
               >
                 {value}
               </a>
@@ -1036,7 +1036,7 @@ export function AdminInventoryView({
   };
 
   const renderReservationContextFields = (scope: 'single' | 'bulk') => (
-    <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+    <div className="brand-filter-panel space-y-3 rounded-2xl border p-3">
       <p className="text-xs font-black uppercase tracking-widest text-slate-500">
         {scope === 'bulk' ? t('inventory.customerContextSelected') : t('inventory.customerContext')}
       </p>
@@ -1046,7 +1046,7 @@ export function AdminInventoryView({
           onChange={(event) =>
             setReservationContext((current) => ({ ...current, customerName: event.target.value }))
           }
-          className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm"
+          className="brand-control h-11 rounded-xl border px-3 text-sm"
           placeholder={t('inventory.customerName')}
         />
         <input
@@ -1054,7 +1054,7 @@ export function AdminInventoryView({
           onChange={(event) =>
             setReservationContext((current) => ({ ...current, customerPhone: event.target.value }))
           }
-          className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm"
+          className="brand-control h-11 rounded-xl border px-3 text-sm"
           placeholder={t('inventory.customerPhone')}
         />
       </div>
@@ -1064,7 +1064,7 @@ export function AdminInventoryView({
         onChange={(event) =>
           setReservationContext((current) => ({ ...current, messengerProfileUrl: event.target.value }))
         }
-        className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"
+        className="brand-control h-11 w-full rounded-xl border px-3 text-sm"
         placeholder={t('inventory.messengerLink')}
       />
       <select
@@ -1075,7 +1075,7 @@ export function AdminInventoryView({
             reservationSource: event.target.value as ReservationSource,
           }))
         }
-        className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"
+        className="brand-control h-11 w-full rounded-xl border px-3 text-sm"
       >
         {RESERVATION_SOURCE_OPTIONS.map((value) => (
           <option key={value} value={value}>
@@ -1128,11 +1128,11 @@ export function AdminInventoryView({
           )}
         </div>
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-            <button type="button" onClick={() => void reloadPageData()} className="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+            <button type="button" onClick={() => void reloadPageData()} className="brand-control flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold text-slate-700 hover:bg-cyan-50">
               <RefreshCw size={16} /> {t('common.reload')}
             </button>
           {canManageCatalog && statusView === 'active' && (
-            <button type="button" onClick={() => void openCreate()} className="flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700">
+            <button type="button" onClick={() => void openCreate()} className="brand-primary flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold">
               <Plus size={16} /> {t('inventory.addProduct')}
             </button>
           )}
@@ -1140,9 +1140,9 @@ export function AdminInventoryView({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs text-slate-500">{t('common.active')}</p><p className="text-2xl font-black text-slate-900">{counts.active}</p></div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs text-slate-500">{t('common.reserved')}</p><p className="text-2xl font-black text-slate-900">{counts.reserved}</p></div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs text-slate-500">{t('common.sold')}</p><p className="text-2xl font-black text-slate-900">{counts.sold}</p></div>
+        <div className="rounded-2xl border border-cyan-100 bg-white p-4"><p className="text-xs text-slate-500">{t('common.active')}</p><p className="text-2xl font-black text-slate-900">{counts.active}</p></div>
+        <div className="rounded-2xl border border-cyan-100 bg-white p-4"><p className="text-xs text-slate-500">{t('common.reserved')}</p><p className="text-2xl font-black text-slate-900">{counts.reserved}</p></div>
+        <div className="rounded-2xl border border-cyan-100 bg-white p-4"><p className="text-xs text-slate-500">{t('common.sold')}</p><p className="text-2xl font-black text-slate-900">{counts.sold}</p></div>
       </div>
 
       <div className="mb-4 space-y-3">
@@ -1160,8 +1160,8 @@ export function AdminInventoryView({
               }}
               className={`h-10 px-4 rounded-xl text-sm font-semibold ${
                 categoryTab === tab
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white border border-slate-300 text-slate-700'
+                  ? 'bg-[var(--brand-navy)] text-white'
+                  : 'brand-control border text-slate-700'
               }`}
             >
               {tab === 'All' ? t('common.all') : categoryLabel(tab, t)}
@@ -1174,14 +1174,14 @@ export function AdminInventoryView({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t('inventory.searchPlaceholder')}
-              className="h-10 w-full rounded-xl border border-slate-300 pl-8 pr-3 text-sm"
+              className="brand-control h-10 w-full rounded-xl border pl-8 pr-3 text-sm"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setIsDetailedFiltersOpen((current) => !current)}
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:w-auto"
+            className="brand-control inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold text-slate-700 hover:bg-cyan-50 sm:w-auto"
           >
             <SlidersHorizontal size={14} />
             {t('inventory.detailedFilters')}
@@ -1193,11 +1193,11 @@ export function AdminInventoryView({
         </div>
 
         {isDetailedFiltersOpen && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <div className="brand-filter-panel grid grid-cols-1 gap-3 rounded-2xl border p-4 md:grid-cols-2 xl:grid-cols-4">
             <select
               value={stockFilter}
               onChange={(event) => setStockFilter(event.target.value as StockFilter)}
-              className="h-10 rounded-xl border border-slate-300 px-3 text-sm bg-white"
+              className="brand-control h-10 rounded-xl border px-3 text-sm"
             >
               <option value="All">{t('inventory.allStock')}</option>
               <option value="In Stock">{t('common.inStock')}</option>
@@ -1208,7 +1208,7 @@ export function AdminInventoryView({
               value={bikeTypeFilter}
               onChange={(event) => setBikeTypeFilter(event.target.value as BikeTypeFilter)}
               disabled={categoryTab === 'Parts'}
-              className="h-10 rounded-xl border border-slate-300 px-3 text-sm bg-white disabled:bg-slate-100"
+              className="brand-control h-10 rounded-xl border px-3 text-sm disabled:bg-slate-100"
             >
               <option value="All">{t('inventory.allBikeTypes')}</option>
               {driveTypeFilterOptions.map((option) => (
@@ -1224,7 +1224,7 @@ export function AdminInventoryView({
               value={minPriceFilter}
               onChange={(event) => setMinPriceFilter(event.target.value)}
               placeholder={t('inventory.minPrice')}
-              className="h-10 rounded-xl border border-slate-300 px-3 text-sm"
+              className="brand-control h-10 rounded-xl border px-3 text-sm"
             />
 
             <input
@@ -1233,7 +1233,7 @@ export function AdminInventoryView({
               value={maxPriceFilter}
               onChange={(event) => setMaxPriceFilter(event.target.value)}
               placeholder={t('inventory.maxPrice')}
-              className="h-10 rounded-xl border border-slate-300 px-3 text-sm"
+              className="brand-control h-10 rounded-xl border px-3 text-sm"
             />
 
             {visibleFilterAttributes.map((attribute) => (
@@ -1246,7 +1246,7 @@ export function AdminInventoryView({
                     [attribute.id]: event.target.value,
                   }))
                 }
-                className="h-10 rounded-xl border border-slate-300 px-3 text-sm bg-white"
+                className="brand-control h-10 rounded-xl border px-3 text-sm"
               >
                 <option value="">{fieldNameLabel(attribute, locale)}: {t('common.any')}</option>
                 {(attributeOptionsById[attribute.id] ?? []).map((value) => (
@@ -1260,7 +1260,7 @@ export function AdminInventoryView({
             <button
               type="button"
               onClick={resetDetailedFilters}
-              className="h-10 px-4 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="brand-control h-10 px-4 rounded-xl border text-sm font-semibold text-slate-700 hover:bg-cyan-50"
             >
               {t('inventory.clearFilters')}
             </button>
@@ -1274,7 +1274,7 @@ export function AdminInventoryView({
             type="checkbox"
             checked={allVisibleSelected}
             onChange={toggleSelectVisible}
-            className="h-4 w-4 rounded border-slate-300 accent-blue-600"
+            className="h-4 w-4 rounded border-slate-300 accent-cyan-600"
           />
           {t('inventory.selectVisible')}
         </label>
@@ -1322,7 +1322,7 @@ export function AdminInventoryView({
                       setBulkMode('discount');
                       setBulkResult(null);
                     }}
-                    className="h-9 rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    className="brand-primary h-9 rounded-lg px-3 text-sm font-semibold disabled:cursor-not-allowed disabled:bg-slate-300"
                   >
                     {t('common.discount')}
                   </button>
@@ -1440,7 +1440,7 @@ export function AdminInventoryView({
                   type="checkbox"
                   checked={selectedProductIds.includes(product.id)}
                   onChange={() => toggleProductSelection(product.id)}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 accent-blue-600"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 accent-cyan-600"
                   aria-label={`Select ${product.name}`}
                 />
                 <span className="sr-only">Select {product.name}</span>
@@ -1454,7 +1454,7 @@ export function AdminInventoryView({
                   <h2 className="break-words text-base font-black text-slate-900 sm:text-lg">{product.name}</h2>
                   <StatusBadge status={product.status} />
                   <span className="text-xs rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">{categoryLabel(product.category, t)}</span>
-                  <span className="text-xs rounded-full bg-blue-100 px-2.5 py-1 font-semibold text-blue-700">{product.type ? driveTypeLabel(product.type, t) : t('inventory.part')}</span>
+                  <span className="text-xs rounded-full bg-cyan-50 px-2.5 py-1 font-semibold text-cyan-700">{product.type ? driveTypeLabel(product.type, t) : t('inventory.part')}</span>
                 </div>
                 <p className="text-sm text-slate-500">{t('common.serial')}: {product.serial}</p>
                 <p className="text-sm text-slate-600 mt-1 line-clamp-2">{product.description}</p>
@@ -1717,7 +1717,7 @@ export function AdminInventoryView({
                   <button
                     type="submit"
                     disabled={workingKey === `bulk:${bulkMode}`}
-                    className="h-11 flex-1 rounded-xl bg-blue-600 text-white font-semibold disabled:opacity-50"
+                    className="brand-primary h-11 flex-1 rounded-xl font-semibold disabled:opacity-50"
                   >
                     {workingKey === `bulk:${bulkMode}`
                       ? t('common.saving')
@@ -1845,7 +1845,7 @@ function ProductForm({
                   <button
                     type="button"
                     onClick={() => setImages([image, ...images.filter((_, imageIndex) => imageIndex !== index)])}
-                    className="h-7 rounded-md border border-blue-200 text-xs font-bold text-blue-700 hover:bg-blue-50"
+                    className="h-7 rounded-md border border-cyan-200 text-xs font-bold text-cyan-700 hover:bg-cyan-50"
                   >
                     {t('inventory.makePrimary')}
                   </button>

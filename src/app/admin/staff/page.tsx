@@ -183,7 +183,7 @@ export default function StaffPage() {
         <button
           type="button"
           onClick={() => void loadStaff()}
-          className="flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="brand-control flex h-11 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold text-slate-700 hover:bg-cyan-50"
         >
           <RefreshCw size={16} />
           {t("common.reload")}
@@ -198,7 +198,7 @@ export default function StaffPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder={t("staff.emailPlaceholder")}
-            className="h-11 rounded-lg border border-slate-300 px-3 text-sm"
+            className="brand-control h-11 rounded-lg border px-3 text-sm"
             required
           />
           <input
@@ -206,20 +206,20 @@ export default function StaffPage() {
             value={fullName}
             onChange={(event) => setFullName(event.target.value)}
             placeholder={t("staff.fullName")}
-            className="h-11 rounded-lg border border-slate-300 px-3 text-sm"
+            className="brand-control h-11 rounded-lg border px-3 text-sm"
           />
           <input
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder={t("staff.passwordOptional")}
-            className="h-11 rounded-lg border border-slate-300 px-3 text-sm"
+            className="brand-control h-11 rounded-lg border px-3 text-sm"
             minLength={6}
           />
           <select
             value={role}
             onChange={(event) => setRole(event.target.value as StaffRole)}
-            className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm"
+            className="brand-control h-11 rounded-lg border px-3 text-sm"
           >
             <option value="seller">{t("role.seller")}</option>
             <option value="admin">{t("role.admin")}</option>
@@ -227,7 +227,7 @@ export default function StaffPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-bold text-white hover:bg-blue-700 disabled:bg-slate-300"
+            className="brand-primary flex h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold disabled:bg-slate-300"
           >
             {isSaving ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
             {t("staff.createOrPromote")}
@@ -276,7 +276,7 @@ export default function StaffPage() {
                           onChange={(event) =>
                             void updateStaff(profile, { role: event.target.value as StaffRole })
                           }
-                          className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold capitalize text-slate-700 disabled:opacity-50"
+                          className="brand-control h-9 rounded-lg border px-3 text-sm font-semibold capitalize text-slate-700 disabled:opacity-50"
                         >
                           <option value="seller">{t("role.seller")}</option>
                           <option value="admin">{t("role.admin")}</option>
@@ -325,14 +325,14 @@ export default function StaffPage() {
                               minLength={6}
                               disabled={isWorking || isSelf}
                               title={isSelf ? t("staff.selfPasswordResetBlocked") : undefined}
-                              className="h-9 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm disabled:bg-slate-100"
+                              className="brand-control h-9 min-w-0 flex-1 rounded-lg border px-3 text-sm disabled:bg-slate-100"
                             />
                             <button
                               type="button"
                               disabled={isWorking || isSelf || resetPassword.trim().length < 6}
                               title={isSelf ? t("staff.selfPasswordResetBlocked") : undefined}
                               onClick={() => void resetStaffPassword(profile)}
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-blue-200 px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-cyan-200 px-3 text-sm font-semibold text-cyan-700 hover:bg-cyan-50 disabled:opacity-50"
                             >
                               {isWorking ? (
                                 <Loader2 size={14} className="animate-spin" />

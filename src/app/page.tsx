@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 're
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import { BikeCityLogo } from '@/components/bike-city-logo';
 import {
   Bike,
   ChevronDown,
@@ -179,7 +180,7 @@ function RentView({
     <section id="rent" className="max-w-7xl mx-auto px-4 py-8 sm:px-6 sm:py-12">
       <div className="grid min-h-[calc(100vh-160px)] grid-cols-1 items-center gap-8 lg:min-h-[calc(100vh-190px)] lg:grid-cols-[1.05fr,0.95fr] lg:gap-10">
         <div>
-          <p className="mb-4 text-sm font-black uppercase tracking-widest text-emerald-700">
+          <p className="mb-4 text-sm font-black uppercase tracking-widest text-[var(--brand-cyan-dark)]">
             {t('rent.eyebrow')}
           </p>
           <h1 className="mb-5 max-w-3xl text-4xl font-black leading-tight text-slate-950 sm:mb-6 sm:text-5xl lg:text-6xl">
@@ -193,7 +194,7 @@ function RentView({
             <button
               type="button"
               onClick={onMessageSeller}
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 text-sm font-bold text-white transition hover:bg-blue-600 sm:w-auto"
+              className="brand-primary inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-bold transition sm:w-auto"
             >
               <MessageCircle className="h-5 w-5" />
               {t('rent.messageSeller')}
@@ -201,7 +202,7 @@ function RentView({
             <button
               type="button"
               onClick={onBrowseBicycles}
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-slate-300 px-5 text-sm font-bold text-slate-800 transition hover:bg-slate-50 sm:w-auto"
+              className="brand-control inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border px-5 text-sm font-bold text-slate-800 transition hover:bg-cyan-50 sm:w-auto"
             >
               <Bike className="h-5 w-5" />
               {t('rent.browseBicycles')}
@@ -220,21 +221,21 @@ function RentView({
           )}
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-lg border border-slate-200 p-5">
-              <MapPin className="mb-4 h-6 w-6 text-blue-600" />
+            <div className="rounded-lg border border-cyan-100 bg-white p-5">
+              <MapPin className="mb-4 h-6 w-6 text-[var(--brand-cyan-dark)]" />
               <h2 className="mb-2 text-base font-black text-slate-950">{t('rent.localPickup')}</h2>
               <p className="text-sm leading-6 text-slate-600">
                 {t('rent.localPickupCopy')}
               </p>
             </div>
-            <div className="rounded-lg border border-slate-200 p-5">
-              <Route className="mb-4 h-6 w-6 text-emerald-700" />
+            <div className="rounded-lg border border-cyan-100 bg-white p-5">
+              <Route className="mb-4 h-6 w-6 text-[var(--brand-blue-strong)]" />
               <h2 className="mb-2 text-base font-black text-slate-950">{t('rent.travelRoutes')}</h2>
               <p className="text-sm leading-6 text-slate-600">
                 {t('rent.travelRoutesCopy')}
               </p>
             </div>
-            <div className="rounded-lg border border-slate-200 p-5">
+            <div className="rounded-lg border border-cyan-100 bg-white p-5">
               <MessageCircle className="mb-4 h-6 w-6 text-amber-600" />
               <h2 className="mb-2 text-base font-black text-slate-950">{t('rent.directContact')}</h2>
               <p className="text-sm leading-6 text-slate-600">
@@ -586,12 +587,14 @@ export default function Home() {
   };
 
   const navButtonClass = (isActive: boolean) =>
-    `text-slate-700 hover:text-blue-600 transition font-medium ${isActive ? 'text-blue-600' : ''}`;
+    `text-slate-700 transition hover:text-[var(--brand-cyan-dark)] font-medium ${
+      isActive ? 'text-[var(--brand-cyan-dark)]' : ''
+    }`;
   const mobileNavButtonClass = (isActive: boolean) =>
     `inline-flex h-10 shrink-0 items-center rounded-lg border px-4 text-sm font-bold transition ${
       isActive
-        ? 'border-blue-600 bg-blue-600 text-white'
-        : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-600'
+        ? 'border-[var(--brand-blue-strong)] bg-[var(--brand-blue-strong)] text-white'
+        : 'border-slate-200 bg-white text-slate-700 hover:border-[var(--brand-blue)] hover:text-[var(--brand-cyan-dark)]'
     }`;
 
   const logout = async () => {
@@ -619,10 +622,8 @@ export default function Home() {
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-50 bg-white/75 backdrop-blur-xl border-b border-slate-200">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <Link href="/" className="flex items-center gap-2 text-base font-bold sm:text-xl">
-            <Bike className="h-7 w-7 text-blue-600 sm:h-8 sm:w-8" />
-            <span className="text-black">VELO</span>
-            <span className="text-blue-600">HUB</span>
+          <Link href="/" className="flex items-center">
+            <BikeCityLogo imageClassName="h-12 w-36 sm:h-14 sm:w-44" priority />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
@@ -671,7 +672,7 @@ export default function Home() {
             {role === 'admin' && (
               <Link
                 href="/admin"
-                className="hidden h-10 items-center rounded-lg bg-emerald-700 px-3 text-sm font-bold text-white hover:bg-emerald-800 sm:inline-flex"
+                className="brand-primary hidden h-10 items-center rounded-lg px-3 text-sm font-bold sm:inline-flex"
               >
                 {t('common.admin')}
               </Link>
@@ -679,7 +680,7 @@ export default function Home() {
             {role === 'seller' && (
               <Link
                 href="/seller"
-                className="hidden h-10 items-center rounded-lg bg-emerald-700 px-3 text-sm font-bold text-white hover:bg-emerald-800 sm:inline-flex"
+                className="brand-primary hidden h-10 items-center rounded-lg px-3 text-sm font-bold sm:inline-flex"
               >
                 {t('common.seller')}
               </Link>
@@ -688,7 +689,7 @@ export default function Home() {
               type="button"
               onClick={() => void logout()}
               aria-label={t('common.logout')}
-              className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-300 px-3 text-xs font-bold text-slate-700 hover:bg-slate-50 sm:h-10 sm:text-sm"
+              className="brand-control inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-xs font-bold text-slate-700 hover:bg-cyan-50 sm:h-10 sm:text-sm"
             >
               <LogOut size={16} />
               <span className="hidden sm:inline">{t('common.logout')}</span>
@@ -747,14 +748,14 @@ export default function Home() {
                   value={draftFilters.query}
                   onChange={(event) => updateDraftFilters({ query: event.target.value })}
                   placeholder={t('home.searchPlaceholder')}
-                  className="w-full h-11 border border-slate-200 rounded-xl pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className="brand-control w-full h-11 rounded-xl border pl-10 pr-4 text-sm"
                 />
               </div>
 
               <select
                 value={draftFilters.category}
                 onChange={(event) => handleCategoryChange(event.target.value as CategoryFilter)}
-                className="h-11 border border-slate-200 rounded-xl px-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="brand-control h-11 rounded-xl border px-3 text-sm"
               >
                 <option value="All">{t('home.allCategories')}</option>
                 <option value="Bicycle">{t('common.bicycles')}</option>
@@ -764,7 +765,7 @@ export default function Home() {
               <select
                 value={draftFilters.stock}
                 onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
-                className="h-11 border border-slate-200 rounded-xl px-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="brand-control h-11 rounded-xl border px-3 text-sm"
               >
                 <option value="All">{t('home.allStock')}</option>
                 <option value="In Stock">{t('common.inStock')}</option>
@@ -774,7 +775,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setIsDetailedOpen((current) => !current)}
-                className="h-11 px-4 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition flex items-center justify-center gap-2"
+                className="brand-control h-11 px-4 rounded-xl border text-slate-700 font-semibold text-sm hover:bg-cyan-50 transition flex items-center justify-center gap-2"
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 {t('home.detailed')}
@@ -787,7 +788,7 @@ export default function Home() {
 
               <button
                 type="submit"
-                className="h-11 rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white transition hover:bg-blue-700 sm:col-span-2 lg:col-span-1"
+                className="brand-primary h-11 rounded-xl px-6 text-sm font-semibold transition sm:col-span-2 lg:col-span-1"
               >
                 {t('common.search')}
               </button>
@@ -817,11 +818,11 @@ export default function Home() {
           <div
             className={`transition-all duration-300 ${
               isDetailedOpen
-                ? 'max-h-[80vh] overflow-y-auto border-t border-slate-200/70'
+                ? 'max-h-[80vh] overflow-y-auto border-t border-cyan-100'
                 : 'max-h-0 overflow-hidden'
             }`}
           >
-            <div className="max-w-7xl mx-auto bg-white px-4 py-5 sm:px-6 sm:py-6">
+            <div className="brand-filter-panel max-w-7xl mx-auto border-x px-4 py-5 sm:px-6 sm:py-6">
               <form onSubmit={handleDetailedSearch}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                   <div>
@@ -832,7 +833,7 @@ export default function Home() {
                         updateDraftFilters({ bikeType: event.target.value as BikeTypeFilter })
                       }
                       disabled={draftFilters.category === 'Parts'}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm disabled:bg-slate-100 disabled:text-slate-400"
                     >
                       <option value="All">{t('home.allTypes')}</option>
                       {bikeTypeOptions.map((option) => (
@@ -851,7 +852,7 @@ export default function Home() {
                       value={draftFilters.minPrice}
                       onChange={(event) => updateDraftFilters({ minPrice: event.target.value })}
                       placeholder="0"
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
                     />
                   </div>
 
@@ -863,7 +864,7 @@ export default function Home() {
                       value={draftFilters.maxPrice}
                       onChange={(event) => updateDraftFilters({ maxPrice: event.target.value })}
                       placeholder="15000"
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
                     />
                   </div>
 
@@ -872,7 +873,7 @@ export default function Home() {
                     <select
                       value={draftFilters.stock}
                       onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
                     >
                       <option value="All">{t('home.allStock')}</option>
                       <option value="In Stock">{t('common.inStock')}</option>
@@ -896,7 +897,7 @@ export default function Home() {
                             },
                           }))
                         }
-                        className="w-full h-11 border border-slate-200 rounded-xl px-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
                       >
                         <option value="">{t('common.any')}</option>
                         {(detailedAttributeOptions[attribute.id] ?? []).map((value) => (
@@ -912,7 +913,7 @@ export default function Home() {
                 <div className="mt-6 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
                   <button
                     type="submit"
-                    className="h-11 rounded-xl bg-slate-900 px-6 text-sm font-semibold text-white transition hover:bg-black"
+                    className="brand-primary h-11 rounded-xl px-6 text-sm font-semibold transition"
                   >
                     {t('common.search')}
                   </button>
@@ -923,7 +924,7 @@ export default function Home() {
                       setAppliedFilters(INITIAL_FILTERS);
                       setIsDetailedOpen(false);
                     }}
-                    className="h-11 rounded-xl border border-slate-300 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    className="brand-control h-11 rounded-xl border px-6 text-sm font-semibold text-slate-700 transition hover:bg-cyan-50"
                   >
                     {t('common.clearAll')}
                   </button>
@@ -968,7 +969,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-black mb-2 group-hover:text-blue-600 transition">
+                  <h3 className="text-lg font-bold text-black mb-2 group-hover:text-[var(--brand-cyan-dark)] transition">
                     {product.name}
                   </h3>
 
@@ -997,14 +998,14 @@ export default function Home() {
                     </span>
                     <span
                       className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                        product.inStock ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        product.inStock ? 'bg-cyan-50 text-cyan-700' : 'bg-amber-100 text-amber-700'
                       }`}
                     >
                       {stockLabel(product.inStock, t)}
                     </span>
                   </div>
 
-                  <span className="mt-auto w-full rounded-xl bg-slate-900 py-3 text-center font-semibold text-white transition hover:bg-black sm:rounded-[1.5rem]">
+                  <span className="brand-primary mt-auto w-full rounded-xl py-3 text-center font-semibold transition sm:rounded-[1.5rem]">
                     {t('home.viewDetails')}
                   </span>
                 </div>

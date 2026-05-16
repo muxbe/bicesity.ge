@@ -70,7 +70,7 @@ function ReservationCustomerSummary({ reservation }: { reservation: ReservationD
                 href={value}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="break-all text-sm font-semibold text-blue-700 hover:underline"
+                className="break-all text-sm font-semibold text-cyan-700 hover:underline"
               >
                 {value}
               </a>
@@ -151,7 +151,7 @@ export default function ReservationsPage() {
 
       <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 md:p-6">
         <div className="flex items-center gap-3 text-slate-700">
-          <CalendarClock className="w-5 h-5 text-blue-600" />
+          <CalendarClock className="w-5 h-5 text-[var(--brand-cyan-dark)]" />
           <p className="font-semibold">
             {t('reservations.activeCount', {
               count: activeReservations.length,
@@ -192,7 +192,7 @@ export default function ReservationsPage() {
                   <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold">
                     {categoryLabel(reservation.category, t)}
                   </span>
-                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                  <span className="inline-block px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-xs font-semibold">
                     ${reservation.price.toLocaleString()}
                   </span>
                   <span
@@ -200,7 +200,7 @@ export default function ReservationsPage() {
                       reservation.status === 'active'
                         ? 'bg-emerald-100 text-emerald-700'
                         : reservation.status === 'completed'
-                        ? 'bg-blue-100 text-blue-700'
+                        ? 'bg-cyan-50 text-cyan-700'
                         : reservation.status === 'cancelled'
                         ? 'bg-rose-100 text-rose-700'
                         : 'bg-amber-100 text-amber-700'

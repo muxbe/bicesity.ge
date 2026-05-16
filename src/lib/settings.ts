@@ -7,7 +7,7 @@ export type AppSettingsDTO = {
 };
 
 export const DEFAULT_APP_SETTINGS: AppSettingsDTO = {
-  shopName: "VeloHub",
+  shopName: "Bike City",
   currency: "GEL",
   messengerUrl: "",
   publicContactInfo: "",

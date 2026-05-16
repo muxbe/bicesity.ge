@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Package, CalendarClock, Lock, User, LogOut, Loader2 } from 'lucide-react';
+import { Package, CalendarClock, User, LogOut, Loader2 } from 'lucide-react';
+import { BikeCityLogo } from '@/components/bike-city-logo';
 import { useAuth } from '@/features/auth';
 import { LanguageSwitcher, useI18n } from '@/lib/i18n';
 
@@ -55,15 +56,13 @@ export default function SellerLayout({
 
   return (
     <div className="min-h-screen bg-white font-['Plus Jakarta Sans'] md:flex">
-      <aside className="fixed left-0 top-0 hidden h-screen w-72 flex-col bg-slate-900 text-white xl:flex">
-        <div className="p-8 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-600 rounded-xl">
-              <Lock size={20} />
-            </div>
+      <aside className="brand-sidebar fixed left-0 top-0 hidden h-screen w-72 flex-col xl:flex">
+        <div className="border-b border-white/10 p-6">
+          <div className="flex items-center gap-4">
+            <BikeCityLogo imageClassName="h-16 w-28" priority />
             <div>
               <h1 className="text-lg font-black tracking-tight">{t('common.seller').toUpperCase()}</h1>
-              <p className="text-xs text-slate-400">HUB</p>
+              <p className="text-xs font-black uppercase tracking-widest text-cyan-200">Bike City</p>
             </div>
           </div>
         </div>
@@ -80,7 +79,7 @@ export default function SellerLayout({
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 ${
                   active
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                    ? 'brand-sidebar-active'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
@@ -91,9 +90,9 @@ export default function SellerLayout({
           })}
         </nav>
 
-        <div className="p-6 border-t border-slate-800">
+        <div className="border-t border-white/10 p-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[var(--brand-blue)] text-[var(--brand-navy)]">
               <User size={24} />
             </div>
             <div className="min-w-0 flex-1">
@@ -109,7 +108,7 @@ export default function SellerLayout({
           <button
             type="button"
             onClick={() => void logout()}
-            className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-slate-700 text-sm font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/15 text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
           >
             <LogOut size={16} />
             {t('common.signOut')}
@@ -117,11 +116,9 @@ export default function SellerLayout({
         </div>
       </aside>
 
-      <aside className="fixed left-0 top-0 hidden h-screen w-24 flex-col items-center bg-slate-900 text-white md:flex xl:hidden">
-        <div className="flex h-20 w-full items-center justify-center border-b border-slate-800">
-          <div className="rounded-xl bg-blue-600 p-2" title={`${t('common.seller')} HUB`}>
-            <Lock size={20} />
-          </div>
+      <aside className="brand-sidebar fixed left-0 top-0 hidden h-screen w-24 flex-col items-center md:flex xl:hidden">
+        <div className="flex h-20 w-full items-center justify-center border-b border-white/10">
+          <BikeCityLogo imageClassName="h-12 w-16" priority />
         </div>
 
         <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-3 py-4">
@@ -138,7 +135,7 @@ export default function SellerLayout({
                 aria-label={item.label}
                 className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 ${
                   active
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                    ? 'brand-sidebar-active'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -148,8 +145,8 @@ export default function SellerLayout({
           })}
         </nav>
 
-        <div className="flex w-full shrink-0 flex-col items-center gap-3 border-t border-slate-800 px-2 py-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600" title={user?.email ?? t('seller.user')}>
+        <div className="flex w-full shrink-0 flex-col items-center gap-3 border-t border-white/10 px-2 py-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--brand-blue)] text-[var(--brand-navy)]" title={user?.email ?? t('seller.user')}>
             <User size={20} />
           </div>
           <LanguageSwitcher compact />
@@ -158,19 +155,17 @@ export default function SellerLayout({
             onClick={() => void logout()}
             title={t('common.signOut')}
             aria-label={t('common.signOut')}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 text-slate-300 hover:bg-white/10 hover:text-white"
           >
             <LogOut size={16} />
           </button>
         </div>
       </aside>
 
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-900 text-white md:hidden">
+      <header className="brand-sidebar sticky top-0 z-40 border-b border-white/10 md:hidden">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="rounded-lg bg-blue-600 p-2">
-              <Lock size={18} />
-            </div>
+            <BikeCityLogo imageClassName="h-11 w-16" priority />
             <div className="min-w-0">
               <h1 className="text-sm font-black tracking-tight">{t('common.seller').toUpperCase()} HUB</h1>
               <p className="truncate text-[11px] text-slate-400">{user?.email ?? t('seller.user')}</p>
@@ -182,7 +177,7 @@ export default function SellerLayout({
               type="button"
               onClick={() => void logout()}
               aria-label={t('common.signOut')}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 text-slate-300 hover:bg-white/10 hover:text-white"
             >
               <LogOut size={16} />
             </button>
@@ -200,8 +195,8 @@ export default function SellerLayout({
                 href={item.href}
                 className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-lg border px-3 text-xs font-bold transition ${
                   active
-                    ? 'border-blue-600 bg-blue-600 text-white'
-                    : 'border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'border-transparent brand-sidebar-active'
+                    : 'border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 <Icon size={14} />

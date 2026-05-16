@@ -202,7 +202,7 @@ function ProductGallery({ product }: { product: ProductDTO }) {
               type="button"
               onClick={() => setSelectedImage(image)}
               className={`relative aspect-square overflow-hidden rounded-xl border bg-slate-100 ${
-                selectedImage === image ? 'border-blue-600 ring-2 ring-blue-100' : 'border-slate-200'
+                selectedImage === image ? 'border-cyan-500 ring-2 ring-cyan-100' : 'border-slate-200'
               }`}
               aria-label={t('shop.viewProductImage', { number: index + 1 })}
             >
@@ -310,7 +310,7 @@ export default function ProductDetailPage() {
         <div className="text-center">
           <h1 className="mb-4 text-2xl font-bold text-black sm:text-3xl">{t('shop.productNotFound')}</h1>
           {error && <p className="mb-4 text-sm text-rose-600">{error}</p>}
-          <Link href={role === 'seller' ? '/seller' : role === 'admin' ? '/admin' : '/'} className="text-blue-600 hover:underline font-semibold">
+          <Link href={role === 'seller' ? '/seller' : role === 'admin' ? '/admin' : '/'} className="text-[var(--brand-cyan-dark)] hover:underline font-semibold">
             {t('shop.backToInventory')}
           </Link>
         </div>
@@ -447,7 +447,7 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
           <Link
             href={backHref}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 transition hover:text-blue-600 sm:text-base"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 transition hover:text-[var(--brand-cyan-dark)] sm:text-base"
           >
             <ChevronLeft className="w-5 h-5" />
             {backLabel}

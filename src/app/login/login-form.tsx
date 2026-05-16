@@ -4,7 +4,8 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Bike, Loader2, Lock, LogOut, Package, ShoppingCart, User } from "lucide-react";
+import { Loader2, Lock, LogOut, Package, ShoppingCart, User } from "lucide-react";
+import { BikeCityLogo } from "@/components/bike-city-logo";
 import { useAuth } from "@/features/auth";
 import type { AppRole } from "@/lib/auth/app-role";
 import { hasSupabasePublicEnv } from "@/lib/supabase/client";
@@ -206,9 +207,8 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
           />
           <div className="absolute inset-0 bg-black/45" />
           <div className="absolute inset-x-10 bottom-10 max-w-xl text-white">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-2 text-sm font-bold backdrop-blur">
-              <Bike size={18} />
-              VeloHub
+            <div className="mb-5 inline-flex rounded-lg bg-white/15 px-3 py-2 backdrop-blur">
+              <BikeCityLogo imageClassName="h-12 w-36" priority />
             </div>
             <h1 className="text-5xl font-black leading-tight">{t("login.heroTitle")}</h1>
             <p className="mt-4 max-w-md text-base text-zinc-100">
@@ -220,15 +220,14 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
         <div className="flex items-center justify-center px-6 py-10 sm:px-8">
           <div className="w-full max-w-md">
             <div className="mb-8 flex items-center justify-between gap-3">
-              <Link href="/" className="inline-flex items-center gap-2 text-xl font-black">
-                <Bike className="h-8 w-8 text-emerald-600" />
-                <span>{t("common.velohub")}</span>
+              <Link href="/" className="inline-flex items-center">
+                <BikeCityLogo imageClassName="h-12 w-36" priority />
               </Link>
               <LanguageSwitcher compact />
             </div>
 
             <div className="mb-8">
-              <p className="text-sm font-black uppercase tracking-widest text-emerald-700">
+              <p className="text-sm font-black uppercase tracking-widest text-[var(--brand-cyan-dark)]">
                 {mode === "signin" ? t("login.welcomeBack") : t("login.customerAccess")}
               </p>
               <h2 className="mt-2 text-3xl font-black text-zinc-950">
@@ -242,9 +241,9 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
             </div>
 
             {signedIn && (
-              <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950">
+              <div className="mb-6 rounded-lg border border-cyan-100 bg-cyan-50 p-4 text-sm text-slate-950">
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
+                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--brand-blue-strong)] text-white">
                     <User size={17} />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -253,10 +252,10 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
                         ? t("login.customerAccountSignedIn")
                         : t("login.accountSignedIn", { role: roleLabel(role, t) })}
                     </p>
-                    <p className="mt-1 break-words text-xs text-emerald-800">
+                    <p className="mt-1 break-words text-xs text-cyan-800">
                       {fullName || user?.email || t("login.savedBrowser")}
                     </p>
-                    <p className="mt-2 text-xs text-emerald-800">{accessCopy(role, t)}</p>
+                    <p className="mt-2 text-xs text-cyan-800">{accessCopy(role, t)}</p>
                     {nextRouteIsStaffPage && role === "user" && (
                       <p className="mt-2 text-xs font-bold text-amber-800">
                         {t("login.askAdmin")}
@@ -266,7 +265,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
                       {!(nextRouteIsStaffPage && role === "user") && (
                         <Link
                           href={signedInRoute}
-                          className="inline-flex h-9 items-center rounded-lg bg-emerald-700 px-3 text-xs font-bold text-white hover:bg-emerald-800"
+                          className="brand-primary inline-flex h-9 items-center rounded-lg px-3 text-xs font-bold"
                         >
                           {signedInRouteLabel}
                         </Link>
@@ -274,7 +273,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
                       {role === "admin" && (
                         <Link
                           href="/seller"
-                          className="inline-flex h-9 items-center rounded-lg border border-emerald-300 bg-white px-3 text-xs font-bold text-emerald-800 hover:bg-emerald-100"
+                          className="brand-control inline-flex h-9 items-center rounded-lg border px-3 text-xs font-bold text-slate-800 hover:bg-cyan-50"
                         >
                           {t("login.sellerView")}
                         </Link>
@@ -283,7 +282,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
                         type="button"
                         onClick={() => void logout()}
                         disabled={isSubmitting}
-                        className="inline-flex h-9 items-center gap-2 rounded-lg border border-emerald-300 bg-white px-3 text-xs font-bold text-emerald-900 hover:bg-emerald-100 disabled:opacity-50"
+                        className="brand-control inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-xs font-bold text-slate-900 hover:bg-cyan-50 disabled:opacity-50"
                       >
                         {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <LogOut size={14} />}
                         {t("common.signOut")}
@@ -350,7 +349,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
             )}
 
             {notice && (
-              <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+              <div className="mb-4 rounded-lg border border-cyan-100 bg-cyan-50 px-4 py-3 text-sm font-semibold text-cyan-800">
                 {notice}
               </div>
             )}
@@ -364,7 +363,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="h-12 w-full rounded-lg border border-zinc-300 bg-white px-3 text-zinc-950 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                  className="brand-control h-12 w-full rounded-lg border px-3 text-zinc-950"
                   autoComplete="email"
                   required
                 />
@@ -378,7 +377,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
                       type="button"
                       onClick={() => void requestPasswordReset()}
                       disabled={isBusy || !supabaseReady}
-                      className="text-[11px] font-black normal-case tracking-normal text-emerald-700 hover:text-emerald-900 disabled:text-zinc-400"
+                      className="text-[11px] font-black normal-case tracking-normal text-[var(--brand-cyan-dark)] hover:text-[var(--brand-blue-dark)] disabled:text-zinc-400"
                     >
                       {isResetSubmitting ? t("login.sendingReset") : t("login.forgotPassword")}
                     </button>
@@ -388,7 +387,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  className="h-12 w-full rounded-lg border border-zinc-300 bg-white px-3 text-zinc-950 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                  className="brand-control h-12 w-full rounded-lg border px-3 text-zinc-950"
                   autoComplete={mode === "signup" ? "new-password" : "current-password"}
                   minLength={6}
                   required
@@ -398,7 +397,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
               <button
                 type="submit"
                 disabled={isBusy || !supabaseReady}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 text-sm font-black text-white hover:bg-emerald-800 disabled:bg-zinc-300"
+                className="brand-primary flex h-12 w-full items-center justify-center gap-2 rounded-lg px-4 text-sm font-black disabled:bg-zinc-300"
               >
                 {isSubmitting || status === "loading" ? (
                   <>
@@ -415,7 +414,7 @@ export function LoginForm({ initialMode = "signin" }: { initialMode?: FormMode }
 
             <div className="mt-8 divide-y divide-zinc-200 border-y border-zinc-200">
               <div className="flex gap-3 py-4">
-                <ShoppingCart className="mt-0.5 h-5 w-5 text-emerald-700" />
+                <ShoppingCart className="mt-0.5 h-5 w-5 text-[var(--brand-cyan-dark)]" />
                 <div>
                   <p className="text-sm font-black text-zinc-950">{t("login.customer")}</p>
                   <p className="mt-1 text-xs leading-5 text-zinc-600">

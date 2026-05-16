@@ -63,7 +63,7 @@ export function ReservationCommentEditor({
         maxLength={2000}
         rows={3}
         placeholder="Add reservation note for staff..."
-        className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-600"
+        className="brand-control w-full resize-y rounded-lg border px-3 py-2 text-sm text-slate-900"
       />
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-slate-500">{draft.length}/2000</p>
@@ -71,7 +71,7 @@ export function ReservationCommentEditor({
           type="button"
           onClick={() => void save()}
           disabled={isSaving || !isDirty}
-          className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 text-sm font-bold text-white hover:bg-blue-700 disabled:bg-slate-300"
+          className="brand-primary inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 text-sm font-bold disabled:bg-slate-300"
         >
           {isSaving && <Loader2 size={14} className="animate-spin" />}
           Save Comment

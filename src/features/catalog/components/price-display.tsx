@@ -52,7 +52,7 @@ export function PriceDisplay({ product, size = "card", discountLabel }: PriceDis
   }
 
   return (
-    <p className={`${classes.wrapper} ${classes.current} text-blue-600`}>
+    <p className={`${classes.wrapper} ${classes.current} text-[var(--brand-cyan-dark)]`}>
       {formatGel(product.price)}
     </p>
   );
