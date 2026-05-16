@@ -1,0 +1,2292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>V3 PC Page Visuals</title>
+  <style>
+    :root {
+      --ink: #0f1a33;
+      --muted: #637089;
+      --bg: #eef8fb;
+      --surface: #ffffff;
+      --soft: #f8fafc;
+      --line: #d8e5ec;
+      --blue: #17bde4;
+      --blue-dark: #0b8fb0;
+      --logo-navy: #0f1a33;
+      --logo-yellow: #f8b928;
+      --control-border: #b8d6e5;
+      --control-bg: #f8fdff;
+      --sidebar-active: #0b57c8;
+      --sidebar-active-dark: #073f92;
+      --emerald: #047857;
+      --amber: #f8b928;
+      --rose: #be123c;
+      --slate: #0f1a33;
+      --shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      overflow-wrap: anywhere;
+    }
+
+    .studio-shell {
+      min-height: 100vh;
+    }
+
+    .studio-bar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+    }
+
+    .studio-inner {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .studio-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 230px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.1;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .view-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .mode-button,
+    .page-button {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .mode-button.active,
+    .page-button.active {
+      border-color: var(--slate);
+      background: var(--slate);
+      color: #fff;
+    }
+
+    .page-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 0 0 12px;
+      scrollbar-width: thin;
+    }
+
+    .filter-lab {
+      border-top: 1px solid var(--line);
+      padding: 14px 0 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 253, 255, 0.96));
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.35fr) minmax(150px, 0.7fr) minmax(150px, 0.7fr) auto auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      position: relative;
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: #1f3a55;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--control-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, #ffffff 0%, var(--control-bg) 100%);
+      color: var(--ink);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 18px rgba(15, 26, 51, 0.06);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .field input::placeholder {
+      color: #7c8aa0;
+    }
+
+    .field select {
+      appearance: none;
+      padding-right: 34px;
+      background-color: var(--control-bg);
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--blue-dark) 50%),
+        linear-gradient(135deg, var(--blue-dark) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 12px) 50%;
+      background-repeat: no-repeat;
+      background-size: 6px 6px, 6px 6px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(23, 189, 228, 0.18), 0 12px 24px rgba(11, 143, 176, 0.14);
+    }
+
+    .detail-panel {
+      display: none;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid rgba(23, 189, 228, 0.24);
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #f4fbff 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 12px 28px rgba(15, 26, 51, 0.07);
+    }
+
+    .detail-panel.open {
+      display: grid;
+    }
+
+    .detail-panel .field {
+      gap: 7px;
+      padding: 10px;
+      border: 1px solid rgba(184, 214, 229, 0.84);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(15, 26, 51, 0.05);
+    }
+
+    .detail-panel .field:focus-within {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(23, 189, 228, 0.14), 0 12px 24px rgba(15, 26, 51, 0.08);
+    }
+
+    .detail-panel .field input,
+    .detail-panel .field select {
+      min-height: 40px;
+      border-color: transparent;
+      background-color: #f7fbfe;
+      box-shadow: none;
+    }
+
+    .count-pill {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 9px 12px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .preview-stage {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 54px;
+    }
+
+    .pc-board {
+      display: grid;
+      gap: 26px;
+    }
+
+    .pc-page {
+      overflow: hidden;
+      border: 1px solid #cfd9e4;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .pc-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 46px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .pc-dots {
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .pc-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #cbd5e1;
+    }
+
+    .pc-canvas {
+      min-height: 760px;
+      background: #fff;
+    }
+
+    .shop-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 74px;
+      padding: 0 42px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .logo-image {
+      width: 146px;
+      height: 52px;
+      border-radius: 8px;
+      object-fit: cover;
+      object-position: center;
+      background: var(--logo-navy);
+      box-shadow: 0 10px 22px rgba(15, 26, 51, 0.14);
+    }
+
+    .logo-wordmark {
+      display: grid;
+      gap: 2px;
+      line-height: 1;
+    }
+
+    .logo-wordmark small {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .logo .accent {
+      color: var(--blue-dark);
+    }
+
+    .logo .gold {
+      color: var(--logo-yellow);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .nav-links .active {
+      color: var(--blue);
+    }
+
+    .account-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .language-pill,
+    .role-pill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(420px, 0.95fr);
+      gap: 36px;
+      align-items: center;
+      padding: 44px 42px 34px;
+      background: linear-gradient(135deg, #f8fbff 0%, #eff6ff 55%, #ecfdf5 100%);
+    }
+
+    .hero h1 {
+      margin: 0;
+      max-width: 680px;
+      font-size: 58px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: 18px 0 0;
+      color: #475569;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .button-primary,
+    .button-secondary {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 11px 15px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .button-primary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .button-secondary {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .hero-image {
+      position: relative;
+      min-height: 330px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #dbeafe;
+    }
+
+    .hero-image img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .floating-card {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      width: min(250px, calc(100% - 32px));
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 16px 28px rgba(15, 23, 42, 0.14);
+    }
+
+    .floating-card strong {
+      display: block;
+      color: var(--blue);
+      font-size: 24px;
+    }
+
+    .floating-card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .catalog-tools {
+      padding: 20px 42px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .tool-row {
+      display: grid;
+      grid-template-columns: minmax(300px, 1.4fr) 180px 180px auto auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .fake-input,
+    .fake-select,
+    .fake-button {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--control-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, #ffffff 0%, var(--control-bg) 100%);
+      color: #27384d;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(15, 26, 51, 0.06);
+    }
+
+    .fake-input::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--blue-dark);
+      box-shadow: 0 0 0 3px rgba(23, 189, 228, 0.12);
+    }
+
+    .fake-select::after {
+      content: "⌄";
+      margin-left: auto;
+      color: var(--blue-dark);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .fake-button {
+      justify-content: center;
+      color: var(--ink);
+      font-weight: 900;
+      box-shadow: none;
+    }
+
+    .fake-button.dark {
+      border-color: var(--slate);
+      background: var(--slate);
+      color: #fff;
+    }
+
+    .detail-filter-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid rgba(23, 189, 228, 0.18);
+      border-radius: 8px;
+      background: #f7fcff;
+    }
+
+    .detail-filter-row .fake-select {
+      min-height: 42px;
+      background: #fff;
+      border-left: 4px solid rgba(23, 189, 228, 0.68);
+    }
+
+    .result-line {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .catalog-section {
+      padding: 34px 42px 46px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 36px;
+      line-height: 1.08;
+    }
+
+    .section-heading p {
+      max-width: 520px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .product-card {
+      min-width: 0;
+      display: grid;
+      gap: 14px;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .product-photo {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      background: #e2e8f0;
+    }
+
+    .product-photo img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .category-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: rgba(15, 23, 42, 0.78);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .product-card h3 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .price {
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .product-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.48;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .stock-chip {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .stock-chip.out {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .empty-state {
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 34px;
+      background: var(--soft);
+      color: var(--muted);
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .detail-page {
+      display: grid;
+      grid-template-columns: minmax(420px, 0.96fr) minmax(520px, 1.04fr);
+      gap: 30px;
+      padding: 36px 42px 38px;
+      background: #fff;
+    }
+
+    .gallery-main {
+      overflow: hidden;
+      border-radius: 8px;
+      aspect-ratio: 1.12 / 1;
+      background: #e2e8f0;
+    }
+
+    .gallery-main img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .thumb {
+      min-height: 92px;
+      border-radius: 8px;
+      background: #e2e8f0;
+    }
+
+    .detail-copy h1 {
+      margin: 0;
+      font-size: 38px;
+      line-height: 1.08;
+    }
+
+    .detail-copy p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .detail-stack {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0 0;
+    }
+
+    .purchase-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      border-radius: 8px;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--logo-navy), #112653);
+      color: #fff;
+      box-shadow: 0 16px 34px rgba(15, 26, 51, 0.18);
+    }
+
+    .purchase-card span {
+      display: block;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .purchase-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--logo-yellow);
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .purchase-card .button-primary {
+      background: var(--blue);
+      color: var(--logo-navy);
+    }
+
+    .detail-key-specs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .key-spec,
+    .detail-spec-cell {
+      border: 1px solid rgba(184, 214, 229, 0.9);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fdff 100%);
+      box-shadow: 0 8px 18px rgba(15, 26, 51, 0.05);
+    }
+
+    .key-spec {
+      min-height: 74px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      padding: 10px;
+      border-top: 4px solid var(--blue);
+    }
+
+    .key-spec span,
+    .detail-spec-cell span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .key-spec strong,
+    .detail-spec-cell strong {
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .detail-spec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .detail-spec-cell {
+      min-height: 60px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      padding: 10px 12px;
+    }
+
+    .admin-shell {
+      display: grid;
+      grid-template-columns: 272px minmax(0, 1fr);
+      min-height: 900px;
+      background: #f8fafc;
+    }
+
+    .side-nav {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 900px;
+      background: var(--logo-navy);
+      color: #fff;
+    }
+
+    .side-brand {
+      display: grid;
+      gap: 12px;
+      padding: 24px 28px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .side-logo {
+      width: 148px;
+      height: 72px;
+      border-radius: 8px;
+      object-fit: contain;
+      object-position: center;
+      background: var(--logo-navy);
+    }
+
+    .side-brand strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .side-brand span {
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .side-links {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .side-link {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 8px;
+      padding: 12px 13px;
+      color: #cbd5e1;
+      font-size: 14px;
+      font-weight: 900;
+      overflow: hidden;
+    }
+
+    .side-link.active {
+      background: linear-gradient(135deg, var(--sidebar-active-dark), var(--sidebar-active));
+      color: #fff;
+      box-shadow: 0 16px 30px rgba(11, 87, 200, 0.34);
+    }
+
+    .side-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .admin-main {
+      padding: 34px;
+    }
+
+    .admin-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .admin-head h1 {
+      margin: 0;
+      font-size: 36px;
+      line-height: 1.08;
+    }
+
+    .admin-head p {
+      max-width: 640px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .admin-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 15px;
+      background: #fff;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 27px;
+    }
+
+    .inventory-tools {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: #fff;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .tab.active {
+      border-color: var(--slate);
+      background: var(--slate);
+      color: #fff;
+    }
+
+    .admin-filter-grid {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(4, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .bulk-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .bulk-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tiny-button {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: #fff;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .tiny-button.blue {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .tiny-button.green {
+      border-color: #bbf7d0;
+      color: #047857;
+      background: #ecfdf5;
+    }
+
+    .tiny-button.red {
+      border-color: #fecdd3;
+      color: var(--rose);
+      background: #fff1f2;
+    }
+
+    .inventory-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .inventory-item {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .inventory-thumb {
+      overflow: hidden;
+      width: 92px;
+      height: 72px;
+      border-radius: 8px;
+      background: #e2e8f0;
+    }
+
+    .inventory-thumb img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .inventory-item h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .inventory-item p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-stack {
+      display: grid;
+      justify-items: end;
+      gap: 8px;
+      min-width: 180px;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .bar-chart {
+      display: grid;
+      align-items: end;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 10px;
+      height: 240px;
+      padding-top: 18px;
+    }
+
+    .bar-chart span {
+      border-radius: 8px 8px 0 0;
+      background: linear-gradient(180deg, var(--blue), #93c5fd);
+      min-height: 32px;
+    }
+
+    .table {
+      display: grid;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      color: #475569;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .table-row.header {
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .fields-page {
+      max-width: 1120px;
+    }
+
+    .fields-tabs {
+      display: flex;
+      gap: 28px;
+      margin: 24px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .fields-tab {
+      position: relative;
+      padding: 0 2px 15px;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .fields-tab.active {
+      color: var(--blue-dark);
+    }
+
+    .fields-tab.active::after {
+      position: absolute;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--blue);
+      content: "";
+    }
+
+    .fields-toolbar {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) 220px auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .field-card {
+      display: grid;
+      gap: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 12px 24px rgba(15, 26, 51, 0.06);
+    }
+
+    .field-card.dragging {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(23, 189, 228, 0.12);
+    }
+
+    .field-card-top {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .drag-handle {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #94a3b8;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .field-card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.22;
+    }
+
+    .field-key {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .field-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .field-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .field-actions .tiny-button {
+      justify-content: center;
+    }
+
+    .field-card-note {
+      border-radius: 8px;
+      padding: 10px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .settings-grid,
+    .auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .auth-panel {
+      max-width: 520px;
+      margin: 58px auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 26px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .rent-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 28px;
+      padding: 42px;
+      background: linear-gradient(135deg, #f8fbff 0%, #ecfdf5 100%);
+    }
+
+    .rent-image {
+      overflow: hidden;
+      min-height: 420px;
+      border-radius: 8px;
+      background: #dbeafe;
+    }
+
+    .rent-image img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .rent-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .rent-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    @media (max-width: 1120px) {
+      .filter-grid,
+      .tool-row,
+      .admin-filter-grid,
+      .detail-filter-row,
+      .detail-panel,
+      .detail-key-specs,
+      .detail-spec-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .product-grid,
+      .metric-row,
+      .fields-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .fields-toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .detail-page,
+      .admin-shell,
+      .report-grid,
+      .settings-grid,
+      .auth-grid,
+      .rent-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-nav {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-shell">
+    <header class="studio-bar">
+      <div class="studio-inner">
+        <div class="studio-top">
+          <div class="brand">
+            <div class="brand-mark">V3</div>
+            <div>
+              <strong>PC page visuals</strong>
+              <span>Bicycle Shop docs preview</span>
+            </div>
+          </div>
+          <div class="view-actions">
+            <button class="mode-button active" type="button" data-viewport="pc">PC first</button>
+            <button class="mode-button" type="button" data-view-mode="full">Full page</button>
+          </div>
+        </div>
+
+        <nav id="page-strip" class="page-strip" aria-label="V3 pages"></nav>
+
+        <section class="filter-lab" aria-label="Existing catalog filters">
+          <div class="filter-grid">
+            <div class="field">
+              <label for="filter-query">Search</label>
+              <input id="filter-query" type="search" placeholder="Search bikes, parts, or specs" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="filter-category">Category</label>
+              <select id="filter-category">
+                <option value="All">All categories</option>
+                <option value="Bicycle">Bicycles</option>
+                <option value="Parts">Parts</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filter-stock">Stock</label>
+              <select id="filter-stock">
+                <option value="All">All stock</option>
+                <option value="In Stock">In Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+              </select>
+            </div>
+            <button id="detail-toggle" class="fake-button" type="button">Detailed filters</button>
+            <span id="result-count" class="count-pill">0 products</span>
+          </div>
+
+          <div id="detail-panel" class="detail-panel open">
+            <div class="field">
+              <label for="filter-bike-type">Bike type</label>
+              <select id="filter-bike-type">
+                <option value="All">All bike types</option>
+                <option value="Manual">Manual</option>
+                <option value="Electrical">Electrical</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filter-min">Min price</label>
+              <input id="filter-min" type="number" min="0" placeholder="0" />
+            </div>
+            <div class="field">
+              <label for="filter-max">Max price</label>
+              <input id="filter-max" type="number" min="0" placeholder="15000" />
+            </div>
+            <div class="field">
+              <label for="filter-frame">Frame Material</label>
+              <select id="filter-frame" data-attribute="attr_1">
+                <option value="">Any</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filter-groupset">Groupset</label>
+              <select id="filter-groupset" data-attribute="attr_3">
+                <option value="">Any</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filter-battery">Battery Range</label>
+              <select id="filter-battery" data-attribute="attr_4">
+                <option value="">Any</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filter-wheel">Wheel Size</label>
+              <select id="filter-wheel" data-attribute="attr_5">
+                <option value="">Any</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filter-compatibility">Compatibility</label>
+              <select id="filter-compatibility" data-attribute="attr_7">
+                <option value="">Any</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filter-material">Material</label>
+              <select id="filter-material" data-attribute="attr_8">
+                <option value="">Any</option>
+              </select>
+            </div>
+            <button id="clear-filters" class="fake-button dark" type="button">Clear all</button>
+          </div>
+        </section>
+      </div>
+    </header>
+
+    <main id="preview-stage" class="preview-stage"></main>
+  </div>
+
+  <script>
+    const currency = "GEL";
+    const logoPath = "../v2/279399999_116543327705069_5323243531129900723_n.jpg";
+    const pageStrip = document.getElementById("page-strip");
+    const stage = document.getElementById("preview-stage");
+    const resultCount = document.getElementById("result-count");
+    const detailPanel = document.getElementById("detail-panel");
+    const detailToggle = document.getElementById("detail-toggle");
+    const clearFiltersButton = document.getElementById("clear-filters");
+
+    const filters = {
+      query: document.getElementById("filter-query"),
+      category: document.getElementById("filter-category"),
+      stock: document.getElementById("filter-stock"),
+      bikeType: document.getElementById("filter-bike-type"),
+      minPrice: document.getElementById("filter-min"),
+      maxPrice: document.getElementById("filter-max"),
+      attributes: Array.from(document.querySelectorAll("[data-attribute]"))
+    };
+
+    const attributes = [
+      { id: "attr_1", name: "Frame Material", category: "Bicycle", isPublic: true },
+      { id: "attr_2", name: "Weight", category: "Bicycle", isPublic: true },
+      { id: "attr_3", name: "Groupset", category: "Bicycle", isPublic: true },
+      { id: "attr_4", name: "Battery Range", category: "Bicycle", isPublic: true },
+      { id: "attr_5", name: "Wheel Size", category: "Bicycle", isPublic: true },
+      { id: "attr_7", name: "Compatibility", category: "Parts", isPublic: true },
+      { id: "attr_8", name: "Material", category: "Parts", isPublic: true },
+      { id: "attr_9", name: "Weight", category: "Parts", isPublic: true }
+    ];
+
+    const products = [
+      {
+        id: "prod_1",
+        name: "S-Works Turbo Levo",
+        category: "Bicycle",
+        type: "Electrical",
+        serial: "SPEC-7721-EV",
+        price: 12499,
+        image: "https://images.unsplash.com/photo-1593761713314-44874730c421?q=80&w=1000&auto=format&fit=crop",
+        description: "The ultimate e-MTB with a custom Specialized motor and a full-carbon frame.",
+        values: {
+          attr_1: "Fact 11m Carbon",
+          attr_2: "22.1 kg",
+          attr_3: "SRAM XX1 Eagle AXS",
+          attr_4: "5-7 Hours / 700Wh",
+          attr_5: "29\""
+        },
+        inStock: true,
+        status: "active"
+      },
+      {
+        id: "prod_2",
+        name: "Trek Emonda SLR 9",
+        category: "Bicycle",
+        type: "Manual",
+        serial: "TRK-RD-990",
+        price: 9850,
+        image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=1000&auto=format&fit=crop",
+        description: "A lightweight road bike born for climbing and built for racing.",
+        values: {
+          attr_1: "800 Series OCLV Carbon",
+          attr_2: "6.75 kg",
+          attr_3: "Shimano Dura-Ace Di2",
+          attr_5: "700c"
+        },
+        inStock: true,
+        status: "active"
+      },
+      {
+        id: "prod_3",
+        name: "Specialized Sirrus X 4.0",
+        category: "Bicycle",
+        type: "Manual",
+        serial: "SPEC-CITY-22",
+        price: 1850,
+        image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?q=80&w=1000&auto=format&fit=crop",
+        description: "Hybrid performance for commuting and weekend adventures.",
+        values: {
+          attr_1: "A1 Premium Aluminum",
+          attr_2: "10.5 kg",
+          attr_3: "Shimano Deore",
+          attr_5: "700c"
+        },
+        inStock: true,
+        status: "active"
+      },
+      {
+        id: "prod_4",
+        name: "Canyon Aeroad CF SLX",
+        category: "Bicycle",
+        type: "Manual",
+        serial: "CAN-AERO-88",
+        price: 8499,
+        image: "https://images.unsplash.com/photo-1532298229144-0ee05051da69?q=80&w=1000&auto=format&fit=crop",
+        description: "Wind-tunnel proven aero performance with clean integration.",
+        values: {
+          attr_1: "CF SLX Carbon",
+          attr_2: "7.2 kg",
+          attr_3: "Shimano Ultegra Di2",
+          attr_5: "700c"
+        },
+        inStock: false,
+        status: "active"
+      },
+      {
+        id: "prod_5",
+        name: "Giant Revolt Advanced Pro",
+        category: "Bicycle",
+        type: "Electrical",
+        serial: "GNT-GRV-204",
+        price: 6990,
+        image: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?q=80&w=1000&auto=format&fit=crop",
+        description: "Adventure-ready gravel bike with electric assistance for long-distance rides.",
+        values: {
+          attr_1: "Advanced Composite",
+          attr_2: "14.8 kg",
+          attr_3: "Shimano GRX",
+          attr_4: "4-6 Hours / 500Wh",
+          attr_5: "700c"
+        },
+        inStock: true,
+        status: "reserved"
+      },
+      {
+        id: "prod_6",
+        name: "Shimano Brake Pads",
+        category: "Parts",
+        type: undefined,
+        serial: "SHP-BRK-88",
+        price: 65,
+        image: "https://images.unsplash.com/photo-1621972750749-0fbb1abb7736?q=80&w=1000&auto=format&fit=crop",
+        description: "Replacement brake pads for reliable stopping power.",
+        values: {
+          attr_7: "Shimano road calipers",
+          attr_8: "Resin",
+          attr_9: "42 g"
+        },
+        inStock: true,
+        status: "active"
+      },
+      {
+        id: "prod_7",
+        name: "Carbon Bottle Cage",
+        category: "Parts",
+        type: undefined,
+        serial: "CBN-CAGE-2",
+        price: 75,
+        image: "https://images.unsplash.com/photo-1571333250630-f0230c320b6d?q=80&w=1000&auto=format&fit=crop",
+        description: "Lightweight cage with strong bottle retention.",
+        values: {
+          attr_7: "Universal frame mounts",
+          attr_8: "Carbon",
+          attr_9: "22 g"
+        },
+        inStock: true,
+        status: "active"
+      },
+      {
+        id: "prod_8",
+        name: "Roval Rapide Wheelset",
+        category: "Parts",
+        type: undefined,
+        serial: "ROV-WHL-72",
+        price: 2100,
+        image: "https://images.unsplash.com/photo-1508780709619-79562169bc64?q=80&w=1000&auto=format&fit=crop",
+        description: "Deep-section carbon wheelset tuned for real-world speed.",
+        values: {
+          attr_7: "700c road bikes",
+          attr_8: "Carbon",
+          attr_9: "1520 g"
+        },
+        inStock: false,
+        status: "sold"
+      }
+    ];
+
+    const pages = [
+      { id: "all", label: "All pages" },
+      { id: "public", label: "Public catalog" },
+      { id: "product", label: "Product detail" },
+      { id: "rent", label: "Rent" },
+      { id: "admin-inventory", label: "Admin inventory" },
+      { id: "admin-reserved", label: "Admin reserved" },
+      { id: "admin-sold", label: "Admin sold" },
+      { id: "admin-deleted", label: "Admin deleted" },
+      { id: "admin-reports", label: "Admin reports" },
+      { id: "admin-fields", label: "Admin fields" },
+      { id: "admin-staff", label: "Admin staff" },
+      { id: "admin-settings", label: "Admin settings" },
+      { id: "seller-inventory", label: "Seller inventory" },
+      { id: "seller-reserved", label: "Seller reserved" },
+      { id: "auth", label: "Auth pages" }
+    ];
+
+    let activePage = "all";
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency,
+        maximumFractionDigits: 0
+      }).format(value).replace("$", "₾");
+    }
+
+    function parsePrice(value) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+    }
+
+    function publicProducts() {
+      return products.filter((product) => product.status === "active");
+    }
+
+    function getFilterState() {
+      const attributeValues = {};
+      for (const select of filters.attributes) {
+        if (select.value) {
+          attributeValues[select.dataset.attribute] = select.value;
+        }
+      }
+
+      return {
+        query: filters.query.value.trim().toLowerCase(),
+        category: filters.category.value,
+        stock: filters.stock.value,
+        bikeType: filters.bikeType.value,
+        minPrice: parsePrice(filters.minPrice.value),
+        maxPrice: parsePrice(filters.maxPrice.value),
+        attributeValues
+      };
+    }
+
+    function filteredProducts() {
+      const state = getFilterState();
+
+      return publicProducts().filter((product) => {
+        if (state.category !== "All" && product.category !== state.category) {
+          return false;
+        }
+
+        if (state.query) {
+          const searchable = [
+            product.name,
+            product.description,
+            product.serial,
+            ...Object.values(product.values)
+          ].join(" ").toLowerCase();
+
+          if (!searchable.includes(state.query)) {
+            return false;
+          }
+        }
+
+        if (state.stock === "In Stock" && !product.inStock) {
+          return false;
+        }
+
+        if (state.stock === "Out of Stock" && product.inStock) {
+          return false;
+        }
+
+        if (state.bikeType !== "All") {
+          if (product.category !== "Bicycle" || product.type !== state.bikeType) {
+            return false;
+          }
+        }
+
+        if (state.minPrice !== null && product.price < state.minPrice) {
+          return false;
+        }
+
+        if (state.maxPrice !== null && product.price > state.maxPrice) {
+          return false;
+        }
+
+        for (const [attributeId, selectedValue] of Object.entries(state.attributeValues)) {
+          if (product.values[attributeId] !== selectedValue) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    }
+
+    function optionValues(attributeId) {
+      return Array.from(new Set(products.map((product) => product.values[attributeId]).filter(Boolean))).sort();
+    }
+
+    function populateAttributeSelects() {
+      for (const select of filters.attributes) {
+        const values = optionValues(select.dataset.attribute);
+        select.innerHTML = '<option value="">Any</option>' + values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+      }
+    }
+
+    function renderPageButtons() {
+      pageStrip.innerHTML = pages.map((page) => `
+        <button class="page-button ${page.id === activePage ? "active" : ""}" type="button" data-page="${page.id}">
+          ${escapeHtml(page.label)}
+        </button>`).join("");
+
+      pageStrip.querySelectorAll("[data-page]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activePage = button.dataset.page;
+          render();
+        });
+      });
+    }
+
+    function renderShell(title, body) {
+      return `
+        <section class="pc-page" data-page-preview="${escapeHtml(title)}">
+          <div class="pc-titlebar">
+            <span>${escapeHtml(title)}</span>
+            <span class="pc-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+          </div>
+          <div class="pc-canvas">${body}</div>
+        </section>`;
+    }
+
+    function renderPublicNav(active = "Explore") {
+      return `
+        <nav class="shop-nav">
+          <a class="logo" href="#">
+            <img class="logo-image" src="${logoPath}" alt="Bike City Biking Store logo">
+            <span class="logo-wordmark"><span><span class="gold">BIKE</span> <span class="accent">CITY</span></span><small>Biking Store</small></span>
+          </a>
+          <div class="nav-links">
+            ${["Explore", "Bicycles", "Components", "Rent"].map((label) => `<span class="${label === active ? "active" : ""}">${label}</span>`).join("")}
+          </div>
+          <div class="account-block">
+            <span class="language-pill">EN</span>
+            <span class="role-pill">Admin</span>
+            <span class="role-pill">Logout</span>
+          </div>
+        </nav>`;
+    }
+
+    function renderCatalogTools(list) {
+      const state = getFilterState();
+      const activeFilters = [
+        state.query,
+        state.category !== "All" ? state.category : "",
+        state.stock !== "All" ? state.stock : "",
+        state.bikeType !== "All" ? state.bikeType : "",
+        state.minPrice !== null ? "Min " + state.minPrice : "",
+        state.maxPrice !== null ? "Max " + state.maxPrice : "",
+        ...Object.values(state.attributeValues)
+      ].filter(Boolean);
+
+      return `
+        <div class="catalog-tools">
+          <div class="tool-row">
+            <div class="fake-input">${state.query ? escapeHtml(filters.query.value.trim()) : "Search bikes, parts, or specs"}</div>
+            <div class="fake-select">${escapeHtml(state.category === "All" ? "All categories" : state.category)}</div>
+            <div class="fake-select">${escapeHtml(state.stock === "All" ? "All stock" : state.stock)}</div>
+            <div class="fake-button">Detailed</div>
+            <div class="fake-button dark">Search</div>
+          </div>
+          <div class="detail-filter-row">
+            <div class="fake-select">Bike type: ${escapeHtml(state.bikeType)}</div>
+            <div class="fake-select">Min: ${state.minPrice ?? "0"}</div>
+            <div class="fake-select">Max: ${state.maxPrice ?? "15000"}</div>
+            <div class="fake-select">Frame / Groupset</div>
+            <div class="fake-select">Public attributes</div>
+          </div>
+          <div class="result-line">${list.length} products found${activeFilters.length ? ` with ${activeFilters.length} active filters` : ""}.</div>
+        </div>`;
+    }
+
+    function renderProductCard(product) {
+      const publicAttributes = attributes
+        .filter((attribute) => attribute.category === product.category && attribute.isPublic && product.values[attribute.id])
+        .slice(0, 3);
+
+      return `
+        <article class="product-card">
+          <div class="product-photo">
+            <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}">
+            <span class="category-badge">${escapeHtml(product.category)}</span>
+          </div>
+          <h3>${escapeHtml(product.name)}</h3>
+          <div class="price">${money(product.price)}</div>
+          <p>${escapeHtml(product.description)}</p>
+          <div class="chips">
+            ${publicAttributes.map((attribute) => `<span class="chip">${escapeHtml(attribute.name)}: ${escapeHtml(product.values[attribute.id])}</span>`).join("")}
+          </div>
+          <div class="chips">
+            ${product.type ? `<span class="chip">${escapeHtml(product.type)}</span>` : ""}
+            <span class="chip stock-chip ${product.inStock ? "" : "out"}">${product.inStock ? "In Stock" : "Out of Stock"}</span>
+          </div>
+          <a class="button-primary" href="#">View details</a>
+        </article>`;
+    }
+
+    function renderPublicCatalog() {
+      const list = filteredProducts();
+
+      return renderShell("PC / Public catalog", `
+        ${renderPublicNav("Explore")}
+        <section class="hero">
+          <div>
+            <h1>Premium bicycles and parts, ready to ride.</h1>
+            <p>PC-first V3 catalog view using the existing search, category, stock, price, bike-type, and public-attribute filters from the current app.</p>
+            <div class="hero-actions">
+              <a class="button-primary" href="#catalog">Explore products</a>
+              <a class="button-secondary" href="#">Rent a bicycle</a>
+            </div>
+          </div>
+          <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=1400&auto=format&fit=crop" alt="">
+            <div class="floating-card">
+              <strong>${list.length}</strong>
+              <span>active products after filters</span>
+            </div>
+          </div>
+        </section>
+        ${renderCatalogTools(list)}
+        <section id="catalog" class="catalog-section">
+          <div class="section-heading">
+            <h2>Products</h2>
+            <p>Bicycles and components share the same filter model; detailed filters adapt to public product attributes.</p>
+          </div>
+          ${list.length ? `<div class="product-grid">${list.map(renderProductCard).join("")}</div>` : `<div class="empty-state">No products match these filters.</div>`}
+        </section>`);
+    }
+
+    function renderProductDetail() {
+      const product = filteredProducts()[0] ?? publicProducts()[0];
+      const publicAttributes = attributes.filter((attribute) => product.values[attribute.id]);
+      const keySpecs = [
+        ["Frame", product.values.attr_1 ?? "N/A"],
+        ["Groupset", product.values.attr_3 ?? "N/A"],
+        [product.values.attr_4 ? "Battery" : "Wheel", product.values.attr_4 ?? product.values.attr_5 ?? "N/A"],
+        ["Stock", product.inStock ? "In Stock" : "Out of Stock"]
+      ];
+      const keyAttributeIds = new Set(["attr_1", "attr_3", "attr_4", "attr_5"]);
+      const detailRows = [
+        ["Serial", product.serial],
+        ["Category", product.category],
+        ["Status", product.status],
+        ["Drive Type", product.type],
+        ...publicAttributes
+          .filter((attribute) => !keyAttributeIds.has(attribute.id))
+          .map((attribute) => [attribute.name, product.values[attribute.id]])
+      ].filter(([, value]) => Boolean(value));
+
+      return renderShell("PC / Product detail", `
+        ${renderPublicNav("Explore")}
+        <section class="detail-page">
+          <div>
+            <div class="gallery-main"><img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}"></div>
+            <div class="thumb-row"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div>
+          </div>
+          <div class="detail-copy">
+            <span class="chip">${escapeHtml(product.category)}</span>
+            <h1>${escapeHtml(product.name)}</h1>
+            <p>${escapeHtml(product.description)}</p>
+            <div class="detail-stack">
+              <div class="purchase-card">
+                <div><span>Current price</span><strong>${money(product.price)}</strong></div>
+                <a class="button-primary" href="#">Message seller</a>
+              </div>
+              <div class="detail-key-specs">
+                ${keySpecs.map(([label, value]) => `<div class="key-spec"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
+              </div>
+              <div class="detail-spec-grid">
+                ${detailRows.map(([label, value]) => `<div class="detail-spec-cell"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
+              </div>
+            </div>
+            <div class="hero-actions">
+              <a class="button-secondary" href="#">Back to catalog</a>
+            </div>
+          </div>
+        </section>`);
+    }
+
+    function renderRent() {
+      return renderShell("PC / Rent page", `
+        ${renderPublicNav("Rent")}
+        <section class="rent-layout">
+          <div>
+            <span class="chip">Rental request</span>
+            <h1>Reserve rental bicycles for local pickup.</h1>
+            <p>Dedicated page state for customers who are not buying inventory, with a messenger-ready request flow and links back to bicycles.</p>
+            <div class="rent-card-grid">
+              <div class="rent-card"><strong>Daily bikes</strong><p>Manual city and road options.</p></div>
+              <div class="rent-card"><strong>Electric bikes</strong><p>Longer rides with battery support.</p></div>
+              <div class="rent-card"><strong>Pickup details</strong><p>Seller confirms time and availability.</p></div>
+              <div class="rent-card"><strong>Messenger flow</strong><p>Request text is prepared for the buyer.</p></div>
+            </div>
+            <div class="hero-actions"><a class="button-primary" href="#">Message seller</a><a class="button-secondary" href="#">Browse bicycles</a></div>
+          </div>
+          <div class="rent-image"><img src="https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?q=80&w=1400&auto=format&fit=crop" alt=""></div>
+        </section>`);
+    }
+
+    function sideNav(role, active) {
+      const adminItems = ["Inventory", "Field Settings", "Reserved Items", "Sold Items", "Deleted Items", "Sales Reports", "Staff Users", "Settings", "Reservation History"];
+      const sellerItems = ["Inventory", "Reserved Items"];
+      const items = role === "seller" ? sellerItems : adminItems;
+
+      return `
+        <aside class="side-nav">
+          <div class="side-brand">
+            <img class="side-logo" src="${logoPath}" alt="Bike City Biking Store logo">
+            <div><strong>${role === "seller" ? "SELLER" : "ADMIN"} HUB</strong><span>BIKE CITY</span></div>
+          </div>
+          <nav class="side-links">
+            ${items.map((item) => `<span class="side-link ${item === active ? "active" : ""}">● ${escapeHtml(item)}</span>`).join("")}
+          </nav>
+          <div class="side-footer">staff@velohub.local<br><br>EN · Sign out</div>
+        </aside>`;
+    }
+
+    function renderInventoryList(status) {
+      const source = status === "active"
+        ? products.filter((product) => product.status === "active")
+        : products.filter((product) => product.status === status);
+      const fallback = source.length ? source : products.slice(0, 3);
+
+      return fallback.slice(0, 5).map((product) => `
+        <div class="inventory-item">
+          <div class="inventory-thumb"><img src="${escapeHtml(product.image)}" alt=""></div>
+          <div>
+            <h3>${escapeHtml(product.name)}</h3>
+            <p>${escapeHtml(product.serial)} · ${escapeHtml(product.category)} · ${product.type ?? "Part"} · ${money(product.price)}</p>
+            <div class="chips" style="margin-top:8px">
+              <span class="chip">${escapeHtml(product.status)}</span>
+              <span class="chip ${product.inStock ? "stock-chip" : "stock-chip out"}">${product.inStock ? "In Stock" : "Out of Stock"}</span>
+            </div>
+          </div>
+          <div class="status-stack">
+            <span class="tiny-button">View</span>
+            <span class="tiny-button blue">Edit</span>
+          </div>
+        </div>`).join("");
+    }
+
+    function renderAdminInventory(status = "active", role = "admin") {
+      const activeLabel = status === "reserved" ? "Reserved Items" : status === "sold" ? "Sold Items" : status === "archived" ? "Deleted Items" : "Inventory";
+      const title = role === "seller" ? (status === "reserved" ? "Seller reserved items" : "Seller inventory") : `Admin ${activeLabel.toLowerCase()}`;
+
+      return renderShell(`PC / ${title}`, `
+        <div class="admin-shell">
+          ${sideNav(role, role === "seller" && status === "reserved" ? "Reserved Items" : activeLabel)}
+          <main class="admin-main">
+            <div class="admin-head">
+              <div>
+                <h1>${escapeHtml(title)}</h1>
+                <p>Inventory uses the existing admin filters: category tabs, text search, detailed stock/type/price filters, public/private attribute filters, and bulk actions.</p>
+              </div>
+              <div class="admin-actions">
+                <span class="tiny-button">Reload</span>
+                ${role === "admin" && status === "active" ? `<span class="tiny-button blue">Add Product</span>` : ""}
+              </div>
+            </div>
+            <div class="metric-row">
+              <div class="metric"><span>Active</span><strong>${products.filter((p) => p.status === "active").length}</strong></div>
+              <div class="metric"><span>Reserved</span><strong>${products.filter((p) => p.status === "reserved").length}</strong></div>
+              <div class="metric"><span>Sold</span><strong>${products.filter((p) => p.status === "sold").length}</strong></div>
+              <div class="metric"><span>Visible</span><strong>${filteredProducts().length}</strong></div>
+            </div>
+            <div class="inventory-tools">
+              <div class="tabs"><span class="tab active">All</span><span class="tab">Bicycle</span><span class="tab">Parts</span></div>
+              <div class="admin-filter-grid">
+                <div class="fake-input">Search name, serial, description</div>
+                <div class="fake-select">All stock</div>
+                <div class="fake-select">All bike types</div>
+                <div class="fake-select">Min price</div>
+                <div class="fake-select">Max price</div>
+                <div class="fake-select">Frame Material</div>
+                <div class="fake-select">Groupset</div>
+                <div class="fake-select">Compatibility</div>
+                <div class="fake-select">Material</div>
+                <div class="fake-button">Clear filters</div>
+              </div>
+            </div>
+            <div class="bulk-row">
+              <strong>Select visible · 0 selected</strong>
+              <div class="bulk-actions">
+                ${status !== "sold" ? `<span class="tiny-button">Reserve</span><span class="tiny-button green">Mark sold</span><span class="tiny-button blue">Discount</span>` : ""}
+                ${status === "reserved" ? `<span class="tiny-button">Cancel reservation</span>` : ""}
+                <span class="tiny-button red">${status === "archived" ? "Clear archived" : "Delete"}</span>
+              </div>
+            </div>
+            <div class="inventory-list">${renderInventoryList(status)}</div>
+          </main>
+        </div>`);
+    }
+
+    function renderReports() {
+      return renderShell("PC / Admin reports", `
+        <div class="admin-shell">
+          ${sideNav("admin", "Sales Reports")}
+          <main class="admin-main">
+            <div class="admin-head">
+              <div><h1>Sales reports</h1><p>Date-range controls, KPIs, revenue trend, top models, and reservation outcomes.</p></div>
+              <div class="admin-actions"><span class="fake-select">Start date</span><span class="fake-select">End date</span><span class="tiny-button blue">Apply</span></div>
+            </div>
+            <div class="metric-row">
+              <div class="metric"><span>Revenue</span><strong>₾22,740</strong></div>
+              <div class="metric"><span>Units sold</span><strong>8</strong></div>
+              <div class="metric"><span>Avg order</span><strong>₾2,842</strong></div>
+              <div class="metric"><span>Active reservations</span><strong>3</strong></div>
+            </div>
+            <div class="report-grid">
+              <div class="panel"><h2>Revenue over time</h2><div class="bar-chart">${[44, 76, 52, 88, 64, 96, 72, 118].map((height) => `<span style="height:${height}px"></span>`).join("")}</div></div>
+              <div class="panel"><h2>Outcomes</h2><p>Started: 12</p><p>Completed: 8</p><p>Cancelled: 2</p><p>Expired: 2</p></div>
+            </div>
+          </main>
+        </div>`);
+    }
+
+    function renderFields() {
+      const fieldCards = [
+        { kind: "Core", name: "Category", key: "category", type: "fixed dropdown", visibility: "Public", options: "Bicycle, Parts", note: "System category split; labels can change but saved category values stay stable." },
+        { kind: "Core", name: "Drive Type", key: "drive_type", type: "fixed dropdown", visibility: "Public", options: "Manual, Electrical", note: "Visible for bicycles and disabled for parts in product filters." },
+        { kind: "Core", name: "Price", key: "price", type: "number", visibility: "Public", options: "none", note: "Critical field used by catalog, sale, reports, and product details." },
+        { kind: "Custom", name: "Frame Material", key: "attr_1", type: "text", visibility: "Public", options: "free text", note: "Shown on product cards and detail pages for bicycle records." },
+        { kind: "Custom", name: "Groupset", key: "attr_3", type: "text", visibility: "Public", options: "free text", note: "Included in detailed public filters when values exist." },
+        { kind: "Custom", name: "Battery Range", key: "attr_4", type: "text", visibility: "Public", options: "free text", note: "Useful for electrical bicycle filtering and detail pages." },
+        { kind: "Custom", name: "Internal Dealer Note", key: "attr_6", type: "text", visibility: "Internal", options: "free text", note: "Hidden from public catalog and customer product pages." },
+        { kind: "Custom", name: "Wheel Size", key: "attr_5", type: "text", visibility: "Public", options: "700c, 29 inch", note: "Reorderable field card matching the existing settings workflow." },
+        { kind: "Custom", name: "Compatibility", key: "attr_7", type: "text", visibility: "Public", options: "parts values", note: "Appears under Parts when the Parts tab is selected." }
+      ];
+
+      return renderShell("PC / Admin field settings", `
+        <div class="admin-shell">
+          ${sideNav("admin", "Field Settings")}
+          <main class="admin-main">
+            <div class="fields-page">
+              <div class="admin-head">
+                <div>
+                  <h1>Field settings</h1>
+                  <p>Archive-only field deletion, public visibility control, category-level definitions, fixed options, and drag ordering.</p>
+                </div>
+                <span class="tiny-button blue">Add Field</span>
+              </div>
+              <p class="field-card-note">Fields define what appears in add/edit product forms, public filters, product cards, detail pages, and reports. This preview follows the real card-based settings page instead of a generic table.</p>
+              <div class="fields-tabs">
+                <span class="fields-tab active">Bicycle Fields</span>
+                <span class="fields-tab">Parts Fields</span>
+              </div>
+              <div class="fields-toolbar">
+                <div class="fake-input">Search field name, key, or type</div>
+                <div class="fake-select">All visibility</div>
+                <strong>9 fields</strong>
+              </div>
+              <div class="fields-grid">
+                ${fieldCards.map((field, index) => `
+                  <article class="field-card ${index === 1 ? "dragging" : ""}">
+                    <div class="field-card-top">
+                      <span class="drag-handle">⋮</span>
+                      <div>
+                        <h3>${escapeHtml(field.name)}</h3>
+                        <span class="field-key">${escapeHtml(field.key)}</span>
+                      </div>
+                      <span class="chip ${field.visibility === "Public" ? "stock-chip" : "stock-chip out"}">${escapeHtml(field.visibility)}</span>
+                    </div>
+                    <div class="field-meta">
+                      <span class="chip">${escapeHtml(field.kind)}</span>
+                      <span class="chip">${escapeHtml(field.type)}</span>
+                      <span class="chip">${escapeHtml(field.options)}</span>
+                    </div>
+                    <p class="field-card-note">${escapeHtml(field.note)}</p>
+                    <div class="field-actions">
+                      <span class="tiny-button">Edit</span>
+                      <span class="tiny-button">Visibility</span>
+                      <span class="tiny-button red">Archive</span>
+                    </div>
+                  </article>`).join("")}
+              </div>
+            </div>
+          </main>
+        </div>`);
+    }
+
+    function renderStaff() {
+      return renderShell("PC / Admin staff users", `
+        <div class="admin-shell">
+          ${sideNav("admin", "Staff Users")}
+          <main class="admin-main">
+            <div class="admin-head"><div><h1>Staff users</h1><p>Admin-only user role management with status and role controls.</p></div><span class="tiny-button blue">Invite staff</span></div>
+            <div class="table">
+              <div class="table-row header"><span>Email</span><span>Role</span><span>Status</span><span>Action</span></div>
+              <div class="table-row"><span>owner@velohub.local</span><span>Admin</span><span>Active</span><span>Edit</span></div>
+              <div class="table-row"><span>seller@velohub.local</span><span>Seller</span><span>Active</span><span>Edit</span></div>
+              <div class="table-row"><span>support@velohub.local</span><span>Seller</span><span>Inactive</span><span>Edit</span></div>
+            </div>
+          </main>
+        </div>`);
+    }
+
+    function renderSettings() {
+      return renderShell("PC / Admin settings", `
+        <div class="admin-shell">
+          ${sideNav("admin", "Settings")}
+          <main class="admin-main">
+            <div class="admin-head"><div><h1>Settings</h1><p>Shop name, currency, Messenger link, and public contact information.</p></div><span class="tiny-button blue">Save settings</span></div>
+            <div class="settings-grid">
+              <div class="panel"><h2>Shop identity</h2><div class="field"><label>Shop name</label><input value="VELOHUB"></div><br><div class="field"><label>Currency</label><select><option>GEL</option></select></div></div>
+              <div class="panel"><h2>Public contact</h2><div class="field"><label>Messenger link</label><input value="https://m.me/velohub"></div><br><div class="field"><label>Contact info</label><input value="Tbilisi pickup, message before visit"></div></div>
+            </div>
+          </main>
+        </div>`);
+    }
+
+    function renderAuth() {
+      return renderShell("PC / Auth pages", `
+        <div class="auth-grid" style="padding:42px;background:#f8fafc;min-height:760px">
+          <div class="auth-panel">
+            <span class="chip">Login</span>
+            <h1>Welcome back</h1>
+            <div class="field"><label>Email</label><input placeholder="you@example.com"></div><br>
+            <div class="field"><label>Password</label><input placeholder="Password"></div><br>
+            <a class="button-primary" href="#">Sign in</a>
+          </div>
+          <div class="auth-panel">
+            <span class="chip">Reset password</span>
+            <h1>Set a new password</h1>
+            <div class="field"><label>New password</label><input placeholder="New password"></div><br>
+            <div class="field"><label>Confirm password</label><input placeholder="Confirm password"></div><br>
+            <a class="button-primary" href="#">Update password</a>
+          </div>
+        </div>`);
+    }
+
+    function renderActivePage(pageId) {
+      if (pageId === "public") return renderPublicCatalog();
+      if (pageId === "product") return renderProductDetail();
+      if (pageId === "rent") return renderRent();
+      if (pageId === "admin-inventory") return renderAdminInventory("active", "admin");
+      if (pageId === "admin-reserved") return renderAdminInventory("reserved", "admin");
+      if (pageId === "admin-sold") return renderAdminInventory("sold", "admin");
+      if (pageId === "admin-deleted") return renderAdminInventory("archived", "admin");
+      if (pageId === "admin-reports") return renderReports();
+      if (pageId === "admin-fields") return renderFields();
+      if (pageId === "admin-staff") return renderStaff();
+      if (pageId === "admin-settings") return renderSettings();
+      if (pageId === "seller-inventory") return renderAdminInventory("active", "seller");
+      if (pageId === "seller-reserved") return renderAdminInventory("reserved", "seller");
+      if (pageId === "auth") return renderAuth();
+      return renderPublicCatalog();
+    }
+
+    function render() {
+      const list = filteredProducts();
+      resultCount.textContent = list.length + (list.length === 1 ? " product" : " products");
+      renderPageButtons();
+
+      if (activePage === "all") {
+        const allPageIds = pages.map((page) => page.id).filter((id) => id !== "all");
+        stage.innerHTML = `<div class="pc-board">${allPageIds.map(renderActivePage).join("")}</div>`;
+        return;
+      }
+
+      stage.innerHTML = `<div class="pc-board">${renderActivePage(activePage)}</div>`;
+    }
+
+    function resetFilters() {
+      filters.query.value = "";
+      filters.category.value = "All";
+      filters.stock.value = "All";
+      filters.bikeType.value = "All";
+      filters.minPrice.value = "";
+      filters.maxPrice.value = "";
+      for (const select of filters.attributes) {
+        select.value = "";
+      }
+      render();
+    }
+
+    detailToggle.addEventListener("click", () => {
+      detailPanel.classList.toggle("open");
+    });
+
+    clearFiltersButton.addEventListener("click", resetFilters);
+
+    [filters.query, filters.category, filters.stock, filters.bikeType, filters.minPrice, filters.maxPrice, ...filters.attributes].forEach((control) => {
+      control.addEventListener("input", render);
+      control.addEventListener("change", render);
+    });
+
+    populateAttributeSelects();
+    render();
+  </script>
+</body>
+</html>

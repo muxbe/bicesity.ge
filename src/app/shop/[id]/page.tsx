@@ -4,9 +4,8 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronLeft, Zap, Bike, LocateFixed, Hash, Package, LogOut, Loader2 } from 'lucide-react';
+import { ChevronLeft, Zap, Bike, LogOut, Loader2 } from 'lucide-react';
 import { formatGel, getCatalogRepository, getFallbackImage, type AttributeDTO, type ProductDTO } from '@/features/catalog';
-import { PriceDisplay } from '@/features/catalog/components/price-display';
 import { useAuth } from '@/features/auth';
 import { buildFieldLayoutItems, loadFieldLayoutConfig, type FieldLayoutItem } from '@/features/fields/field-layout';
 import { DEFAULT_APP_SETTINGS, type AppSettingsDTO } from '@/lib/settings';
@@ -25,6 +24,47 @@ type DetailAttribute = {
   value: string;
   isPublic: boolean;
 };
+
+type KeySpec = {
+  id: string;
+  name: string;
+  value: string;
+};
+
+const MATRIX_EXCLUDED_DETAIL_IDS = new Set([
+  'core:name',
+  'core:price',
+  'core:discount',
+  'core:image',
+  'core:description',
+  'core:stock_count',
+]);
+
+function normalizedDetailName(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function findDetailAttribute(attributes: DetailAttribute[], terms: string[]) {
+  return attributes.find((attribute) => {
+    const normalizedName = normalizedDetailName(attribute.name);
+    return terms.some((term) => normalizedName.includes(term));
+  });
+}
+
+function keySpecFromAttribute(
+  attribute: DetailAttribute | undefined,
+  fallback: KeySpec
+): KeySpec {
+  if (!attribute) {
+    return fallback;
+  }
+
+  return {
+    id: attribute.id,
+    name: attribute.name,
+    value: attribute.value,
+  };
+}
 
 function coreDetailValue(
   product: ProductDTO,
@@ -308,11 +348,56 @@ export default function ProductDetailPage() {
         {
           id: item.field.id,
           name: fieldNameLabel(item.field, locale),
-            value: value || t('common.notSet'),
+          value: value || t('common.notSet'),
           isPublic: item.isPublic,
         },
       ];
     });
+  const frameSpec = findDetailAttribute(detailAttrs, ['frame']) ?? findDetailAttribute(detailAttrs, ['material']);
+  const groupsetSpec = findDetailAttribute(detailAttrs, ['groupset']) ?? findDetailAttribute(detailAttrs, ['compatibility']);
+  const batterySpec = findDetailAttribute(detailAttrs, ['battery', 'range']);
+  const wheelSpec = findDetailAttribute(detailAttrs, ['wheel']);
+  const rideSpec = product.type === 'Electrical' ? batterySpec ?? wheelSpec : wheelSpec ?? batterySpec;
+  const keySpecs: KeySpec[] = [
+    keySpecFromAttribute(frameSpec, {
+      id: 'fallback:category',
+      name: t('common.category'),
+      value: categoryLabel(product.category, t),
+    }),
+    keySpecFromAttribute(groupsetSpec, {
+      id: 'fallback:drive-type',
+      name: t('shop.configuration'),
+      value: product.type ? driveTypeLabel(product.type, t) : categoryLabel(product.category, t),
+    }),
+    keySpecFromAttribute(rideSpec, {
+      id: 'fallback:serial',
+      name: t('common.serial'),
+      value: product.serial,
+    }),
+    {
+      id: 'core:stock_count',
+      name: t('shop.stock'),
+      value: product.inStock ? `${t('common.inStock')} (${product.stockCount})` : t('common.preOrder'),
+    },
+  ];
+  const keySpecIds = new Set(keySpecs.map((spec) => spec.id));
+  const matrixDetails = [
+    ...detailAttrs.filter((attribute) => (
+      !keySpecIds.has(attribute.id) &&
+      !MATRIX_EXCLUDED_DETAIL_IDS.has(attribute.id)
+    )),
+    ...(isStaff
+      ? [{
+          id: 'product:status',
+          name: t('staff.status'),
+          value: product.status,
+          isPublic: false,
+        }]
+      : []),
+  ];
+  const currentPrice = formatGel(product.discountedPrice ?? product.price);
+  const originalPrice = product.discountedPrice !== null ? formatGel(product.price) : null;
+  const currentDiscountLabel = translatedDiscountLabel(product, t) ?? product.discountLabel;
   const typeColor = product.type === 'Electrical' ? 'bg-amber-500' : 'bg-slate-900';
 
   const logout = async () => {
@@ -395,88 +480,109 @@ export default function ProductDetailPage() {
       </nav>
 
       {/* Product Detail */}
-      <section className="max-w-7xl mx-auto grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2 lg:gap-16 lg:py-16">
-        {/* Left Column - Image & Info */}
-        <div>
-          <ProductGallery product={product} />
-
-          {/* Info Cards */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-center sm:rounded-[2rem] sm:p-6">
-              <LocateFixed className="mx-auto mb-2 text-blue-600" />
-              <p className="text-[10px] font-black uppercase text-slate-400">{t('shop.availability')}</p>
-              <p className="font-bold">{product.inStock ? t('common.inStock') : t('common.preOrder')}</p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-center sm:rounded-[2rem] sm:p-6">
-              <Package className="mx-auto mb-2 text-emerald-600" />
-              <p className="text-[10px] font-black uppercase text-slate-400">{t('shop.stock')}</p>
-              <p className="font-bold">{product.stockCount}</p>
-            </div>
-
-          </div>
-        </div>
+      <section className="max-w-7xl mx-auto grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] lg:gap-12 lg:py-12">
+        {/* Left Column - Image */}
+        <ProductGallery product={product} />
 
         {/* Right Column - Details */}
-        <div className="flex flex-col py-0 lg:py-4">
-          {/* Type & Serial Badges */}
-          <div className="mb-5 flex flex-wrap gap-2 sm:mb-6 sm:gap-3">
+        <div className="flex flex-col py-0 lg:py-2">
+          {/* Type Badges */}
+          <div className="mb-4 flex flex-wrap gap-2 sm:gap-3">
             {product.type && (
-              <span className={`${typeColor} flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-white sm:px-5 sm:tracking-[0.2em]`}>
+              <span className={`${typeColor} flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-black uppercase text-white sm:px-5`}>
                 {product.type === 'Electrical' ? <Zap size={12} fill="currentColor" /> : <Bike size={12} />}
                 {driveTypeLabel(product.type, t)}
               </span>
             )}
-            <span className="flex items-center gap-1 rounded-full bg-slate-100 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500 sm:px-5 sm:tracking-[0.2em]">
-              <Hash size={12} />
-              {product.serial}
+            <span className="rounded-full bg-cyan-50 px-4 py-2 text-[10px] font-black uppercase text-cyan-700 sm:px-5">
+              {categoryLabel(product.category, t)}
             </span>
             {isStaff && (
-              <span className="rounded-full bg-emerald-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-700 sm:px-5 sm:tracking-[0.2em]">
+              <span className="rounded-full bg-emerald-50 px-4 py-2 text-[10px] font-black uppercase text-emerald-700 sm:px-5">
                 {product.status}
               </span>
             )}
           </div>
 
           {/* Product Name */}
-          <h1 className="mb-5 break-words text-4xl font-black leading-tight text-slate-900 sm:mb-6 sm:text-5xl lg:text-6xl lg:leading-none">
+          <h1 className="mb-3 break-words text-4xl font-black leading-tight text-slate-900 sm:text-5xl lg:text-6xl lg:leading-none">
             {product.name}
           </h1>
 
-          {/* Price */}
-          <div className="flex items-center gap-4 mb-6">
-            <PriceDisplay product={product} size="detail" discountLabel={translatedDiscountLabel(product, t)} />
-          </div>
-
           {/* Description */}
-          <p className="mb-8 text-base leading-7 text-slate-500 sm:mb-10 sm:text-lg sm:leading-relaxed">{product.description}</p>
-          {error && <p className="text-sm text-rose-600 mb-6">{error}</p>}
+          <p className="mb-5 text-base leading-7 text-slate-500 sm:text-lg sm:leading-relaxed">{product.description}</p>
+          {error && <p className="mb-4 text-sm text-rose-600">{error}</p>}
 
-          {/* Configuration */}
-          <div className="mb-10 sm:mb-12">
-            <h2 className="mb-6 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.22em] text-slate-300 sm:mb-8 sm:gap-4 sm:text-xs sm:tracking-[0.3em]">
-              <div className="h-px bg-slate-100 flex-1"></div>
-              {isStaff ? t('shop.inventoryDetails') : t('shop.configuration')}
-              <div className="h-px bg-slate-100 flex-1"></div>
-            </h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
-              {detailAttrs.map(attr => (
-                <div key={attr.id} className="group">
-                  <p className={`text-[10px] font-black uppercase tracking-widest mb-1 transition-colors ${
-                    attr.isPublic ? 'text-slate-400 group-hover:text-blue-500' : 'text-amber-500'
-                  }`}>
-                    {attr.name}
-                    {isStaff && !attr.isPublic && <span className="ml-1">({t('common.internal')})</span>}
-                  </p>
-                  <p className="break-words text-base font-black text-slate-800 sm:text-xl">{attr.value}</p>
-                </div>
-              ))}
-              {detailAttrs.length === 0 && (
-                <p className="col-span-2 text-sm font-semibold text-slate-500">
-                  {t('shop.noCustomDetails')}
-                </p>
+          {/* A1 compact price/action bar */}
+          <div className="mb-4 grid gap-4 rounded-2xl bg-slate-950 p-4 text-white shadow-2xl shadow-slate-900/20 sm:grid-cols-[1fr_auto] sm:items-center">
+            <div>
+              <p className="text-[10px] font-black uppercase text-white/60">{t('common.price')}</p>
+              <div className="mt-1 flex flex-wrap items-baseline gap-3">
+                {originalPrice && (
+                  <span className="text-sm font-bold text-white/45 line-through sm:text-base">
+                    {originalPrice}
+                  </span>
+                )}
+                <span className="text-3xl font-black text-amber-300 sm:text-4xl">
+                  {currentPrice}
+                </span>
+              </div>
+              {currentDiscountLabel && (
+                <span className="mt-2 inline-flex rounded-full bg-rose-500/15 px-2.5 py-1 text-xs font-black text-rose-100">
+                  {currentDiscountLabel}
+                </span>
               )}
             </div>
+            {isStaff ? (
+              <Link
+                href={backHref}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-cyan-400 px-5 text-sm font-black text-slate-950 transition hover:bg-cyan-300"
+              >
+                {t('shop.useInventoryActions')}
+              </Link>
+            ) : product.status === 'active' && product.inStock ? (
+              <button
+                type="button"
+                onClick={() => void openMessengerForItem()}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-cyan-400 px-5 text-sm font-black text-slate-950 transition hover:bg-cyan-300"
+              >
+                {t('shop.messageSeller')}
+              </button>
+            ) : null}
+          </div>
+
+          <div className="detail-key-specs mb-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
+            {keySpecs.map((spec) => (
+              <div
+                key={spec.id}
+                className="rounded-xl border border-cyan-100 border-t-4 border-t-cyan-400 bg-white p-3 shadow-sm"
+              >
+                <p className="mb-1 text-[10px] font-black uppercase text-slate-400">{spec.name}</p>
+                <p className="break-words text-sm font-black leading-snug text-slate-900">{spec.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="detail-spec-grid mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {matrixDetails.map((attr) => (
+              <div
+                key={attr.id}
+                className="detail-spec-cell rounded-xl border border-cyan-100 bg-gradient-to-b from-white to-cyan-50/40 p-3 shadow-sm"
+              >
+                <p className={`mb-1 text-[10px] font-black uppercase ${
+                  attr.isPublic ? 'text-slate-400' : 'text-amber-500'
+                }`}>
+                  {attr.name}
+                  {isStaff && !attr.isPublic && <span className="ml-1">({t('common.internal')})</span>}
+                </p>
+                <p className="break-words text-sm font-black leading-snug text-slate-900">{attr.value}</p>
+              </div>
+            ))}
+            {matrixDetails.length === 0 && (
+              <p className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-500">
+                {t('shop.noCustomDetails')}
+              </p>
+            )}
           </div>
 
           {messengerMessage && (
@@ -489,23 +595,6 @@ export default function ProductDetailPage() {
               {messengerError}
             </div>
           )}
-
-          {isStaff ? (
-            <Link
-              href={backHref}
-              className="w-full rounded-2xl bg-slate-900 py-4 text-center text-lg font-black text-white shadow-xl transition-all hover:-translate-y-1 hover:bg-blue-600 sm:rounded-[2.5rem] sm:py-8 sm:text-2xl sm:shadow-2xl"
-            >
-              {t('shop.useInventoryActions')}
-            </Link>
-          ) : product.status === 'active' && product.inStock ? (
-            <button
-              type="button"
-              onClick={() => void openMessengerForItem()}
-              className="w-full rounded-2xl bg-slate-900 py-4 text-lg font-black text-white shadow-xl transition-all hover:-translate-y-1 hover:bg-blue-600 sm:rounded-[2.5rem] sm:py-8 sm:text-2xl sm:shadow-2xl"
-            >
-              {t('shop.messageSeller')}
-            </button>
-          ) : null}
         </div>
       </section>
     </div>
