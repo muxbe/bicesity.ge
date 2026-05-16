@@ -1710,6 +1710,19 @@
       grid-template-columns: 1fr;
     }
 
+    .viewport-mobile .tool-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .viewport-mobile .tool-row .fake-select,
+    .viewport-mobile .tool-row .fake-button.dark {
+      display: none;
+    }
+
+    .viewport-mobile .tool-row .fake-button:not(.dark) {
+      min-width: 96px;
+    }
+
     .viewport-mobile .fake-input,
     .viewport-mobile .fake-select,
     .viewport-mobile .fake-button {

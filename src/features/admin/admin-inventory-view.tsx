@@ -1139,10 +1139,10 @@ export function AdminInventoryView({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div className="rounded-2xl border border-cyan-100 bg-white p-4"><p className="text-xs text-slate-500">{t('common.active')}</p><p className="text-2xl font-black text-slate-900">{counts.active}</p></div>
-        <div className="rounded-2xl border border-cyan-100 bg-white p-4"><p className="text-xs text-slate-500">{t('common.reserved')}</p><p className="text-2xl font-black text-slate-900">{counts.reserved}</p></div>
-        <div className="rounded-2xl border border-cyan-100 bg-white p-4"><p className="text-xs text-slate-500">{t('common.sold')}</p><p className="text-2xl font-black text-slate-900">{counts.sold}</p></div>
+      <div className="grid grid-cols-3 gap-2 mb-4 sm:gap-3 sm:mb-5">
+        <div className="rounded-2xl border border-cyan-100 bg-white p-3 sm:p-4"><p className="text-[11px] text-slate-500 sm:text-xs">{t('common.active')}</p><p className="text-xl font-black text-slate-900 sm:text-2xl">{counts.active}</p></div>
+        <div className="rounded-2xl border border-cyan-100 bg-white p-3 sm:p-4"><p className="text-[11px] text-slate-500 sm:text-xs">{t('common.reserved')}</p><p className="text-xl font-black text-slate-900 sm:text-2xl">{counts.reserved}</p></div>
+        <div className="rounded-2xl border border-cyan-100 bg-white p-3 sm:p-4"><p className="text-[11px] text-slate-500 sm:text-xs">{t('common.sold')}</p><p className="text-xl font-black text-slate-900 sm:text-2xl">{counts.sold}</p></div>
       </div>
 
       <div className="mb-4 space-y-3">
@@ -1167,7 +1167,9 @@ export function AdminInventoryView({
               {tab === 'All' ? t('common.all') : categoryLabel(tab, t)}
             </button>
           ))}
+        </div>
 
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:flex sm:flex-wrap sm:items-center">
           <div className="relative w-full sm:min-w-72 sm:flex-1">
             <Search size={15} className="text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -1181,7 +1183,7 @@ export function AdminInventoryView({
           <button
             type="button"
             onClick={() => setIsDetailedFiltersOpen((current) => !current)}
-            className="brand-control inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold text-slate-700 hover:bg-cyan-50 sm:w-auto"
+            className="brand-control inline-flex h-10 items-center justify-center gap-2 rounded-xl border px-3 text-sm font-semibold text-slate-700 hover:bg-cyan-50 sm:w-auto sm:px-4"
           >
             <SlidersHorizontal size={14} />
             {t('inventory.detailedFilters')}

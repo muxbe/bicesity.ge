@@ -465,6 +465,7 @@ export default function ProductDetailPage() {
                 {role === 'admin' ? t('role.admin') : role === 'seller' ? t('role.seller') : t('role.user')}
               </p>
             </div>
+            <LanguageSwitcher compact />
             <button
               type="button"
               onClick={() => void logout()}
@@ -477,14 +478,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </nav>
-      <div className="relative z-[90] border-b border-cyan-100 bg-white">
-        <div className="max-w-7xl mx-auto flex justify-end px-4 py-2.5 sm:px-6">
-          <LanguageSwitcher />
-        </div>
-      </div>
 
       {/* Product Detail */}
-      <section className="max-w-7xl mx-auto grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] lg:gap-12 lg:py-12">
+      <section className="max-w-7xl mx-auto grid grid-cols-1 gap-7 px-4 py-6 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] lg:gap-12 lg:py-12">
         {/* Left Column - Image */}
         <ProductGallery product={product} />
 

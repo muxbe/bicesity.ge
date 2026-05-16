@@ -205,7 +205,7 @@ export default function SellerLayout({
       <div className="min-h-screen flex-1 md:ml-24 xl:ml-72 xl:h-screen xl:overflow-y-auto">
         <div className="p-4 sm:p-6 xl:p-10">
           <div className="relative z-[90] mb-5 flex justify-end">
-            <LanguageSwitcher />
+            <LanguageSwitcher compact />
           </div>
           {children}
         </div>

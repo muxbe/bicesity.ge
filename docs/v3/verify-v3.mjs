@@ -50,7 +50,8 @@ const requiredSnippets = [
   ".viewport-mobile .product-grid",
   ".viewport-mobile .detail-page",
   ".viewport-mobile .auth-grid",
-  ".viewport-mobile .detail-filter-row"
+  ".viewport-mobile .detail-filter-row",
+  ".viewport-mobile .tool-row .fake-select"
 ];
 
 const missing = requiredSnippets.filter((snippet) => !html.includes(snippet));

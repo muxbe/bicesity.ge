@@ -591,7 +591,7 @@ export default function Home() {
       isActive ? 'text-[var(--brand-cyan-dark)]' : ''
     }`;
   const mobileNavButtonClass = (isActive: boolean) =>
-    `inline-flex h-10 shrink-0 items-center rounded-lg border px-4 text-sm font-bold transition ${
+    `inline-flex h-9 shrink-0 items-center rounded-lg border px-3 text-xs font-bold transition sm:h-10 sm:px-4 sm:text-sm ${
       isActive
         ? 'border-[var(--brand-blue-strong)] bg-[var(--brand-blue-strong)] text-white'
         : 'border-slate-200 bg-white text-slate-700 hover:border-[var(--brand-blue)] hover:text-[var(--brand-cyan-dark)]'
@@ -621,9 +621,9 @@ export default function Home() {
     <div className="min-h-screen bg-white font-['Plus Jakarta Sans', sans-serif]">
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-50 bg-white/75 backdrop-blur-xl border-b border-slate-200">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 sm:gap-3 sm:px-6 sm:py-4">
           <Link href="/" className="flex items-center">
-            <BikeCityLogo imageClassName="h-12 w-36 sm:h-14 sm:w-44" priority />
+            <BikeCityLogo imageClassName="h-10 w-28 sm:h-14 sm:w-44" priority />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
@@ -668,6 +668,8 @@ export default function Home() {
                 {accountRoleLabel(role, t)}
               </p>
             </div>
+            <LanguageSwitcher compact className="sm:hidden" />
+            <LanguageSwitcher compact className="hidden sm:inline-block" />
             {role === 'admin' && (
               <Link
                 href="/admin"
@@ -697,7 +699,7 @@ export default function Home() {
         </div>
 
         <div className="border-t border-slate-200/70 md:hidden">
-          <div className="max-w-7xl mx-auto flex gap-2 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="max-w-7xl mx-auto flex gap-1.5 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
               type="button"
               onClick={() => showCatalogCategory('All', '#explore')}
@@ -733,18 +735,12 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative z-[90] border-t border-cyan-100/80 bg-white/80">
-          <div className="max-w-7xl mx-auto flex justify-end px-4 py-2.5 sm:px-6">
-            <LanguageSwitcher />
-          </div>
-        </div>
-
         {activeView === 'products' && (
         <div className="border-t border-slate-200/70">
-          <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
+          <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 sm:py-4">
             <form
               onSubmit={handleBasicSearch}
-              className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-[1.7fr,1fr,1fr,auto,auto] lg:items-center"
+              className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-[1.7fr,1fr,1fr,auto,auto] lg:items-center"
             >
               <div className="relative">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -753,14 +749,14 @@ export default function Home() {
                   value={draftFilters.query}
                   onChange={(event) => updateDraftFilters({ query: event.target.value })}
                   placeholder={t('home.searchPlaceholder')}
-                  className="brand-control w-full h-11 rounded-xl border pl-10 pr-4 text-sm"
+                  className="brand-control h-10 w-full rounded-xl border pl-10 pr-4 text-sm sm:h-11"
                 />
               </div>
 
               <select
                 value={draftFilters.category}
                 onChange={(event) => handleCategoryChange(event.target.value as CategoryFilter)}
-                className="brand-control h-11 rounded-xl border px-3 text-sm"
+                className="brand-control hidden h-11 rounded-xl border px-3 text-sm sm:block"
               >
                 <option value="All">{t('home.allCategories')}</option>
                 <option value="Bicycle">{t('common.bicycles')}</option>
@@ -770,7 +766,7 @@ export default function Home() {
               <select
                 value={draftFilters.stock}
                 onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
-                className="brand-control h-11 rounded-xl border px-3 text-sm"
+                className="brand-control hidden h-11 rounded-xl border px-3 text-sm sm:block"
               >
                 <option value="All">{t('home.allStock')}</option>
                 <option value="In Stock">{t('common.inStock')}</option>
@@ -780,7 +776,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setIsDetailedOpen((current) => !current)}
-                className="brand-control h-11 px-4 rounded-xl border text-slate-700 font-semibold text-sm hover:bg-cyan-50 transition flex items-center justify-center gap-2"
+                className="brand-control flex h-10 items-center justify-center gap-2 rounded-xl border px-3 text-sm font-semibold text-slate-700 transition hover:bg-cyan-50 sm:h-11 sm:px-4"
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 {t('home.detailed')}
@@ -793,13 +789,13 @@ export default function Home() {
 
               <button
                 type="submit"
-                className="brand-primary h-11 rounded-xl px-6 text-sm font-semibold transition sm:col-span-2 lg:col-span-1"
+                className="brand-primary hidden h-11 rounded-xl px-6 text-sm font-semibold transition sm:col-span-2 sm:block lg:col-span-1"
               >
                 {t('common.search')}
               </button>
             </form>
 
-            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 sm:mt-3">
               <p>
                 {isLoading
                   ? t('home.loadingCatalog')
@@ -842,6 +838,32 @@ export default function Home() {
             <form onSubmit={handleDetailedSearch}>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.allCategories')}</label>
+                  <select
+                    value={draftFilters.category}
+                    onChange={(event) => handleCategoryChange(event.target.value as CategoryFilter)}
+                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
+                  >
+                    <option value="All">{t('home.allCategories')}</option>
+                    <option value="Bicycle">{t('common.bicycles')}</option>
+                    <option value="Parts">{t('common.parts')}</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.allStock')}</label>
+                  <select
+                    value={draftFilters.stock}
+                    onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
+                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
+                  >
+                    <option value="All">{t('home.allStock')}</option>
+                    <option value="In Stock">{t('common.inStock')}</option>
+                    <option value="Out of Stock">{t('common.outOfStock')}</option>
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.bikeType')}</label>
                   <select
                     value={draftFilters.bikeType}
@@ -882,19 +904,6 @@ export default function Home() {
                     placeholder="15000"
                     className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('shop.stock')}</label>
-                  <select
-                    value={draftFilters.stock}
-                    onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
-                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                  >
-                    <option value="All">{t('home.allStock')}</option>
-                    <option value="In Stock">{t('common.inStock')}</option>
-                    <option value="Out of Stock">{t('common.outOfStock')}</option>
-                  </select>
                 </div>
 
                 {visibleAttributes.map((attribute) => (
