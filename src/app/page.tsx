@@ -733,8 +733,8 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="border-t border-cyan-100/80 bg-white/80">
-          <div className="max-w-7xl mx-auto flex justify-start px-4 py-2.5 sm:px-6">
+        <div className="relative z-[90] border-t border-cyan-100/80 bg-white/80">
+          <div className="max-w-7xl mx-auto flex justify-end px-4 py-2.5 sm:px-6">
             <LanguageSwitcher />
           </div>
         </div>

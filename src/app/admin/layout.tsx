@@ -205,7 +205,7 @@ export default function AdminLayout({
       {/* Main Content Area */}
       <div className="min-h-screen flex-1 md:ml-24 xl:ml-72 xl:h-screen xl:overflow-y-auto">
         <div className="p-4 sm:p-6 xl:p-10">
-          <div className="mb-5 flex justify-start">
+          <div className="relative z-[90] mb-5 flex justify-end">
             <LanguageSwitcher />
           </div>
           {children}

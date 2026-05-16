@@ -477,8 +477,8 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </nav>
-      <div className="border-b border-cyan-100 bg-white">
-        <div className="max-w-7xl mx-auto flex justify-start px-4 py-2.5 sm:px-6">
+      <div className="relative z-[90] border-b border-cyan-100 bg-white">
+        <div className="max-w-7xl mx-auto flex justify-end px-4 py-2.5 sm:px-6">
           <LanguageSwitcher />
         </div>
       </div>

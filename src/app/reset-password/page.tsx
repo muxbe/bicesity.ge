@@ -129,7 +129,7 @@ export default function ResetPasswordPage() {
             <BikeCityLogo imageClassName="h-12 w-36" priority />
           </Link>
         </div>
-        <div className="mb-8 flex justify-start">
+        <div className="relative z-[90] mb-8 flex justify-end">
           <LanguageSwitcher />
         </div>
 

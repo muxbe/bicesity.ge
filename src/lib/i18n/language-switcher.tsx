@@ -47,7 +47,7 @@ export function LanguageSwitcher({ compact = false, className = "" }: LanguageSw
   }, [isOpen]);
 
   return (
-    <div ref={menuRef} className={`relative inline-block shrink-0 ${className}`} aria-label={t("language.select")}>
+    <div ref={menuRef} className={`relative z-[9999] inline-block shrink-0 ${className}`} aria-label={t("language.select")}>
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
@@ -74,7 +74,7 @@ export function LanguageSwitcher({ compact = false, className = "" }: LanguageSw
       {isOpen && (
         <div
           role="menu"
-          className="absolute left-0 top-full z-[80] mt-2 w-56 overflow-hidden rounded-xl border border-cyan-100 bg-white p-1.5 shadow-2xl shadow-slate-900/15"
+          className="absolute right-0 top-full z-[9999] mt-2 w-56 overflow-hidden rounded-xl border border-cyan-100 bg-white p-1.5 shadow-2xl shadow-slate-900/25"
         >
           {LANGUAGE_OPTIONS.map((option) => {
             const isActive = locale === option.locale;
