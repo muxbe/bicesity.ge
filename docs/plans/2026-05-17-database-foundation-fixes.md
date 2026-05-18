@@ -20,7 +20,7 @@
 - Server APIs may use `SUPABASE_SERVICE_ROLE_KEY`, but only after route-level auth and role checks.
 - Public storefront reads are allowed; staff writes go through API routes.
 - `product-images` remains a public bucket.
-- `public.rls_auto_enable` must be investigated before a preserve/remove decision.
+- `public.rls_auto_enable` has been inspected; preserve and document it as an RLS safety guard, but keep it out of the first narrow schema-alignment migration.
 - `sales.currency_code` default should be `GEL`.
 
 ## Files
@@ -52,7 +52,7 @@
 - Read: `docs/audits/2026-05-17-database-code-contract-audit.md`
 - Read: `supabase/migrations/*.sql`
 
-- [ ] **Step 1: Verify local worktree**
+- [x] **Step 1: Verify local worktree**
 
 Run:
 
@@ -62,7 +62,9 @@ git status --short
 
 Expected: documentation changes are visible; no unexpected code or migration edits are present.
 
-- [ ] **Step 2: Re-run metadata query for exact target fields**
+Result on 2026-05-18: worktree was clean before the metadata follow-up.
+
+- [x] **Step 2: Re-run metadata query for exact target fields**
 
 Run in Supabase SQL Editor:
 
@@ -84,7 +86,15 @@ order by table_name, ordinal_position;
 
 Expected: confirms current state of `attribute_options`, `attributes.input_mode`, `attributes.display_name_translations`, profile columns, and `sales.currency_code`.
 
-- [ ] **Step 3: Inspect unknown function body**
+Result on 2026-05-18:
+
+- Live `attribute_options` exists.
+- Live `attributes.input_mode` exists with default `'free_text'::text`.
+- Live `attributes.display_name_translations` is missing.
+- Live `profiles` has no `trg_profiles_set_updated_at`.
+- Live `sales.currency_code` default is `'USD'::bpchar`.
+
+- [x] **Step 3: Inspect unknown function body**
 
 Run in Supabase SQL Editor:
 
@@ -105,6 +115,35 @@ where n.nspname = 'public'
 ```
 
 Expected: returns every matching `rls_auto_enable` function definition.
+
+Result on 2026-05-18: `public.rls_auto_enable()` is a `security definer` event-trigger function with `search_path` set to `pg_catalog`. It loops over new table DDL commands in `public` and runs `alter table if exists ... enable row level security`.
+
+- [x] **Step 4: Confirm event trigger wiring**
+
+Run in Supabase SQL Editor:
+
+```sql
+select
+  evtname as trigger_name,
+  evtevent as trigger_event,
+  case evtenabled
+    when 'O' then 'enabled'
+    when 'D' then 'disabled'
+    when 'R' then 'replica'
+    when 'A' then 'always'
+    else evtenabled::text
+  end as trigger_status,
+  evtfoid::regprocedure::text as function_signature,
+  pg_get_userbyid(evtowner) as owner
+from pg_event_trigger
+where evtfoid::regprocedure::text like 'rls_auto_enable%'
+   or evtname ilike '%rls%'
+order by evtname;
+```
+
+Result on 2026-05-18: event trigger `ensure_rls` is enabled on `ddl_command_end`, calls `rls_auto_enable()`, and is owned by `postgres`.
+
+Decision: preserve and document `rls_auto_enable` / `ensure_rls`, but do not include it in the first schema-alignment migration. Recreate or normalize it later only in a dedicated RLS/security migration.
 
 ## Task 2: Create Forward-Only Schema Alignment Migration
 
@@ -437,7 +476,7 @@ Expected: no direct browser insert/update calls to `reservations`.
 Plan is not approval to apply database changes. Before implementation, review:
 
 - The migration SQL.
-- The `public.rls_auto_enable` function body.
+- The decision to preserve and document `public.rls_auto_enable` / `ensure_rls` outside the first schema-alignment migration.
 - The reservation API route shape.
 - The RLS policy direction.
 

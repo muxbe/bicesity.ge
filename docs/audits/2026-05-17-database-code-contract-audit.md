@@ -24,7 +24,7 @@ The audit intentionally did not read business rows, customer rows, product rows,
 - RLS should support public storefront reads and defensive staff access, while writes go through server APIs.
 - Service-role usage should stay server-only and be documented with strict route-level role checks.
 - The `product-images` bucket should stay public and documented.
-- The unknown live `public.rls_auto_enable` function should be investigated before any preserve/remove decision.
+- The live `public.rls_auto_enable` function was inspected on 2026-05-18; preserve and document it as an RLS safety guard, but keep it out of the first narrow schema-alignment migration.
 - `sales.currency_code` should default to `GEL`.
 
 ## Summary
@@ -46,6 +46,7 @@ The pasted live metadata shows:
 - RLS is enabled for public tables including `attribute_options`, `attributes`, `catalog_items`, `reservations`, `sales`, `profiles`, and `app_settings`.
 - Live policies are mostly public-read policies plus profile/app settings policies.
 - Live functions include `public.rls_auto_enable`, which local migrations do not define.
+- `public.rls_auto_enable()` is attached to enabled event trigger `ensure_rls` on `ddl_command_end`, owned by `postgres`. It enables RLS automatically on newly created tables in the `public` schema.
 - Live triggers do not show `trg_profiles_set_updated_at`.
 - Live `sales.currency_code` default is `'USD'::bpchar`.
 
@@ -146,15 +147,15 @@ Impact: The intended access model is unclear. Some paths work through service ro
 
 Decision: Normalize policy intent after the API-only reservation decision: public storefront reads, staff writes through server APIs, and defensive RLS for exposed tables.
 
-### Finding 6: Unknown Live `public.rls_auto_enable`
+### Finding 6: Live `public.rls_auto_enable` Event Trigger Is Active
 
 Severity: Medium
 
-Live has a `security definer` function named `public.rls_auto_enable`, but local migrations do not define it.
+Live has a `security definer` function named `public.rls_auto_enable`, but local migrations do not define it. Follow-up metadata inspection on 2026-05-18 showed it is wired to enabled event trigger `ensure_rls` on `ddl_command_end`, owned by `postgres`.
 
-Impact: Unknown security-definer behavior should not be preserved or removed blindly.
+Impact: The function is a security guard rather than business logic. It automatically enables RLS on new tables created in the `public` schema, which helps avoid accidentally exposing future tables without RLS.
 
-Decision: Inspect its function body before deciding whether to migrate, replace, or remove it.
+Decision: Preserve and document it. Do not include it in the first schema-alignment migration because that migration should stay focused on app-contract drift. Recreate or normalize it later only as part of a dedicated RLS/security migration.
 
 ### Finding 7: Live Missing `trg_profiles_set_updated_at`
 
@@ -191,7 +192,7 @@ Decision: Keep the public bucket and document expected setup. Do not change stor
 1. Create a schema-alignment migration plan for field schema drift: `attribute_options`, `attributes.input_mode`, `attributes.display_name_translations`, profile trigger, and sales currency default.
 2. Refactor reservation writes to API-only routes, then remove or disable browser-side reservation writes.
 3. Normalize RLS policies around the chosen model: public storefront reads, server-only writes, and defensive staff policies.
-4. Investigate `public.rls_auto_enable` with metadata-only SQL and decide whether it belongs in Git.
+4. Document the active `public.rls_auto_enable` / `ensure_rls` safety guard and decide later whether it belongs in a dedicated RLS/security migration.
 5. Document the public `product-images` bucket setup and verification query.
 
 ## Stop Conditions For Implementation
@@ -199,8 +200,7 @@ Decision: Keep the public bucket and document expected setup. Do not change stor
 Stop before applying any migration if:
 
 - The generated migration would drop tables, columns, policies, or functions.
-- `public.rls_auto_enable` turns out to perform business-critical behavior.
+- A future migration would drop, disable, or replace `public.rls_auto_enable` / `ensure_rls` without a dedicated security review.
 - The reservation data source is not clearly routed through server APIs.
 - Supabase CLI or connector access is unavailable and the user has not approved a manual SQL process.
 - Any step requires reading business rows instead of metadata.
-
