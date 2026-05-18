@@ -1,6 +1,7 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { FormEvent, KeyboardEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -798,6 +799,27 @@ export function AdminInventoryView({
     setReserveAtLocal(formatDatetimeForInput(new Date().toISOString()));
     setReserveNote('');
     setReservationContext(EMPTY_RESERVATION_CONTEXT);
+  };
+
+  const closeReserveDraft = () => {
+    setReserveProductId(null);
+    setReserveAtLocal('');
+    setReserveNote('');
+    setReservationContext(EMPTY_RESERVATION_CONTEXT);
+  };
+
+  const preventImplicitReservationSubmit = (event: KeyboardEvent<HTMLFormElement>) => {
+    if (event.key !== 'Enter') {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    const tagName = target.tagName.toLowerCase();
+    if (tagName === 'button' || tagName === 'textarea') {
+      return;
+    }
+
+    event.preventDefault();
   };
 
   const submitReserve = async (event: FormEvent) => {
@@ -1614,8 +1636,14 @@ export function AdminInventoryView({
               />
             )}
             {reserveProductId && (
-              <form onSubmit={submitReserve} className="space-y-4">
-                <div className="flex justify-between gap-3"><h2 className="text-lg font-black text-slate-900 sm:text-xl">{t('inventory.reserveProduct')}</h2><button type="button" onClick={() => { setReserveProductId(null); setReservationContext(EMPTY_RESERVATION_CONTEXT); setReserveNote(''); }}><X size={18} /></button></div>
+              <form onSubmit={submitReserve} onKeyDown={preventImplicitReservationSubmit} className="flex min-h-[min(34rem,calc(100vh-1.5rem))] flex-col">
+                <div className="sticky -top-4 z-10 -mx-4 -mt-4 mb-2 flex justify-between gap-3 border-b border-slate-100 bg-white px-4 py-4 sm:-top-6 sm:-mx-6 sm:-mt-6 sm:px-6">
+                  <h2 className="text-lg font-black text-slate-900 sm:text-xl">{t('inventory.reserveProduct')}</h2>
+                  <button type="button" onClick={closeReserveDraft} className="rounded-lg p-2 text-slate-600 hover:bg-slate-100" aria-label={t('inventory.closeForm')}>
+                    <X size={18} />
+                  </button>
+                </div>
+                <div className="space-y-4 py-3">
                 {actionErrorKey === `reserve:${reserveProductId}` && actionError && (
                   <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700">
                     {actionError}
@@ -1624,7 +1652,13 @@ export function AdminInventoryView({
                 <input type="datetime-local" value={reserveAtLocal} onChange={(event) => setReserveAtLocal(event.target.value)} className="h-11 w-full rounded-xl border border-slate-300 px-3 text-sm" />
                 {renderReservationContextFields('single')}
                 <textarea value={reserveNote} onChange={(event) => setReserveNote(event.target.value)} rows={3} className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" placeholder={t('inventory.sellerComment')} />
-                <button type="submit" disabled={workingKey === `reserve:${reserveProductId}`} className="h-11 w-full rounded-xl bg-sky-600 text-white font-semibold disabled:opacity-50">{workingKey === `reserve:${reserveProductId}` ? t('common.saving') : t('inventory.saveReservation')}</button>
+                </div>
+                <div className="reservation-modal-footer sticky -bottom-4 z-10 -mx-4 -mb-4 mt-auto grid grid-cols-1 gap-3 border-t border-slate-100 bg-white px-4 py-4 sm:-bottom-6 sm:-mx-6 sm:-mb-6 sm:grid-cols-2 sm:px-6">
+                  <button type="button" onClick={closeReserveDraft} aria-label={t('common.cancel')} className="brand-control h-11 rounded-xl border text-sm font-semibold text-slate-700 hover:bg-cyan-50">
+                    {t('common.cancel')}
+                  </button>
+                  <button type="submit" aria-label={t('inventory.saveReservation')} disabled={workingKey === `reserve:${reserveProductId}`} className="brand-primary h-11 rounded-xl text-sm font-semibold disabled:opacity-50">{workingKey === `reserve:${reserveProductId}` ? t('common.saving') : t('inventory.saveReservation')}</button>
+                </div>
               </form>
             )}
             {sellProductId && (
