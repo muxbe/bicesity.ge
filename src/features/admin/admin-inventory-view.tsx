@@ -2077,15 +2077,24 @@ function ProductForm({
   );
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
+    <form onSubmit={onSubmit} className="flex min-h-[min(42rem,calc(100vh-1.5rem))] flex-col">
       <div className="sticky -top-4 z-10 -mx-4 -mt-4 mb-2 flex justify-between gap-3 border-b border-slate-100 bg-white px-4 py-4 sm:-top-6 sm:-mx-6 sm:-mt-6 sm:px-6">
         <h2 className="text-lg font-black text-slate-900 sm:text-xl">{title}</h2>
         <button type="button" onClick={onClose} className="rounded-lg p-2 text-slate-600 hover:bg-slate-100" aria-label={t('inventory.closeForm')}>
           <X size={18} />
         </button>
       </div>
-      {fieldLayoutItems.map(renderFieldLayoutItem)}
-      <button type="submit" disabled={isSaving || isUploadingImage} className="h-11 w-full rounded-xl bg-slate-900 text-white font-semibold disabled:opacity-50">{isSaving ? t('common.saving') : isUploadingImage ? t('inventory.uploadingImage') : t('inventory.saveProduct')}</button>
+      <div className="space-y-3 py-3">
+        {fieldLayoutItems.map(renderFieldLayoutItem)}
+      </div>
+      <div className="product-form-actions-footer sticky -bottom-4 z-10 -mx-4 -mb-4 mt-auto grid grid-cols-1 gap-3 border-t border-slate-100 bg-white px-4 py-4 sm:-bottom-6 sm:-mx-6 sm:-mb-6 sm:grid-cols-2 sm:px-6">
+        <button type="button" onClick={onClose} aria-label={t('common.cancel')} className="brand-control h-11 rounded-xl border text-sm font-semibold text-slate-700 hover:bg-cyan-50">
+          {t('common.cancel')}
+        </button>
+        <button type="submit" aria-label={t('inventory.saveProduct')} disabled={isSaving || isUploadingImage} className="brand-primary h-11 rounded-xl text-sm font-semibold disabled:opacity-50">
+          {isSaving ? t('common.saving') : isUploadingImage ? t('inventory.uploadingImage') : t('inventory.saveProduct')}
+        </button>
+      </div>
     </form>
   );
 }
