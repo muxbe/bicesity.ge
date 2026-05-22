@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   archiveProduct,
-  cancelReservationForProduct,
   getProductById,
   markAsSold,
-  reserveProduct,
   updateProduct,
 } from "@/app/api/catalog/catalog-service";
 import { catalogErrorResponse } from "@/app/api/catalog/error-response";
 import { getCatalogRole } from "@/app/api/catalog/role";
+import {
+  cancelProductReservation,
+  reserveProductForReservation,
+} from "@/app/api/reservations/reservation-service";
 import { getCurrentPrice } from "@/features/catalog/domain/catalog-discount";
+import { getRequestAuth } from "@/lib/auth/server";
 
 type BulkAction =
   | "apply_discount"
@@ -75,6 +78,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const auth = await getRequestAuth(request);
+    const actorUserId = auth?.user.id;
+
     const itemIds = Array.from(new Set(body.itemIds ?? [])).filter(Boolean);
     if (itemIds.length === 0) {
       return NextResponse.json({ error: "Select at least one item." }, { status: 400 });
@@ -131,16 +137,20 @@ export async function POST(request: NextRequest) {
             continue;
           }
 
-          await reserveProduct(product.id, {
-            reservedForAt: body.payload?.reservedForAt,
-            expiresAt: body.payload?.expiresAt,
-            note: body.payload?.note,
-            sellerComment: body.payload?.sellerComment,
-            customerName: body.payload?.customerName,
-            customerPhone: body.payload?.customerPhone,
-            messengerProfileUrl: body.payload?.messengerProfileUrl,
-            reservationSource: body.payload?.reservationSource,
-          });
+          await reserveProductForReservation(
+            product.id,
+            {
+              reservedForAt: body.payload?.reservedForAt,
+              expiresAt: body.payload?.expiresAt,
+              note: body.payload?.note ?? undefined,
+              sellerComment: body.payload?.sellerComment ?? undefined,
+              customerName: body.payload?.customerName ?? undefined,
+              customerPhone: body.payload?.customerPhone ?? undefined,
+              messengerProfileUrl: body.payload?.messengerProfileUrl ?? undefined,
+              reservationSource: body.payload?.reservationSource,
+            },
+            actorUserId
+          );
           result.success.push({ id: product.id, name: product.name });
           continue;
         }
@@ -155,9 +165,7 @@ export async function POST(request: NextRequest) {
             continue;
           }
 
-          await cancelReservationForProduct(product.id, {
-            note: body.payload?.note,
-          });
+          await cancelProductReservation(product.id, body.payload?.note ?? undefined, actorUserId);
           result.success.push({ id: product.id, name: product.name });
           continue;
         }

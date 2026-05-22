@@ -1,4 +1,5 @@
-import type { ProductCategory } from "@/features/catalog/dto/catalog-dto";
+import { getProductById } from "@/app/api/catalog/catalog-service";
+import type { ProductCategory, ProductDTO } from "@/features/catalog/dto/catalog-dto";
 import {
   getFallbackImage,
   normalizeProductImage,
@@ -10,7 +11,7 @@ import {
   UpsertReservationDTO,
 } from "@/features/reservations/dto/reservation-dto";
 import { parseReservationCommentContext } from "@/features/reservations/dto/reservation-comment-context";
-import { AdapterError, ValidationError } from "@/features/shared/domain/errors";
+import { AdapterError, NotFoundError, ValidationError } from "@/features/shared/domain/errors";
 import { getServerSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type ReservationRow = {
@@ -58,6 +59,10 @@ type ReservationRow = {
           | null;
       }[]
     | null;
+};
+
+type ProductReservationInput = Omit<UpsertReservationDTO, "productId" | "reservedForAt"> & {
+  reservedForAt?: string;
 };
 
 const RESERVATION_HOLD_MS = 7 * 24 * 60 * 60 * 1000;
@@ -370,4 +375,88 @@ export async function completeActiveReservationByProductId(
   if (!data || data.length === 0) {
     throw new ValidationError("No active reservation was found for this product.");
   }
+}
+
+async function setCatalogItemStatus(
+  productId: string,
+  status: "active" | "reserved"
+): Promise<void> {
+  const supabase = getServerSupabaseAdminClient();
+  const { error } = await supabase
+    .from("catalog_items")
+    .update({ status })
+    .eq("id", productId);
+
+  if (error) {
+    throw new AdapterError(
+      status === "reserved"
+        ? "Failed to move product to reserved items."
+        : "Failed to move product back to active items.",
+      error
+    );
+  }
+}
+
+export async function reserveProductForReservation(
+  productId: string,
+  input: ProductReservationInput = {},
+  actorUserId?: string
+): Promise<ProductDTO> {
+  const product = await getProductById(productId);
+  if (!product) {
+    throw new NotFoundError("Product not found.", { productId });
+  }
+  if (product.status === "reserved") {
+    throw new ValidationError("Product is already reserved.");
+  }
+  if (product.status !== "active") {
+    throw new ValidationError("Only active products can be reserved.");
+  }
+  if (product.stockCount <= 0) {
+    throw new ValidationError("Out-of-stock products cannot be reserved.");
+  }
+
+  await upsertReservation(
+    {
+      ...input,
+      productId,
+      reservedForAt: input.reservedForAt ?? new Date().toISOString(),
+    },
+    actorUserId
+  );
+  await setCatalogItemStatus(productId, "reserved");
+
+  const updated = await getProductById(productId);
+  if (!updated) {
+    throw new NotFoundError("Product not found after reservation.", { productId });
+  }
+  return updated;
+}
+
+export async function cancelProductReservation(
+  productId: string,
+  note?: string,
+  actorUserId?: string
+): Promise<ProductDTO> {
+  const product = await getProductById(productId);
+  if (!product) {
+    throw new NotFoundError("Product not found.", { productId });
+  }
+  if (product.status !== "reserved") {
+    throw new ValidationError("Only reserved products can have reservations cancelled.");
+  }
+
+  await cancelActiveReservationByProductId(
+    productId,
+    "seller_cancelled",
+    note?.trim() || "Cancelled from reserved items page.",
+    actorUserId
+  );
+  await setCatalogItemStatus(productId, "active");
+
+  const updated = await getProductById(productId);
+  if (!updated) {
+    throw new NotFoundError("Product not found after cancelling reservation.", { productId });
+  }
+  return updated;
 }

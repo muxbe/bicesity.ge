@@ -84,26 +84,9 @@ type ProductImageStorageRow = {
   external_url: string | null;
 };
 
-type ReserveProductInput = {
-  reservedForAt?: string;
-  expiresAt?: string;
-  note?: string | null;
-  sellerComment?: string | null;
-  customerName?: string | null;
-  customerPhone?: string | null;
-  messengerProfileUrl?: string | null;
-  reservationSource?: "manual" | "messenger" | "phone" | "walk_in" | "other";
-};
-
-type CancelReservationInput = {
-  note?: string | null;
-};
-
 type ListProductsOptions = {
   syncReservations?: boolean;
 };
-
-const RESERVATION_HOLD_MS = 7 * 24 * 60 * 60 * 1000;
 
 const CATALOG_ITEM_SELECT =
   "id,name,item_type,serial_number,price_cents,stock_count,status,description,rating,discount_type,discount_amount_cents,discount_percent_bps,discount_reason,bicycles(drive_type),product_images(bucket_name,object_path,external_url,is_primary,sort_order)";
@@ -141,36 +124,6 @@ function mapDriveTypeToDb(value: ProductDriveType | undefined): string | null {
     return "electrical";
   }
   return trimmed;
-}
-
-function resolveReservationExpiryIso(reservedDate: Date, requestedExpiresAt?: string): string {
-  const fallbackExpiresAt = new Date(reservedDate.getTime() + RESERVATION_HOLD_MS);
-  if (!requestedExpiresAt) {
-    return fallbackExpiresAt.toISOString();
-  }
-
-  const requestedExpiresDate = new Date(requestedExpiresAt);
-  if (Number.isNaN(requestedExpiresDate.getTime())) {
-    throw new ValidationError("Reservation expiry date is invalid.");
-  }
-
-  if (requestedExpiresDate.getTime() <= reservedDate.getTime()) {
-    return fallbackExpiresAt.toISOString();
-  }
-
-  return requestedExpiresDate.toISOString();
-}
-
-function isMissingReservationContextColumn(error: { code?: string; message?: string } | null): boolean {
-  const message = error?.message?.toLowerCase() ?? "";
-  return (
-    error?.code === "PGRST204" ||
-    error?.code === "42703" ||
-    message.includes("customer_name") ||
-    message.includes("customer_phone") ||
-    message.includes("messenger_profile_url") ||
-    message.includes("reservation_source")
-  );
 }
 
 function pickPrimaryImage(
@@ -453,31 +406,6 @@ function discountPatchFromInput(
       discount.discountPercent === null ? null : Math.round(discount.discountPercent * 100),
     discount_reason: reason ?? null,
   };
-}
-
-function appendReservationContextToComment(
-  sellerComment: string,
-  input: {
-    customerName: string | null;
-    customerPhone: string | null;
-    messengerProfileUrl: string | null;
-    reservationSource: ReserveProductInput["reservationSource"];
-  }
-) {
-  const contextLines = [
-    input.customerName ? `Customer: ${input.customerName}` : null,
-    input.customerPhone ? `Phone: ${input.customerPhone}` : null,
-    input.messengerProfileUrl ? `Messenger: ${input.messengerProfileUrl}` : null,
-    input.reservationSource && input.reservationSource !== "manual"
-      ? `Source: ${input.reservationSource}`
-      : null,
-  ].filter((line): line is string => Boolean(line));
-
-  if (contextLines.length === 0) {
-    return sellerComment;
-  }
-
-  return [sellerComment, "Customer details:", ...contextLines].filter(Boolean).join("\n");
 }
 
 async function fetchAttributeValueMap(): Promise<Map<string, Record<string, string>>> {
@@ -945,187 +873,6 @@ export async function markAsSold(
   const updated = await getProductById(productId);
   if (!updated) {
     throw new NotFoundError("Product not found after sale.", { productId });
-  }
-  return updated;
-}
-
-export async function reserveProduct(
-  productId: string,
-  input: ReserveProductInput = {}
-): Promise<ProductDTO> {
-  const product = await getProductById(productId);
-  if (!product) {
-    throw new NotFoundError("Product not found.", { productId });
-  }
-  if (product.status === "reserved") {
-    throw new ValidationError("Product is already reserved.");
-  }
-  if (product.status !== "active") {
-    throw new ValidationError("Only active products can be reserved.");
-  }
-  if (product.stockCount <= 0) {
-    throw new ValidationError("Out-of-stock products cannot be reserved.");
-  }
-
-  const reservedForAt = input.reservedForAt ?? new Date().toISOString();
-  const reservedDate = new Date(reservedForAt);
-  if (Number.isNaN(reservedDate.getTime())) {
-    throw new ValidationError("Reservation date is invalid.");
-  }
-  const expiresAt = resolveReservationExpiryIso(reservedDate, input.expiresAt);
-  const sellerComment = input.sellerComment?.trim() || input.note?.trim() || "";
-  const customerName = input.customerName?.trim() || null;
-  const customerPhone = input.customerPhone?.trim() || null;
-  const messengerProfileUrl = input.messengerProfileUrl?.trim() || null;
-  const reservationSource = input.reservationSource ?? "manual";
-  const fallbackSellerComment = appendReservationContextToComment(sellerComment, {
-    customerName,
-    customerPhone,
-    messengerProfileUrl,
-    reservationSource,
-  });
-
-  const supabase = getServerSupabaseAdminClient();
-  const { data: existingReservation, error: existingReservationError } = await supabase
-    .from("reservations")
-    .select("id")
-    .eq("catalog_item_id", productId)
-    .eq("status", "active")
-    .maybeSingle();
-
-  if (existingReservationError) {
-    throw new AdapterError("Failed to check existing reservation.", existingReservationError);
-  }
-
-  if (!existingReservation) {
-    const baseReservation = {
-      catalog_item_id: productId,
-      status: "active",
-      reserved_for_at: reservedForAt,
-      expires_at: expiresAt,
-      note: input.note?.trim() || null,
-      seller_comment: sellerComment,
-    };
-    const contextReservation = {
-      ...baseReservation,
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      messenger_profile_url: messengerProfileUrl,
-      reservation_source: reservationSource,
-    };
-    const { error } = await supabase.from("reservations").insert(contextReservation);
-
-    if (error && error.code !== "23505") {
-      if (isMissingReservationContextColumn(error)) {
-        const { error: fallbackError } = await supabase.from("reservations").insert({
-          ...baseReservation,
-          seller_comment: fallbackSellerComment,
-        });
-        if (fallbackError && fallbackError.code !== "23505") {
-          throw new AdapterError("Failed to reserve product.", fallbackError);
-        }
-      } else {
-        throw new AdapterError("Failed to reserve product.", error);
-      }
-    }
-  } else {
-    const baseReservation = {
-      reserved_for_at: reservedForAt,
-      expires_at: expiresAt,
-      note: input.note?.trim() || null,
-      seller_comment: sellerComment,
-    };
-    const contextReservation = {
-      ...baseReservation,
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      messenger_profile_url: messengerProfileUrl,
-      reservation_source: reservationSource,
-    };
-    const { error } = await supabase
-      .from("reservations")
-      .update(contextReservation)
-      .eq("id", existingReservation.id);
-
-    if (error) {
-      if (isMissingReservationContextColumn(error)) {
-        const { error: fallbackError } = await supabase
-          .from("reservations")
-          .update({
-            ...baseReservation,
-            seller_comment: fallbackSellerComment,
-          })
-          .eq("id", existingReservation.id);
-        if (fallbackError) {
-          throw new AdapterError("Failed to update existing reservation.", fallbackError);
-        }
-      } else {
-        throw new AdapterError("Failed to update existing reservation.", error);
-      }
-    }
-  }
-
-  // Keep the item visible on Reserved Items even if database status triggers were not installed.
-  const { error: statusError } = await supabase
-    .from("catalog_items")
-    .update({ status: "reserved" })
-    .eq("id", productId);
-
-  if (statusError) {
-    throw new AdapterError("Failed to move product to reserved items.", statusError);
-  }
-
-  const updated = await getProductById(productId);
-  if (!updated) {
-    throw new NotFoundError("Product not found after reservation.", { productId });
-  }
-  return updated;
-}
-
-export async function cancelReservationForProduct(
-  productId: string,
-  input: CancelReservationInput = {}
-): Promise<ProductDTO> {
-  const product = await getProductById(productId);
-  if (!product) {
-    throw new NotFoundError("Product not found.", { productId });
-  }
-  if (product.status !== "reserved") {
-    throw new ValidationError("Only reserved products can have reservations cancelled.");
-  }
-
-  const supabase = getServerSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("reservations")
-    .update({
-      status: "cancelled",
-      cancellation_reason_code: "seller_cancelled",
-      cancellation_note: input.note?.trim() || "Cancelled from reserved items page.",
-    })
-    .eq("catalog_item_id", productId)
-    .eq("status", "active")
-    .select("id");
-
-  if (error) {
-    throw new AdapterError("Failed to cancel reservation.", error);
-  }
-  if (!data || data.length === 0) {
-    throw new ValidationError("No active reservation was found for this product.");
-  }
-
-  // Keep the item visible on Active Items even if database status triggers were not installed.
-  const { error: statusError } = await supabase
-    .from("catalog_items")
-    .update({ status: "active" })
-    .eq("id", productId);
-
-  if (statusError) {
-    throw new AdapterError("Failed to move product back to active items.", statusError);
-  }
-
-  const updated = await getProductById(productId);
-  if (!updated) {
-    throw new NotFoundError("Product not found after cancelling reservation.", { productId });
   }
   return updated;
 }
