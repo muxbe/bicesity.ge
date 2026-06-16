@@ -5,6 +5,8 @@ import type {
   ProductCategory,
   ProductDTO,
   ProductDriveType,
+  ProductStatus,
+  CatalogStatusCounts,
   ProductStatusFilter,
   UpdateProductDTO,
 } from "@/features/catalog/dto/catalog-dto";
@@ -90,6 +92,7 @@ type ListProductsOptions = {
 
 const CATALOG_ITEM_SELECT =
   "id,name,item_type,serial_number,price_cents,stock_count,status,description,rating,discount_type,discount_amount_cents,discount_percent_bps,discount_reason,bicycles(drive_type),product_images(bucket_name,object_path,external_url,is_primary,sort_order)";
+const PRODUCT_STATUSES: ProductStatus[] = ["active", "reserved", "sold", "archived"];
 
 function mapCategoryFromDb(dbCategory: "bicycle" | "part"): ProductCategory {
   return dbCategory === "bicycle" ? "Bicycle" : "Parts";
@@ -548,6 +551,20 @@ async function fetchCatalogItems(status: ProductStatusFilter = "all"): Promise<C
   return (data ?? []) as unknown as CatalogItemRow[];
 }
 
+async function countCatalogItems(status: ProductStatus): Promise<number> {
+  const supabase = getServerSupabaseAdminClient();
+  const { count, error } = await supabase
+    .from("catalog_items")
+    .select("id", { count: "exact", head: true })
+    .eq("status", status);
+
+  if (error) {
+    throw new AdapterError("Failed to count catalog items.", error);
+  }
+
+  return count ?? 0;
+}
+
 async function syncCatalogReservationStatuses(): Promise<void> {
   const supabase = getServerSupabaseAdminClient();
   const { data: reservationRows, error: reservationError } = await supabase
@@ -638,6 +655,20 @@ export async function listProducts(
     fetchAttributeValueMap(),
   ]);
   return itemRows.map((row) => rowToProduct(row, valuesByItemId));
+}
+
+export async function countProductsByStatus(
+  options: ListProductsOptions = {}
+): Promise<CatalogStatusCounts> {
+  if (options.syncReservations) {
+    await syncCatalogReservationStatuses();
+  }
+
+  const entries = await Promise.all(
+    PRODUCT_STATUSES.map(async (status) => [status, await countCatalogItems(status)] as const)
+  );
+
+  return Object.fromEntries(entries) as CatalogStatusCounts;
 }
 
 export async function listPublicActiveProducts(publicAttributes: AttributeDTO[]): Promise<ProductDTO[]> {

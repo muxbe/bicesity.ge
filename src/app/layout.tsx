@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { AuthProvider } from "@/features/auth";
 import { I18nProvider } from "@/lib/i18n";
 import "./globals.css";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-plus-jakarta-sans",
+});
 
 export const metadata: Metadata = {
   title: "Bike City",
@@ -18,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="v3-surface antialiased">
+    <html lang="en" className={plusJakartaSans.variable}>
+      <body className="v3-surface font-sans antialiased">
         <I18nProvider>
           <AuthProvider>{children}</AuthProvider>
         </I18nProvider>

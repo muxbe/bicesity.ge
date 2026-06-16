@@ -50,7 +50,7 @@ export function bearerToken(request: NextRequest): string | null {
 }
 
 export function canUseDevRoleHeader(): boolean {
-  return process.env.NODE_ENV !== "production" || process.env.ALLOW_INSECURE_ROLE_HEADER === "true";
+  return process.env.NODE_ENV !== "production" && process.env.ALLOW_INSECURE_ROLE_HEADER === "true";
 }
 
 export function readDevRoleHeader(request: NextRequest): StaffRole | null {

@@ -618,7 +618,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-['Plus Jakarta Sans', sans-serif]">
+    <div className="min-h-screen bg-white font-sans">
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-50 bg-white/75 backdrop-blur-xl border-b border-slate-200">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 sm:gap-3 sm:px-6 sm:py-4">

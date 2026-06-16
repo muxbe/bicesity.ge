@@ -62,7 +62,7 @@ export default function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen bg-white font-['Plus Jakarta Sans'] md:flex">
+    <div className="min-h-screen bg-white font-sans md:flex">
       {/* Sidebar */}
       <aside className="brand-sidebar fixed left-0 top-0 hidden h-screen w-72 flex-col xl:flex">
         {/* Top Section - Branding */}
@@ -77,7 +77,7 @@ export default function AdminLayout({
         </div>
 
         {/* Navigation Links */}
-        <nav className="min-h-0 flex-1 overflow-y-auto p-6 space-y-3">
+        <nav className="sidebar-scrollbar min-h-0 flex-1 overflow-y-auto p-6 space-y-3">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -124,7 +124,7 @@ export default function AdminLayout({
           <BikeCityLogo imageClassName="h-12 w-16" priority />
         </div>
 
-        <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-3 py-4">
+        <nav className="sidebar-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-3 py-4">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (

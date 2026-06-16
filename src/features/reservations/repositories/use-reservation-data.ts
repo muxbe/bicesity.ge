@@ -16,14 +16,28 @@ type ReservationDataState = {
   lastRefreshAt: string | null;
 };
 
-export function useReservationData(status: ReservationStatus | "all" = "all"): ReservationDataState {
+type UseReservationDataOptions = {
+  enabled?: boolean;
+};
+
+export function useReservationData(
+  status: ReservationStatus | "all" = "all",
+  options: UseReservationDataOptions = {}
+): ReservationDataState {
+  const enabled = options.enabled ?? true;
   const repository = useMemo(() => getReservationRepository(), []);
   const [reservations, setReservations] = useState<ReservationDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
   const hasLoadedOnceRef = useRef(false);
 
   const load = useCallback(async (options: { background?: boolean } = {}) => {
+    if (!enabled) {
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
     const shouldUseBackgroundRefresh = options.background === true;
     const shouldShowInitialLoader = !shouldUseBackgroundRefresh || !hasLoadedOnceRef.current;
 
@@ -49,24 +63,31 @@ export function useReservationData(status: ReservationStatus | "all" = "all"): R
         setIsLoading(false);
       }
     }
-  }, [repository, status]);
+  }, [enabled, repository, status]);
 
   useEffect(() => {
+    if (!enabled) {
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
     void load();
-  }, [load]);
+  }, [enabled, load]);
 
   const freshness = useFocusFreshness({
     tags: [CRITICAL_INVALIDATION_TAGS.RESERVATIONS_CRITICAL],
     onRefresh: () => load({ background: true }),
+    enabled,
   });
 
   return {
-    reservations,
-    isLoading,
-    isRefreshing: freshness.isRefreshing,
-    error,
-    reload: () => load({ background: hasLoadedOnceRef.current }),
-    isStale: freshness.isStale,
-    lastRefreshAt: freshness.lastRefreshAt,
+    reservations: enabled ? reservations : [],
+    isLoading: enabled ? isLoading : false,
+    isRefreshing: enabled ? freshness.isRefreshing : false,
+    error: enabled ? error : null,
+    reload: () =>
+      enabled ? load({ background: hasLoadedOnceRef.current }) : Promise.resolve(),
+    isStale: enabled ? freshness.isStale : false,
+    lastRefreshAt: enabled ? freshness.lastRefreshAt : null,
   };
 }

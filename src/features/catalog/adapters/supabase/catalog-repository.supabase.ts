@@ -1,5 +1,6 @@
 import type {
   AttributeDTO,
+  CatalogStatusCounts,
   CreateProductDTO,
   MarkSoldDTO,
   ProductDTO,
@@ -60,6 +61,15 @@ export function createSupabaseCatalogRepository(): CatalogRepository {
         cache: "no-store",
       });
       return parseApiResponse<ProductDTO[]>(response, "Failed to fetch catalog items.");
+    },
+
+    async listStatusCounts() {
+      const response = await fetch("/api/catalog/counts", {
+        method: "GET",
+        headers: await getAuthHeaders(),
+        cache: "no-store",
+      });
+      return parseApiResponse<CatalogStatusCounts>(response, "Failed to fetch catalog counts.");
     },
 
     async getProductById(productId) {

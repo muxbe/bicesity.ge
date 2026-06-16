@@ -3,6 +3,7 @@ export type ProductDriveType = string;
 export type ProductDiscountType = "amount" | "percent";
 export type ProductStatus = "active" | "reserved" | "sold" | "archived";
 export type ProductStatusFilter = ProductStatus | "all";
+export type CatalogStatusCounts = Record<ProductStatus, number>;
 export type AttributeInputMode = "free_text" | "single_select";
 
 export type AttributeOptionDTO = {

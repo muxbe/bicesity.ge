@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   AttributeDTO,
+  CatalogStatusCounts,
   ProductDTO,
   ProductStatusFilter,
 } from "@/features/catalog/dto/catalog-dto";
@@ -13,6 +14,7 @@ import { useFocusFreshness } from "@/features/shared/freshness/use-focus-freshne
 type CatalogDataState = {
   products: ProductDTO[];
   attributes: AttributeDTO[];
+  statusCounts: CatalogStatusCounts;
   isLoading: boolean;
   isRefreshing: boolean;
   error: string | null;
@@ -21,11 +23,19 @@ type CatalogDataState = {
   lastRefreshAt: string | null;
 };
 
+const EMPTY_STATUS_COUNTS: CatalogStatusCounts = {
+  active: 0,
+  reserved: 0,
+  sold: 0,
+  archived: 0,
+};
+
 export function useCatalogData(options: { status?: ProductStatusFilter } = {}): CatalogDataState {
   const repository = useMemo(() => getCatalogRepository(), []);
   const status = options.status ?? "all";
   const [products, setProducts] = useState<ProductDTO[]>([]);
   const [attributes, setAttributes] = useState<AttributeDTO[]>([]);
+  const [statusCounts, setStatusCounts] = useState<CatalogStatusCounts>(EMPTY_STATUS_COUNTS);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasLoadedOnceRef = useRef(false);
@@ -39,12 +49,14 @@ export function useCatalogData(options: { status?: ProductStatusFilter } = {}): 
     }
     setError(null);
     try {
-      const [nextProducts, nextAttributes] = await Promise.all([
+      const [nextProducts, nextAttributes, nextStatusCounts] = await Promise.all([
         repository.listProducts({ status }),
         repository.listAttributes(),
+        repository.listStatusCounts(),
       ]);
       setProducts(nextProducts);
       setAttributes(nextAttributes);
+      setStatusCounts(nextStatusCounts);
       hasLoadedOnceRef.current = true;
     } catch (loadError) {
       const message = loadError instanceof Error ? loadError.message : "Failed to load catalog data.";
@@ -68,6 +80,7 @@ export function useCatalogData(options: { status?: ProductStatusFilter } = {}): 
   return {
     products,
     attributes,
+    statusCounts,
     isLoading,
     isRefreshing: freshness.isRefreshing,
     error,

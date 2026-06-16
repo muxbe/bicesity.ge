@@ -1,5 +1,6 @@
 import type {
   AttributeDTO,
+  CatalogStatusCounts,
   CreateProductDTO,
   MarkSoldDTO,
   ProductDTO,
@@ -9,6 +10,7 @@ import type {
 
 export interface CatalogRepository {
   listProducts(options?: { status?: ProductStatusFilter }): Promise<ProductDTO[]>;
+  listStatusCounts(): Promise<CatalogStatusCounts>;
   getProductById(productId: string): Promise<ProductDTO | null>;
   listAttributes(): Promise<AttributeDTO[]>;
   createProduct(input: CreateProductDTO): Promise<ProductDTO>;

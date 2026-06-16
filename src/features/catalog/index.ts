@@ -1,5 +1,6 @@
 export type {
   AttributeDTO,
+  CatalogStatusCounts,
   CreateProductDTO,
   ProductCategory,
   ProductDiscountType,

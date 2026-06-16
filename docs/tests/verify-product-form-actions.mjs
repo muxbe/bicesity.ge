@@ -1,8 +1,10 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const repoRoot = process.cwd();
-const filePath = path.join(repoRoot, "src/features/admin/admin-inventory-view.tsx");
+const productFormPath = path.join(repoRoot, "src/features/admin/inventory/components/product-form.tsx");
+const legacyFilePath = path.join(repoRoot, "src/features/admin/admin-inventory-view.tsx");
+const filePath = existsSync(productFormPath) ? productFormPath : legacyFilePath;
 const source = readFileSync(filePath, "utf8");
 
 const productFormStart = source.indexOf("function ProductForm({");

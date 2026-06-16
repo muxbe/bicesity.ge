@@ -1,7 +1,10 @@
 import type {
   CreateProductDTO,
+  CatalogStatusCounts,
   MarkSoldDTO,
   ProductDTO,
+  ProductStatus,
+  ProductStatusFilter,
   UpdateProductDTO,
 } from "@/features/catalog/dto/catalog-dto";
 import {
@@ -29,6 +32,24 @@ function cloneProduct(product: ProductDTO): ProductDTO {
     images: [...product.images],
     values: { ...product.values },
   };
+}
+
+const PRODUCT_STATUSES: ProductStatus[] = ["active", "reserved", "sold", "archived"];
+
+function filterProductsByStatus(status: ProductStatusFilter = "all"): ProductDTO[] {
+  return mockRuntimeStore.products.filter((product) =>
+    status === "all" ? product.status !== "archived" : product.status === status
+  );
+}
+
+function countProductsByStatus(): CatalogStatusCounts {
+  return PRODUCT_STATUSES.reduce<CatalogStatusCounts>(
+    (counts, status) => ({
+      ...counts,
+      [status]: mockRuntimeStore.products.filter((product) => product.status === status).length,
+    }),
+    { active: 0, reserved: 0, sold: 0, archived: 0 }
+  );
 }
 
 function getProductOrThrow(productId: string): ProductDTO {
@@ -71,8 +92,12 @@ function normalizeImages(images: string[] | undefined, fallbackImage?: string): 
 
 export function createMockCatalogRepository(): CatalogRepository {
   return {
-    async listProducts() {
-      return mockRuntimeStore.products.map(cloneProduct);
+    async listProducts(options) {
+      return filterProductsByStatus(options?.status).map(cloneProduct);
+    },
+
+    async listStatusCounts() {
+      return countProductsByStatus();
     },
 
     async getProductById(productId) {
