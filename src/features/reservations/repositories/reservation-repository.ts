@@ -1,4 +1,5 @@
 import type {
+  ResolveExpiredReservationDTO,
   ReservationCancelReason,
   ReservationDTO,
   ReservationStatus,
@@ -16,4 +17,8 @@ export interface ReservationRepository {
   completeReservationByProductId(productId: string): Promise<void>;
   updateSellerComment(reservationId: string, sellerComment: string): Promise<void>;
   expirePastReservations(referenceTimeIso?: string): Promise<number>;
+  resolveExpiredReservation(
+    reservationId: string,
+    input: ResolveExpiredReservationDTO
+  ): Promise<void>;
 }

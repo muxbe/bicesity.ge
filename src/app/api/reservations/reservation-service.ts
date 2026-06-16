@@ -460,3 +460,5 @@ export async function cancelProductReservation(
   }
   return updated;
 }
+
+export { resolveExpiredReservation } from "@/app/api/reservations/resolve-expired-service";

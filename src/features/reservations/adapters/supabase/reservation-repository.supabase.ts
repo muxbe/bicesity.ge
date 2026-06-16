@@ -1,6 +1,7 @@
 import { AdapterError, ValidationError } from "@/features/shared/domain/errors";
 import { getAuthHeaders, getJsonAuthHeaders } from "@/lib/auth/request-headers";
 import type {
+  ResolveExpiredReservationDTO,
   ReservationCancelReason,
   ReservationDTO,
   ReservationStatus,
@@ -148,6 +149,30 @@ export function createSupabaseReservationRepository(): ReservationRepository {
       }
 
       return payload.data.expiredCount;
+    },
+
+    async resolveExpiredReservation(
+      reservationId: string,
+      input: ResolveExpiredReservationDTO
+    ) {
+      const response = await fetch(
+        `/api/reservations/${encodeURIComponent(reservationId)}/resolve-expired`,
+        {
+          method: "POST",
+          headers: await getJsonAuthHeaders("seller"),
+          body: JSON.stringify(input),
+        }
+      );
+      const payload = (await response.json().catch(() => null)) as ApiResponse<{
+        ok: boolean;
+      }> | null;
+
+      if (!response.ok || !payload?.data) {
+        throw new AdapterError(
+          apiErrorMessage(payload, "Failed to resolve expired reservation."),
+          payload?.details
+        );
+      }
     },
   };
 }

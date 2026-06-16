@@ -1,6 +1,7 @@
 import { NotFoundError, ValidationError } from "@/features/shared/domain/errors";
 import { createRuntimeId, mockRuntimeStore, type MockReservationRecord } from "@/features/mock-runtime/store";
 import type {
+  ResolveExpiredReservationDTO,
   ReservationCancelReason,
   ReservationDTO,
   ReservationStatus,
@@ -67,6 +68,14 @@ function ensureProductExists(productId: string) {
   if (!found) {
     throw new NotFoundError("Product not found.", { productId });
   }
+}
+
+function resolveExpiredNote(input: ResolveExpiredReservationDTO) {
+  const fallback =
+    input.outcome === "release"
+      ? "Product released after reservation expiry."
+      : "Product marked sold after reservation expiry.";
+  return input.note?.trim() || fallback;
 }
 
 export function createMockReservationRepository(): ReservationRepository {
@@ -185,6 +194,73 @@ export function createMockReservationRepository(): ReservationRepository {
         setProductReservedState(reservation.productId, "expired");
       }
       return expiredCount;
+    },
+
+    async resolveExpiredReservation(
+      reservationId: string,
+      input: ResolveExpiredReservationDTO
+    ) {
+      const reservation = mockRuntimeStore.reservations.find((item) => item.id === reservationId);
+      if (!reservation) {
+        throw new NotFoundError("Reservation not found.", { reservationId });
+      }
+      if (reservation.status !== "expired") {
+        throw new ValidationError("Only expired reservations can be resolved.");
+      }
+
+      const productIndex = mockRuntimeStore.products.findIndex(
+        (item) => item.id === reservation.productId
+      );
+      if (productIndex < 0) {
+        throw new NotFoundError("Product for reservation not found.", {
+          productId: reservation.productId,
+        });
+      }
+
+      const nowIso = new Date().toISOString();
+      const product = mockRuntimeStore.products[productIndex];
+      if (input.outcome === "release") {
+        if (product.status === "sold" || product.status === "archived") {
+          throw new ValidationError("Sold or deleted products cannot be released.");
+        }
+        mockRuntimeStore.products[productIndex] = {
+          ...product,
+          status: "active",
+          inStock: product.stockCount > 0,
+        };
+        reservation.cancellationNote = resolveExpiredNote(input);
+        reservation.updatedAt = nowIso;
+        return;
+      }
+
+      if (input.soldPrice < 0) {
+        throw new ValidationError("Sold price must be non-negative.");
+      }
+      if (product.status === "archived") {
+        throw new ValidationError("Deleted products cannot be marked as sold.");
+      }
+      if (product.status === "sold") {
+        throw new ValidationError("Product is already sold.");
+      }
+
+      mockRuntimeStore.sales.unshift({
+        id: createRuntimeId("sale"),
+        productId: product.id,
+        saleChannel: input.saleChannel,
+        salePrice: input.soldPrice,
+        soldAt: nowIso,
+        auditNote: resolveExpiredNote(input),
+        createdAt: nowIso,
+        updatedAt: nowIso,
+      });
+      mockRuntimeStore.products[productIndex] = {
+        ...product,
+        status: "sold",
+        stockCount: 0,
+        inStock: false,
+      };
+      reservation.cancellationNote = resolveExpiredNote(input);
+      reservation.updatedAt = nowIso;
     },
   };
 }

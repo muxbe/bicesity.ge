@@ -1,4 +1,5 @@
 export type {
+  ResolveExpiredReservationDTO,
   ReservationCancelReason,
   ReservationDTO,
   ReservationSource,

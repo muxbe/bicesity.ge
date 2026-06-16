@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import {
   getReservationRepository,
   useReservationData,
+  type ResolveExpiredReservationDTO,
   type ReservationCancelReason,
   type ReservationDTO,
   type ReservationStatus,
@@ -15,6 +16,7 @@ import { useI18n } from '@/lib/i18n';
 export type ReservationStatusFilter = ReservationStatus | 'all';
 export type ReservationDateFilter = 'all' | 'today' | 'upcoming' | 'past';
 export type ReservationCounts = Record<ReservationStatus, number>;
+export type ExpiredResolutionOutcome = ResolveExpiredReservationDTO['outcome'];
 
 const EMPTY_COUNTS: ReservationCounts = {
   active: 0,
@@ -86,6 +88,17 @@ export function useAdminReservationsController() {
   const [cancelReason, setCancelReason] = useState<ReservationCancelReason | ''>('');
   const [cancelNote, setCancelNote] = useState('');
   const [cancelError, setCancelError] = useState<string | null>(null);
+  const [expiredResolutionReservation, setExpiredResolutionReservation] =
+    useState<ReservationDTO | null>(null);
+  const [expiredResolutionOutcome, setExpiredResolutionOutcome] =
+    useState<ExpiredResolutionOutcome>('release');
+  const [expiredResolutionNote, setExpiredResolutionNote] = useState('');
+  const [expiredSoldPrice, setExpiredSoldPrice] = useState('');
+  const [expiredSaleChannel, setExpiredSaleChannel] =
+    useState<'online' | 'in_store' | 'as_is'>('in_store');
+  const [expiredResolutionError, setExpiredResolutionError] = useState<string | null>(null);
+  const [isResolvingExpiredReservationId, setIsResolvingExpiredReservationId] =
+    useState<string | null>(null);
   const reservationRepository = useMemo(() => getReservationRepository(), []);
 
   const sortedReservations = useMemo(
@@ -170,6 +183,71 @@ export function useAdminReservationsController() {
     }
   };
 
+  const openExpiredResolution = (
+    reservation: ReservationDTO,
+    outcome: ExpiredResolutionOutcome
+  ) => {
+    setExpiredResolutionReservation(reservation);
+    setExpiredResolutionOutcome(outcome);
+    setExpiredResolutionNote('');
+    setExpiredSoldPrice(outcome === 'sold' ? String(reservation.price) : '');
+    setExpiredSaleChannel('in_store');
+    setExpiredResolutionError(null);
+  };
+
+  const closeExpiredResolution = () => {
+    if (isResolvingExpiredReservationId !== null) {
+      return;
+    }
+    setExpiredResolutionReservation(null);
+    setExpiredResolutionNote('');
+    setExpiredSoldPrice('');
+    setExpiredResolutionError(null);
+  };
+
+  const submitExpiredResolution = async () => {
+    if (!expiredResolutionReservation) {
+      return;
+    }
+
+    const input: ResolveExpiredReservationDTO =
+      expiredResolutionOutcome === 'release'
+        ? { outcome: 'release', note: expiredResolutionNote }
+        : {
+            outcome: 'sold',
+            soldPrice: Number(expiredSoldPrice),
+            saleChannel: expiredSaleChannel,
+            note: expiredResolutionNote,
+          };
+
+    if (input.outcome === 'sold' && (!Number.isFinite(input.soldPrice) || input.soldPrice < 0)) {
+      setExpiredResolutionError(t('reservations.resolveExpiredPriceRequired'));
+      return;
+    }
+
+    setIsResolvingExpiredReservationId(expiredResolutionReservation.id);
+    setExpiredResolutionError(null);
+    try {
+      await reservationRepository.resolveExpiredReservation(
+        expiredResolutionReservation.id,
+        input
+      );
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.RESERVATIONS_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
+      await reload();
+      setExpiredResolutionReservation(null);
+      setExpiredResolutionNote('');
+      setExpiredSoldPrice('');
+    } catch (caughtError) {
+      setExpiredResolutionError(
+        caughtError instanceof Error ? caughtError.message : t('reservations.resolveExpiredFailed')
+      );
+    } finally {
+      setIsResolvingExpiredReservationId(null);
+    }
+  };
+
   return {
     t,
     reservations: sortedReservations,
@@ -200,5 +278,21 @@ export function useAdminReservationsController() {
     openCancelReservation,
     closeCancelReservation,
     submitCancelReservation,
+    expiredResolutionReservation,
+    expiredResolutionOutcome,
+    expiredResolutionNote,
+    setExpiredResolutionNote,
+    expiredSoldPrice,
+    setExpiredSoldPrice,
+    expiredSaleChannel,
+    setExpiredSaleChannel,
+    expiredResolutionError,
+    isResolvingExpiredReservationId,
+    isExpiredResolutionSubmitting:
+      Boolean(expiredResolutionReservation) &&
+      isResolvingExpiredReservationId === expiredResolutionReservation?.id,
+    openExpiredResolution,
+    closeExpiredResolution,
+    submitExpiredResolution,
   };
 }

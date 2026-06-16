@@ -103,7 +103,11 @@ export function AdminReservationsView() {
               key={reservation.id}
               reservation={reservation}
               isCancelling={reservations.isCancellingProductId === reservation.productId}
+              isResolvingExpired={
+                reservations.isResolvingExpiredReservationId === reservation.id
+              }
               onOpenCancelReservation={reservations.openCancelReservation}
+              onOpenExpiredResolution={reservations.openExpiredResolution}
               onReload={reservations.reload}
             />
           ))}
@@ -121,7 +125,20 @@ export function AdminReservationsView() {
         onClose={reservations.closeCancelReservation}
         onSubmit={reservations.submitCancelReservation}
       />
-      <ResolveExpiredReservationModal />
+      <ResolveExpiredReservationModal
+        reservation={reservations.expiredResolutionReservation}
+        outcome={reservations.expiredResolutionOutcome}
+        note={reservations.expiredResolutionNote}
+        soldPrice={reservations.expiredSoldPrice}
+        saleChannel={reservations.expiredSaleChannel}
+        error={reservations.expiredResolutionError}
+        isSubmitting={reservations.isExpiredResolutionSubmitting}
+        onNoteChange={reservations.setExpiredResolutionNote}
+        onSoldPriceChange={reservations.setExpiredSoldPrice}
+        onSaleChannelChange={reservations.setExpiredSaleChannel}
+        onClose={reservations.closeExpiredResolution}
+        onSubmit={reservations.submitExpiredResolution}
+      />
     </div>
   );
 }

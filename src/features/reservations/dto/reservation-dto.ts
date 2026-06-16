@@ -49,3 +49,15 @@ export type UpsertReservationDTO = {
   reservationSource?: ReservationSource;
   sellerComment?: string;
 };
+
+export type ResolveExpiredReservationDTO =
+  | {
+      outcome: "release";
+      note?: string;
+    }
+  | {
+      outcome: "sold";
+      soldPrice: number;
+      saleChannel: "online" | "in_store" | "as_is";
+      note?: string;
+    };

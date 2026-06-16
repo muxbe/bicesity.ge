@@ -7,12 +7,18 @@ import { formatGel, getFallbackImage } from '@/features/catalog';
 import type { ReservationDTO } from '@/features/reservations';
 import { ReservationCommentEditor } from '@/features/reservations/components/reservation-comment-editor';
 import { ReservationActions } from '@/features/reservations/admin/reservation-actions';
+import type { ExpiredResolutionOutcome } from '@/features/reservations/admin/use-admin-reservations-controller';
 import { categoryLabel, reservationSourceLabel, useI18n } from '@/lib/i18n';
 
 type ReservationCardProps = {
   reservation: ReservationDTO;
   isCancelling: boolean;
+  isResolvingExpired: boolean;
   onOpenCancelReservation: (reservation: ReservationDTO) => void;
+  onOpenExpiredResolution: (
+    reservation: ReservationDTO,
+    outcome: ExpiredResolutionOutcome
+  ) => void;
   onReload: () => void | Promise<void>;
 };
 
@@ -120,7 +126,9 @@ function ReservationCustomerSummary({ reservation }: { reservation: ReservationD
 export function ReservationCard({
   reservation,
   isCancelling,
+  isResolvingExpired,
   onOpenCancelReservation,
+  onOpenExpiredResolution,
   onReload,
 }: ReservationCardProps) {
   const { t } = useI18n();
@@ -206,12 +214,14 @@ export function ReservationCard({
             </div>
           </div>
 
-          {reservation.status === 'active' && (
+          {(reservation.status === 'active' || reservation.status === 'expired') && (
             <div className="shrink-0 lg:min-w-[180px]">
               <ReservationActions
                 reservation={reservation}
                 isCancelling={isCancelling}
+                isResolvingExpired={isResolvingExpired}
                 onOpenCancelReservation={onOpenCancelReservation}
+                onOpenExpiredResolution={onOpenExpiredResolution}
               />
             </div>
           )}
