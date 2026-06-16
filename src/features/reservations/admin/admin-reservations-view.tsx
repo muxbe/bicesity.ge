@@ -2,6 +2,7 @@
 
 import { Loader2, RefreshCw } from 'lucide-react';
 import { CancelReservationModal } from '@/features/reservations/admin/cancel-reservation-modal';
+import { CompleteReservationModal } from '@/features/reservations/admin/complete-reservation-modal';
 import { ReservationCard } from '@/features/reservations/admin/reservation-card';
 import { ReservationFilters } from '@/features/reservations/admin/reservation-filters';
 import { ReservationSummaryCards } from '@/features/reservations/admin/reservation-summary-cards';
@@ -103,10 +104,12 @@ export function AdminReservationsView() {
               key={reservation.id}
               reservation={reservation}
               isCancelling={reservations.isCancellingProductId === reservation.productId}
+              isCompleting={reservations.isCompletingProductId === reservation.productId}
               isResolvingExpired={
                 reservations.isResolvingExpiredReservationId === reservation.id
               }
               onOpenCancelReservation={reservations.openCancelReservation}
+              onOpenCompleteReservation={reservations.openCompleteReservation}
               onOpenExpiredResolution={reservations.openExpiredResolution}
               onReload={reservations.reload}
             />
@@ -124,6 +127,13 @@ export function AdminReservationsView() {
         onNoteChange={reservations.setCancelNote}
         onClose={reservations.closeCancelReservation}
         onSubmit={reservations.submitCancelReservation}
+      />
+      <CompleteReservationModal
+        reservation={reservations.completeModalReservation}
+        error={reservations.completeError}
+        isSubmitting={reservations.isCompleteModalSubmitting}
+        onClose={reservations.closeCompleteReservation}
+        onSubmit={reservations.submitCompleteReservation}
       />
       <ResolveExpiredReservationModal
         reservation={reservations.expiredResolutionReservation}

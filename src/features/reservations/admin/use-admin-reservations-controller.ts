@@ -88,6 +88,10 @@ export function useAdminReservationsController() {
   const [cancelReason, setCancelReason] = useState<ReservationCancelReason | ''>('');
   const [cancelNote, setCancelNote] = useState('');
   const [cancelError, setCancelError] = useState<string | null>(null);
+  const [completeModalReservation, setCompleteModalReservation] =
+    useState<ReservationDTO | null>(null);
+  const [completeError, setCompleteError] = useState<string | null>(null);
+  const [isCompletingProductId, setIsCompletingProductId] = useState<string | null>(null);
   const [expiredResolutionReservation, setExpiredResolutionReservation] =
     useState<ReservationDTO | null>(null);
   const [expiredResolutionOutcome, setExpiredResolutionOutcome] =
@@ -180,6 +184,43 @@ export function useAdminReservationsController() {
       );
     } finally {
       setIsCancellingProductId(null);
+    }
+  };
+
+  const openCompleteReservation = (reservation: ReservationDTO) => {
+    setCompleteModalReservation(reservation);
+    setCompleteError(null);
+  };
+
+  const closeCompleteReservation = () => {
+    if (isCompletingProductId !== null) {
+      return;
+    }
+    setCompleteModalReservation(null);
+    setCompleteError(null);
+  };
+
+  const submitCompleteReservation = async () => {
+    if (!completeModalReservation) {
+      return;
+    }
+
+    const reservation = completeModalReservation;
+    setIsCompletingProductId(reservation.productId);
+    setCompleteError(null);
+    try {
+      await reservationRepository.completeReservationByProductId(reservation.productId);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.RESERVATIONS_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
+      await reload();
+      setCompleteModalReservation(null);
+    } catch (caughtError) {
+      setCompleteError(
+        caughtError instanceof Error ? caughtError.message : t('reservations.completeFailed')
+      );
+    } finally {
+      setIsCompletingProductId(null);
     }
   };
 
@@ -278,6 +319,15 @@ export function useAdminReservationsController() {
     openCancelReservation,
     closeCancelReservation,
     submitCancelReservation,
+    completeModalReservation,
+    completeError,
+    isCompletingProductId,
+    isCompleteModalSubmitting:
+      Boolean(completeModalReservation) &&
+      isCompletingProductId === completeModalReservation?.productId,
+    openCompleteReservation,
+    closeCompleteReservation,
+    submitCompleteReservation,
     expiredResolutionReservation,
     expiredResolutionOutcome,
     expiredResolutionNote,

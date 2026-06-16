@@ -13,8 +13,10 @@ import { categoryLabel, reservationSourceLabel, useI18n } from '@/lib/i18n';
 type ReservationCardProps = {
   reservation: ReservationDTO;
   isCancelling: boolean;
+  isCompleting: boolean;
   isResolvingExpired: boolean;
   onOpenCancelReservation: (reservation: ReservationDTO) => void;
+  onOpenCompleteReservation: (reservation: ReservationDTO) => void;
   onOpenExpiredResolution: (
     reservation: ReservationDTO,
     outcome: ExpiredResolutionOutcome
@@ -126,8 +128,10 @@ function ReservationCustomerSummary({ reservation }: { reservation: ReservationD
 export function ReservationCard({
   reservation,
   isCancelling,
+  isCompleting,
   isResolvingExpired,
   onOpenCancelReservation,
+  onOpenCompleteReservation,
   onOpenExpiredResolution,
   onReload,
 }: ReservationCardProps) {
@@ -219,8 +223,10 @@ export function ReservationCard({
               <ReservationActions
                 reservation={reservation}
                 isCancelling={isCancelling}
+                isCompleting={isCompleting}
                 isResolvingExpired={isResolvingExpired}
                 onOpenCancelReservation={onOpenCancelReservation}
+                onOpenCompleteReservation={onOpenCompleteReservation}
                 onOpenExpiredResolution={onOpenExpiredResolution}
               />
             </div>

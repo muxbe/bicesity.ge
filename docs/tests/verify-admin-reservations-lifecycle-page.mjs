@@ -21,7 +21,9 @@ const files = {
   card: "src/features/reservations/admin/reservation-card.tsx",
   actions: "src/features/reservations/admin/reservation-actions.tsx",
   cancelModal: "src/features/reservations/admin/cancel-reservation-modal.tsx",
+  completeModal: "src/features/reservations/admin/complete-reservation-modal.tsx",
   cancelRoute: "src/app/api/reservations/product/[productId]/cancel/route.ts",
+  completeRoute: "src/app/api/reservations/product/[productId]/complete/route.ts",
   dictionary: "src/lib/i18n/dictionaries.ts",
   resolveExpiredModal:
     "src/features/reservations/admin/resolve-expired-reservation-modal.tsx",
@@ -115,6 +117,14 @@ if (!/cancelModalReservation/.test(source.controller) || !/submitCancelReservati
   failures.push("Controller must expose cancel modal state and submit handler.");
 }
 
+if (!/completeModalReservation/.test(source.controller) || !/submitCompleteReservation/.test(source.controller)) {
+  failures.push("Controller must expose complete modal state and submit handler.");
+}
+
+if (!/completeReservationByProductId/.test(source.controller)) {
+  failures.push("Controller must call completeReservationByProductId() for completion.");
+}
+
 if (!/expiredResolutionReservation/.test(source.controller) || !/submitExpiredResolution/.test(source.controller)) {
   failures.push("Controller must expose expired resolution modal state and submit handler.");
 }
@@ -159,6 +169,10 @@ if (!/reservations\.releaseProduct/.test(source.actions) || !/reservations\.mark
   failures.push("Expired actions must render release and mark-sold buttons.");
 }
 
+if (!/onOpenCompleteReservation/.test(source.actions) || !/reservations\.complete/.test(source.actions)) {
+  failures.push("Active actions must render a complete button that opens confirmation.");
+}
+
 if (!/CancelReservationModal/.test(source.cancelModal)) {
   failures.push("CancelReservationModal component must exist.");
 }
@@ -177,12 +191,28 @@ if (!/CancelReservationModal/.test(source.view)) {
   failures.push("Admin reservations view must render the cancel reason modal.");
 }
 
+if (!/CompleteReservationModal/.test(source.completeModal)) {
+  failures.push("CompleteReservationModal component must exist.");
+}
+
+if (!/reservations\.completeModalTitle/.test(source.completeModal)) {
+  failures.push("Complete modal must render completion title text.");
+}
+
+if (!/CompleteReservationModal/.test(source.view)) {
+  failures.push("Admin reservations view must render the complete confirmation modal.");
+}
+
 if (/return\s+['"]seller_cancelled['"]/.test(source.cancelRoute)) {
   failures.push("Cancel API must not default missing reason to seller_cancelled.");
 }
 
 if (!/Reservation cancellation reason is required/.test(source.cancelRoute)) {
   failures.push("Cancel API must reject missing cancellation reason.");
+}
+
+if (!/completeActiveReservationByProductId/.test(source.completeRoute)) {
+  failures.push("Complete API route must call completeActiveReservationByProductId().");
 }
 
 if (!/ResolveExpiredReservationModal/.test(source.resolveExpiredModal)) {
@@ -202,6 +232,11 @@ if (!/ResolveExpiredReservationModal/.test(source.view)) {
 }
 
 for (const key of [
+  "reservations.complete",
+  "reservations.completeModalTitle",
+  "reservations.completeModalDescription",
+  "reservations.completeModalSubmit",
+  "reservations.completeFailed",
   "reservations.expiredOutcomeTitle",
   "reservations.expiredOutcomeDescription",
   "reservations.releaseProduct",
