@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import {
   getReservationRepository,
   useReservationData,
+  type ReservationCancelReason,
   type ReservationDTO,
   type ReservationStatus,
 } from '@/features/reservations';
@@ -81,6 +82,10 @@ export function useAdminReservationsController() {
   const [dateFilter, setDateFilter] = useState<ReservationDateFilter>('all');
   const [query, setQuery] = useState('');
   const [isCancellingProductId, setIsCancellingProductId] = useState<string | null>(null);
+  const [cancelModalReservation, setCancelModalReservation] = useState<ReservationDTO | null>(null);
+  const [cancelReason, setCancelReason] = useState<ReservationCancelReason | ''>('');
+  const [cancelNote, setCancelNote] = useState('');
+  const [cancelError, setCancelError] = useState<string | null>(null);
   const reservationRepository = useMemo(() => getReservationRepository(), []);
 
   const sortedReservations = useMemo(
@@ -114,18 +119,52 @@ export function useAdminReservationsController() {
     [dateFilter, query, sortedReservations, statusFilter]
   );
 
-  const cancelReservation = async (reservation: ReservationDTO) => {
+  const openCancelReservation = (reservation: ReservationDTO) => {
+    setCancelModalReservation(reservation);
+    setCancelReason('');
+    setCancelNote('');
+    setCancelError(null);
+  };
+
+  const closeCancelReservation = () => {
+    if (isCancellingProductId !== null) {
+      return;
+    }
+    setCancelModalReservation(null);
+    setCancelReason('');
+    setCancelNote('');
+    setCancelError(null);
+  };
+
+  const submitCancelReservation = async () => {
+    if (!cancelModalReservation) {
+      return;
+    }
+    if (!cancelReason) {
+      setCancelError(t('reservations.cancelReasonRequired'));
+      return;
+    }
+
+    const reservation = cancelModalReservation;
     setIsCancellingProductId(reservation.productId);
+    setCancelError(null);
     try {
       await reservationRepository.cancelReservationByProductId(
         reservation.productId,
-        'seller_cancelled',
-        t('reservations.cancelledNote')
+        cancelReason,
+        cancelNote
       );
       publishInvalidation(CRITICAL_INVALIDATION_TAGS.RESERVATIONS_CRITICAL);
       publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
       publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
       await reload();
+      setCancelModalReservation(null);
+      setCancelReason('');
+      setCancelNote('');
+    } catch (caughtError) {
+      setCancelError(
+        caughtError instanceof Error ? caughtError.message : t('reservations.cancelFailed')
+      );
     } finally {
       setIsCancellingProductId(null);
     }
@@ -149,6 +188,17 @@ export function useAdminReservationsController() {
     isStale,
     lastRefreshAt,
     isCancellingProductId,
-    cancelReservation,
+    cancelModalReservation,
+    cancelReason,
+    setCancelReason,
+    cancelNote,
+    setCancelNote,
+    cancelError,
+    isCancelModalSubmitting:
+      Boolean(cancelModalReservation) &&
+      isCancellingProductId === cancelModalReservation?.productId,
+    openCancelReservation,
+    closeCancelReservation,
+    submitCancelReservation,
   };
 }

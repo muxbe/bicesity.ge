@@ -10,6 +10,8 @@ const files = {
   summaryCards: "src/features/reservations/admin/reservation-summary-cards.tsx",
   card: "src/features/reservations/admin/reservation-card.tsx",
   actions: "src/features/reservations/admin/reservation-actions.tsx",
+  cancelModal: "src/features/reservations/admin/cancel-reservation-modal.tsx",
+  cancelRoute: "src/app/api/reservations/product/[productId]/cancel/route.ts",
   resolveExpiredModal:
     "src/features/reservations/admin/resolve-expired-reservation-modal.tsx",
 };
@@ -50,6 +52,14 @@ if (!/reservationCounts/.test(source.controller)) {
   failures.push("Controller must expose lifecycle reservationCounts.");
 }
 
+if (/cancelReservationByProductId\(\s*[^,]+,\s*['"]seller_cancelled['"]/.test(source.controller)) {
+  failures.push("Admin reservations controller must not hard-code seller_cancelled.");
+}
+
+if (!/cancelModalReservation/.test(source.controller) || !/submitCancelReservation/.test(source.controller)) {
+  failures.push("Controller must expose cancel modal state and submit handler.");
+}
+
 if (!/\['all',\s*'active',\s*'completed',\s*'cancelled',\s*'expired'\]/.test(source.filters)) {
   failures.push("Filters must expose all lifecycle status tabs.");
 }
@@ -80,6 +90,32 @@ if (!/reservations\.readOnlyComment/.test(source.card)) {
 
 if (!/reservation\.status\s*!==\s*['"]active['"]/.test(source.actions)) {
   failures.push("Reservation actions must hide mutating actions for non-active reservations.");
+}
+
+if (!/CancelReservationModal/.test(source.cancelModal)) {
+  failures.push("CancelReservationModal component must exist.");
+}
+
+for (const reason of ["customer_cancelled", "seller_cancelled", "no_show", "other"]) {
+  if (!source.cancelModal.includes(reason)) {
+    failures.push(`Cancel modal must expose ${reason} reason option.`);
+  }
+}
+
+if (!/reservations\.cancelReasonRequired/.test(source.cancelModal)) {
+  failures.push("Cancel modal must render required reason validation text.");
+}
+
+if (!/CancelReservationModal/.test(source.view)) {
+  failures.push("Admin reservations view must render the cancel reason modal.");
+}
+
+if (/return\s+['"]seller_cancelled['"]/.test(source.cancelRoute)) {
+  failures.push("Cancel API must not default missing reason to seller_cancelled.");
+}
+
+if (!/Reservation cancellation reason is required/.test(source.cancelRoute)) {
+  failures.push("Cancel API must reject missing cancellation reason.");
 }
 
 if (!/resolve-expired-reservation-modal/.test(source.resolveExpiredModal)) {

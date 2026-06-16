@@ -13,16 +13,16 @@ const CANCEL_REASONS = new Set<ReservationCancelReason>([
   "customer_cancelled",
   "seller_cancelled",
   "no_show",
-  "expired",
   "other",
 ]);
 
 function parseCancelReason(value: unknown): ReservationCancelReason {
-  if (typeof value === "undefined" || value === null || value === "") {
-    return "seller_cancelled";
+  if (typeof value !== "string" || value.trim() === "") {
+    throw new ValidationError("Reservation cancellation reason is required.");
   }
-  if (typeof value === "string" && CANCEL_REASONS.has(value as ReservationCancelReason)) {
-    return value as ReservationCancelReason;
+  const normalized = value.trim();
+  if (CANCEL_REASONS.has(normalized as ReservationCancelReason)) {
+    return normalized as ReservationCancelReason;
   }
   throw new ValidationError("Unsupported reservation cancellation reason.");
 }

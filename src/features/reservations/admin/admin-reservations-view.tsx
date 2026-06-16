@@ -1,6 +1,7 @@
 'use client';
 
 import { Loader2, RefreshCw } from 'lucide-react';
+import { CancelReservationModal } from '@/features/reservations/admin/cancel-reservation-modal';
 import { ReservationCard } from '@/features/reservations/admin/reservation-card';
 import { ReservationFilters } from '@/features/reservations/admin/reservation-filters';
 import { ReservationSummaryCards } from '@/features/reservations/admin/reservation-summary-cards';
@@ -102,13 +103,24 @@ export function AdminReservationsView() {
               key={reservation.id}
               reservation={reservation}
               isCancelling={reservations.isCancellingProductId === reservation.productId}
-              onCancelReservation={reservations.cancelReservation}
+              onOpenCancelReservation={reservations.openCancelReservation}
               onReload={reservations.reload}
             />
           ))}
         </div>
       )}
 
+      <CancelReservationModal
+        reservation={reservations.cancelModalReservation}
+        reason={reservations.cancelReason}
+        note={reservations.cancelNote}
+        error={reservations.cancelError}
+        isSubmitting={reservations.isCancelModalSubmitting}
+        onReasonChange={reservations.setCancelReason}
+        onNoteChange={reservations.setCancelNote}
+        onClose={reservations.closeCancelReservation}
+        onSubmit={reservations.submitCancelReservation}
+      />
       <ResolveExpiredReservationModal />
     </div>
   );

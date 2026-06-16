@@ -12,7 +12,7 @@ import { categoryLabel, reservationSourceLabel, useI18n } from '@/lib/i18n';
 type ReservationCardProps = {
   reservation: ReservationDTO;
   isCancelling: boolean;
-  onCancelReservation: (reservation: ReservationDTO) => void | Promise<void>;
+  onOpenCancelReservation: (reservation: ReservationDTO) => void;
   onReload: () => void | Promise<void>;
 };
 
@@ -120,7 +120,7 @@ function ReservationCustomerSummary({ reservation }: { reservation: ReservationD
 export function ReservationCard({
   reservation,
   isCancelling,
-  onCancelReservation,
+  onOpenCancelReservation,
   onReload,
 }: ReservationCardProps) {
   const { t } = useI18n();
@@ -211,7 +211,7 @@ export function ReservationCard({
               <ReservationActions
                 reservation={reservation}
                 isCancelling={isCancelling}
-                onCancelReservation={onCancelReservation}
+                onOpenCancelReservation={onOpenCancelReservation}
               />
             </div>
           )}

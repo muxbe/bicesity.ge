@@ -7,13 +7,13 @@ import { useI18n } from '@/lib/i18n';
 type ReservationActionsProps = {
   reservation: ReservationDTO;
   isCancelling: boolean;
-  onCancelReservation: (reservation: ReservationDTO) => void | Promise<void>;
+  onOpenCancelReservation: (reservation: ReservationDTO) => void;
 };
 
 export function ReservationActions({
   reservation,
   isCancelling,
-  onCancelReservation,
+  onOpenCancelReservation,
 }: ReservationActionsProps) {
   const { t } = useI18n();
 
@@ -24,7 +24,7 @@ export function ReservationActions({
   return (
     <button
       type="button"
-      onClick={() => void onCancelReservation(reservation)}
+      onClick={() => onOpenCancelReservation(reservation)}
       disabled={isCancelling}
       className="flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-300 px-4 text-sm font-semibold text-rose-700 transition-colors hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
     >
