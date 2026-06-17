@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Eye, EyeOff, GripVertical, Loader2, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { getFieldRepository, useFieldData } from '@/features/fields';
-import type { FieldDTO, FieldDataType, FieldOptionDTO } from '@/features/fields';
+import type { FieldDTO, FieldDataType } from '@/features/fields';
 import {
   buildFieldLayoutItems,
   coreFieldOptions,
@@ -13,90 +13,26 @@ import {
   setCoreFieldOptions,
   setCategoryFieldOrder,
   setCorePublicVisibility,
-  type CoreFieldDefinition,
   type CoreFieldKey,
-  type CoreFieldOption,
   type FieldLayoutItem,
 } from '@/features/fields/field-layout';
+import type {
+  Category,
+  CoreFieldEditor,
+  VisibilityFilter,
+} from '@/features/fields/admin/field-settings-types';
+import {
+  CATEGORY_OPTION_VALUES_FOR_FIELDS,
+  canEditCoreOptions,
+  normalizeCoreOptionLabels,
+  normalizeOptionLabels,
+  parseActionError,
+} from '@/features/fields/admin/field-settings-helpers';
 import { publishInvalidation } from '@/features/shared/freshness/invalidation';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { getFieldDataSource } from '@/lib/feature-flags';
 import { hasSupabasePublicEnv } from '@/lib/supabase/client';
 import { fieldNameLabel, useI18n } from '@/lib/i18n';
-
-type Category = 'Bicycle' | 'Parts';
-type VisibilityFilter = 'all' | 'public' | 'internal';
-type CoreFieldEditor = {
-  category: Category;
-  field: CoreFieldDefinition;
-  isPublic: boolean;
-};
-
-const CATEGORY_OPTION_VALUES = ['Bicycle', 'Parts'] as const;
-
-function parseActionError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return 'Action failed. Please try again.';
-}
-
-function normalizeOptionLabels(labels: string[]): Array<Pick<FieldOptionDTO, 'label' | 'value' | 'sortOrder'>> {
-  const seen = new Set<string>();
-  return labels
-    .map((label) => label.trim())
-    .filter((label) => {
-      if (!label) {
-        return false;
-      }
-      const key = label.toLowerCase();
-      if (seen.has(key)) {
-        return false;
-      }
-      seen.add(key);
-      return true;
-    })
-    .map((label, index) => ({
-      label,
-      value: label,
-      sortOrder: index + 1,
-    }));
-}
-
-function normalizeCoreOptionLabels(
-  fieldKey: CoreFieldKey,
-  labels: string[]
-): CoreFieldOption[] {
-  if (fieldKey === 'category') {
-    return CATEGORY_OPTION_VALUES.map((value, index) => ({
-      value,
-      label: labels[index]?.trim() || value,
-    }));
-  }
-
-  const seen = new Set<string>();
-  return labels
-    .map((label) => label.trim())
-    .filter((label) => {
-      if (!label) {
-        return false;
-      }
-      const key = label.toLowerCase();
-      if (seen.has(key)) {
-        return false;
-      }
-      seen.add(key);
-      return true;
-    })
-    .map((label) => ({
-      label,
-      value: label,
-    }));
-}
-
-function canEditCoreOptions(fieldKey: CoreFieldKey) {
-  return fieldKey === 'category' || fieldKey === 'drive_type';
-}
 
 export default function FieldSettingsPage() {
   const { locale, t } = useI18n();
@@ -360,7 +296,7 @@ export default function FieldSettingsPage() {
     setCoreFieldIsPublic(item.isPublic);
     if (item.core.key === 'category') {
       setCoreOptionDrafts(
-        CATEGORY_OPTION_VALUES.map(
+        CATEGORY_OPTION_VALUES_FOR_FIELDS.map(
           (value) => existingOptions.find((option) => option.value === value)?.label ?? value
         )
       );
@@ -998,7 +934,7 @@ export default function FieldSettingsPage() {
                       />
                       {coreFieldEditor.field.key === 'category' ? (
                         <span className="inline-flex h-11 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-slate-500">
-                          {t('fields.savesAs', { value: CATEGORY_OPTION_VALUES[index] })}
+                          {t('fields.savesAs', { value: CATEGORY_OPTION_VALUES_FOR_FIELDS[index] })}
                         </span>
                       ) : (
                         <button
