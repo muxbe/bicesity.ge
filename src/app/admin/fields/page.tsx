@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Eye, EyeOff, GripVertical, Loader2, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
+import { Eye, EyeOff, GripVertical, Loader2, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { getFieldRepository, useFieldData } from '@/features/fields';
 import type { FieldDTO, FieldDataType } from '@/features/fields';
 import {
@@ -28,8 +28,9 @@ import {
   normalizeOptionLabels,
   parseActionError,
 } from '@/features/fields/admin/field-settings-helpers';
-import { FieldOptionDrafts } from '@/features/fields/admin/field-option-drafts';
 import { AddFieldModal } from '@/features/fields/admin/add-field-modal';
+import { EditCoreFieldModal } from '@/features/fields/admin/edit-core-field-modal';
+import { EditCustomFieldModal } from '@/features/fields/admin/edit-custom-field-modal';
 import { publishInvalidation } from '@/features/shared/freshness/invalidation';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { getFieldDataSource } from '@/lib/feature-flags';
@@ -720,272 +721,49 @@ export default function FieldSettingsPage() {
         onSubmit={() => void createField()}
         onClose={() => setShowModal(false)}
       />
-      {coreFieldEditor && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/60 p-3 backdrop-blur-md sm:p-4">
-          <div className="max-h-[calc(100vh-1.5rem)] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 sm:max-h-[calc(100vh-2rem)] sm:rounded-[3rem] sm:p-8">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h2 className="text-2xl font-black text-slate-900">{t('fields.editCoreTitle')}</h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  {t('fields.editCoreDescription')}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={closeCoreEditor}
-                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
-                aria-label={t('fields.closeCoreEditor')}
-              >
-                <X size={24} className="text-slate-600" />
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.fieldName')}
-                </label>
-                <input
-                  type="text"
-                  value={coreFieldName}
-                  onChange={(event) => setCoreFieldName(event.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900"
-                />
-              </div>
-
-              <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <input
-                  type="checkbox"
-                  checked={coreFieldIsPublic}
-                  onChange={(event) => setCoreFieldIsPublic(event.target.checked)}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
-                />
-                <span className="text-sm font-semibold text-slate-900">
-                  {t('fields.publicVisibility')}
-                </span>
-              </label>
-
-              {canEditCoreOptions(coreFieldEditor.field.key) && (
-                <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                      {t('fields.dropdownOptions')}
-                    </p>
-                    {coreFieldEditor.field.key !== 'category' && (
-                      <button
-                        type="button"
-                        onClick={() => setCoreOptionDrafts((current) => [...current, ''])}
-                        className="brand-control rounded-lg border px-3 py-2 text-xs font-bold text-slate-700 hover:bg-cyan-50"
-                      >
-                        {t('fields.addOption')}
-                      </button>
-                    )}
-                  </div>
-
-                  {coreFieldEditor.field.key === 'category' && (
-                    <p className="text-xs font-semibold text-slate-500">
-                      {t('fields.categoryNote')}
-                    </p>
-                  )}
-
-                  <FieldOptionDrafts
-                    drafts={coreOptionDrafts}
-                    onChange={updateCoreOptionDraft}
-                    onRemove={removeCoreOptionDraft}
-                    optionPlaceholder={(index) => t('fields.optionPlaceholder', { number: index + 1 })}
-                    deleteLabel={t('common.delete')}
-                    deleteButtonClassName="h-11 rounded-lg border border-rose-200 bg-white px-3 text-xs font-bold text-rose-700 hover:bg-rose-50"
-                    fixedValues={
-                      coreFieldEditor.field.key === 'category'
-                        ? CATEGORY_OPTION_VALUES_FOR_FIELDS
-                        : undefined
-                    }
-                    fixedValueLabel={(value) => t('fields.savesAs', { value })}
-                  />
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={saveCoreEditor}
-                  disabled={!coreFieldName.trim()}
-                  className="brand-primary flex-1 py-3 rounded-2xl font-semibold transition-colors disabled:bg-slate-300"
-                >
-                  {t('fields.saveField')}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeCoreEditor}
-                  className="flex-1 bg-white border border-slate-200 text-slate-900 font-semibold py-3 rounded-2xl hover:bg-slate-50 transition-colors"
-                >
-                  {t('common.cancel')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {optionsField && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/60 p-3 backdrop-blur-md sm:p-4">
-          <div className="max-h-[calc(100vh-1.5rem)] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 sm:max-h-[calc(100vh-2rem)] sm:rounded-[3rem] sm:p-8">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h2 className="text-2xl font-black text-slate-900">{t('fields.editFieldTitle')}</h2>
-                <p className="mt-1 text-sm text-slate-500">{t('fields.editFieldDescription')}</p>
-              </div>
-              <button
-                type="button"
-                onClick={closeOptionsEditor}
-                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
-                aria-label={t('fields.closeOptions')}
-              >
-                <X size={24} className="text-slate-600" />
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.englishLabel')}
-                </label>
-                <input
-                  type="text"
-                  value={optionsFieldName}
-                  onChange={(event) => setOptionsFieldName(event.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900"
-                />
-                <p className="mt-2 text-xs text-slate-500">{t('fields.translationHelp')}</p>
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.russianLabel')}
-                </label>
-                <input
-                  type="text"
-                  value={optionsFieldNameRu}
-                  onChange={(event) => setOptionsFieldNameRu(event.target.value)}
-                  placeholder={t('fields.russianLabelOptional')}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.georgianLabel')}
-                </label>
-                <input
-                  type="text"
-                  value={optionsFieldNameKa}
-                  onChange={(event) => setOptionsFieldNameKa(event.target.value)}
-                  placeholder={t('fields.georgianLabelOptional')}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.fieldType')}
-                </label>
-                <select
-                  value={optionsFieldDataType}
-                  onChange={(event) => setOptionsFieldDataType(event.target.value as FieldDataType)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900"
-                >
-                  <option value="text">{t('fields.text')}</option>
-                  <option value="number">{t('fields.number')}</option>
-                  <option value="boolean">{t('fields.boolean')}</option>
-                  <option value="date">{t('fields.date')}</option>
-                  <option value="url">{t('fields.url')}</option>
-                  <option value="image">{t('fields.imageUrl')}</option>
-                </select>
-              </div>
-
-              <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <input
-                  type="checkbox"
-                  checked={optionsFieldIsPublic}
-                  onChange={(event) => setOptionsFieldIsPublic(event.target.checked)}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
-                />
-                <span className="text-sm font-semibold text-slate-900">
-                  {t('fields.publicVisibility')}
-                </span>
-              </label>
-
-              <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <input
-                  type="checkbox"
-                  checked={optionsEnabled}
-                  onChange={(event) => {
-                    setOptionsEnabled(event.target.checked);
-                    if (event.target.checked && optionDrafts.length === 0) {
-                      setOptionDrafts(['']);
-                    }
-                  }}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
-                />
-                <span className="text-sm font-semibold text-slate-900">
-                  {t('fields.useFixedOptions')}
-                </span>
-              </label>
-
-              {optionsEnabled && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                      {t('fields.options')}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setOptionDrafts((current) => [...current, ''])}
-                      className="brand-control rounded-lg border px-3 py-2 text-xs font-bold text-slate-700 hover:bg-cyan-50"
-                    >
-                      {t('fields.addOption')}
-                    </button>
-                  </div>
-
-                  <FieldOptionDrafts
-                    drafts={optionDrafts}
-                    onChange={updateOptionDraft}
-                    onRemove={removeOptionDraft}
-                    onMove={moveOptionDraft}
-                    optionPlaceholder={(index) => t('fields.optionPlaceholder', { number: index + 1 })}
-                    deleteLabel={t('common.delete')}
-                    deleteButtonClassName="h-11 rounded-lg border border-rose-200 px-2 text-xs font-bold text-rose-700 hover:bg-rose-50"
-                    upLabel={t('fields.up')}
-                    downLabel={t('fields.down')}
-                  />
-                </div>
-              )}
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
-                {t('fields.fixedOptionsHelp')}
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => void saveOptions()}
-                  disabled={workingFieldId === optionsField.id || !optionsFieldName.trim()}
-                  className="brand-primary flex-1 py-3 rounded-2xl font-semibold transition-colors disabled:bg-slate-300"
-                >
-                  {workingFieldId === optionsField.id ? t('common.saving') : t('fields.saveField')}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeOptionsEditor}
-                  className="flex-1 bg-white border border-slate-200 text-slate-900 font-semibold py-3 rounded-2xl hover:bg-slate-50 transition-colors"
-                >
-                  {t('common.cancel')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <EditCoreFieldModal
+        editor={coreFieldEditor}
+        fieldName={coreFieldName}
+        isPublic={coreFieldIsPublic}
+        optionDrafts={coreOptionDrafts}
+        t={t}
+        onFieldNameChange={setCoreFieldName}
+        onPublicChange={setCoreFieldIsPublic}
+        onOptionDraftChange={updateCoreOptionDraft}
+        onOptionDraftRemove={removeCoreOptionDraft}
+        onOptionDraftAdd={() => setCoreOptionDrafts((current) => [...current, ''])}
+        onSave={saveCoreEditor}
+        onClose={closeCoreEditor}
+      />
+      <EditCustomFieldModal
+        field={optionsField}
+        fieldName={optionsFieldName}
+        fieldNameRu={optionsFieldNameRu}
+        fieldNameKa={optionsFieldNameKa}
+        dataType={optionsFieldDataType}
+        isPublic={optionsFieldIsPublic}
+        optionsEnabled={optionsEnabled}
+        optionDrafts={optionDrafts}
+        isSaving={optionsField ? workingFieldId === optionsField.id : false}
+        t={t}
+        onFieldNameChange={setOptionsFieldName}
+        onFieldNameRuChange={setOptionsFieldNameRu}
+        onFieldNameKaChange={setOptionsFieldNameKa}
+        onDataTypeChange={setOptionsFieldDataType}
+        onPublicChange={setOptionsFieldIsPublic}
+        onOptionsEnabledChange={(value) => {
+          setOptionsEnabled(value);
+          if (value && optionDrafts.length === 0) {
+            setOptionDrafts(['']);
+          }
+        }}
+        onOptionDraftChange={updateOptionDraft}
+        onOptionDraftRemove={removeOptionDraft}
+        onOptionDraftMove={moveOptionDraft}
+        onOptionDraftAdd={() => setOptionDrafts((current) => [...current, ''])}
+        onSave={() => void saveOptions()}
+        onClose={closeOptionsEditor}
+      />
     </div>
   );
 }
