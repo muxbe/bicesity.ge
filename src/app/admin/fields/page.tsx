@@ -29,6 +29,7 @@ import {
   parseActionError,
 } from '@/features/fields/admin/field-settings-helpers';
 import { FieldOptionDrafts } from '@/features/fields/admin/field-option-drafts';
+import { AddFieldModal } from '@/features/fields/admin/add-field-modal';
 import { publishInvalidation } from '@/features/shared/freshness/invalidation';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { getFieldDataSource } from '@/lib/feature-flags';
@@ -691,162 +692,34 @@ export default function FieldSettingsPage() {
         </button>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/60 p-3 backdrop-blur-md sm:p-4">
-          <div className="max-h-[calc(100vh-1.5rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-4 sm:rounded-[3rem] sm:p-8">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-black text-slate-900">{t('fields.addNewField')}</h2>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
-              >
-                <X size={24} className="text-slate-600" />
-              </button>
-            </div>
-
-            <form
-              className="space-y-6"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void createField();
-              }}
-            >
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.englishLabel')}
-                </label>
-                <input
-                  type="text"
-                  value={newFieldName}
-                  onChange={(event) => setNewFieldName(event.target.value)}
-                  placeholder={t('fields.fieldNamePlaceholder')}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400"
-                />
-                <p className="mt-2 text-xs text-slate-500">{t('fields.translationHelp')}</p>
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.russianLabel')}
-                </label>
-                <input
-                  type="text"
-                  value={newFieldNameRu}
-                  onChange={(event) => setNewFieldNameRu(event.target.value)}
-                  placeholder={t('fields.russianLabelOptional')}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.georgianLabel')}
-                </label>
-                <input
-                  type="text"
-                  value={newFieldNameKa}
-                  onChange={(event) => setNewFieldNameKa(event.target.value)}
-                  placeholder={t('fields.georgianLabelOptional')}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">
-                  {t('fields.fieldType')}
-                </label>
-                <select
-                  value={newFieldDataType}
-                  onChange={(event) => setNewFieldDataType(event.target.value as FieldDataType)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900"
-                >
-                  <option value="text">{t('fields.text')}</option>
-                  <option value="number">{t('fields.number')}</option>
-                  <option value="boolean">{t('fields.boolean')}</option>
-                  <option value="date">{t('fields.date')}</option>
-                  <option value="url">{t('fields.url')}</option>
-                  <option value="image">{t('fields.imageUrl')}</option>
-                </select>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4">
-                <label className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={newFieldOptionsEnabled}
-                    onChange={(event) => {
-                      setNewFieldOptionsEnabled(event.target.checked);
-                      if (event.target.checked && newFieldOptionDrafts.length === 0) {
-                        setNewFieldOptionDrafts(['']);
-                      }
-                    }}
-                    className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
-                  />
-                  <span className="text-sm font-semibold text-slate-900">
-                    {t('fields.addFixedOptions')}
-                  </span>
-                </label>
-
-                {newFieldOptionsEnabled && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                        {t('fields.options')}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setNewFieldOptionDrafts((current) => [...current, ''])}
-                        className="brand-control rounded-lg border px-3 py-2 text-xs font-bold text-slate-700 hover:bg-white"
-                      >
-                        {t('fields.addOption')}
-                      </button>
-                    </div>
-
-                    <FieldOptionDrafts
-                      drafts={newFieldOptionDrafts}
-                      onChange={updateNewFieldOptionDraft}
-                      onRemove={removeNewFieldOptionDraft}
-                      optionPlaceholder={(index) => t('fields.optionPlaceholder', { number: index + 1 })}
-                      deleteLabel={t('common.delete')}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="isPublic"
-                  checked={isPublic}
-                  onChange={(event) => setIsPublic(event.target.checked)}
-                  className="w-5 h-5 rounded-lg border border-slate-300 cursor-pointer accent-cyan-600"
-                />
-                <label htmlFor="isPublic" className="text-sm font-semibold text-slate-900 cursor-pointer">
-                  {t('fields.publicVisibility')}
-                </label>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="submit"
-                  disabled={workingFieldId === 'creating' || !newFieldName.trim()}
-                  className="brand-primary flex-1 py-3 rounded-2xl font-semibold transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
-                >
-                  {workingFieldId === 'creating' ? t('fields.creating') : t('fields.createField')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 bg-white border border-slate-200 text-slate-900 font-semibold py-3 rounded-2xl hover:bg-slate-50 transition-colors"
-                >
-                  {t('common.cancel')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
+      <AddFieldModal
+        isOpen={showModal}
+        fieldName={newFieldName}
+        fieldNameRu={newFieldNameRu}
+        fieldNameKa={newFieldNameKa}
+        dataType={newFieldDataType}
+        isPublic={isPublic}
+        optionsEnabled={newFieldOptionsEnabled}
+        optionDrafts={newFieldOptionDrafts}
+        isCreating={workingFieldId === 'creating'}
+        t={t}
+        onFieldNameChange={setNewFieldName}
+        onFieldNameRuChange={setNewFieldNameRu}
+        onFieldNameKaChange={setNewFieldNameKa}
+        onDataTypeChange={setNewFieldDataType}
+        onPublicChange={setIsPublic}
+        onOptionsEnabledChange={(value) => {
+          setNewFieldOptionsEnabled(value);
+          if (value && newFieldOptionDrafts.length === 0) {
+            setNewFieldOptionDrafts(['']);
+          }
+        }}
+        onOptionDraftChange={updateNewFieldOptionDraft}
+        onOptionDraftRemove={removeNewFieldOptionDraft}
+        onOptionDraftAdd={() => setNewFieldOptionDrafts((current) => [...current, ''])}
+        onSubmit={() => void createField()}
+        onClose={() => setShowModal(false)}
+      />
       {coreFieldEditor && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/60 p-3 backdrop-blur-md sm:p-4">
           <div className="max-h-[calc(100vh-1.5rem)] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 sm:max-h-[calc(100vh-2rem)] sm:rounded-[3rem] sm:p-8">
