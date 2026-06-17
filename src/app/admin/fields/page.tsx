@@ -28,6 +28,7 @@ import {
   normalizeOptionLabels,
   parseActionError,
 } from '@/features/fields/admin/field-settings-helpers';
+import { FieldOptionDrafts } from '@/features/fields/admin/field-option-drafts';
 import { publishInvalidation } from '@/features/shared/freshness/invalidation';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { getFieldDataSource } from '@/lib/feature-flags';
@@ -801,23 +802,13 @@ export default function FieldSettingsPage() {
                       </button>
                     </div>
 
-                    {newFieldOptionDrafts.map((option, index) => (
-                      <div key={index} className="grid grid-cols-[1fr,auto] gap-2">
-                        <input
-                          value={option}
-                          onChange={(event) => updateNewFieldOptionDraft(index, event.target.value)}
-                          placeholder={t('fields.optionPlaceholder', { number: index + 1 })}
-                          className="brand-control h-11 rounded-xl border px-3 text-sm"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeNewFieldOptionDraft(index)}
-                          className="h-11 rounded-lg border border-rose-200 px-3 text-xs font-bold text-rose-700 hover:bg-rose-50"
-                        >
-                          {t('common.delete')}
-                        </button>
-                      </div>
-                    ))}
+                    <FieldOptionDrafts
+                      drafts={newFieldOptionDrafts}
+                      onChange={updateNewFieldOptionDraft}
+                      onRemove={removeNewFieldOptionDraft}
+                      optionPlaceholder={(index) => t('fields.optionPlaceholder', { number: index + 1 })}
+                      deleteLabel={t('common.delete')}
+                    />
                   </div>
                 )}
               </div>
@@ -924,29 +915,20 @@ export default function FieldSettingsPage() {
                     </p>
                   )}
 
-                  {coreOptionDrafts.map((option, index) => (
-                    <div key={index} className="grid grid-cols-[1fr,auto] gap-2">
-                      <input
-                        value={option}
-                        onChange={(event) => updateCoreOptionDraft(index, event.target.value)}
-                        placeholder={t('fields.optionPlaceholder', { number: index + 1 })}
-                        className="brand-control h-11 rounded-xl border px-3 text-sm"
-                      />
-                      {coreFieldEditor.field.key === 'category' ? (
-                        <span className="inline-flex h-11 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-slate-500">
-                          {t('fields.savesAs', { value: CATEGORY_OPTION_VALUES_FOR_FIELDS[index] })}
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => removeCoreOptionDraft(index)}
-                          className="h-11 rounded-lg border border-rose-200 bg-white px-3 text-xs font-bold text-rose-700 hover:bg-rose-50"
-                        >
-                          {t('common.delete')}
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                  <FieldOptionDrafts
+                    drafts={coreOptionDrafts}
+                    onChange={updateCoreOptionDraft}
+                    onRemove={removeCoreOptionDraft}
+                    optionPlaceholder={(index) => t('fields.optionPlaceholder', { number: index + 1 })}
+                    deleteLabel={t('common.delete')}
+                    deleteButtonClassName="h-11 rounded-lg border border-rose-200 bg-white px-3 text-xs font-bold text-rose-700 hover:bg-rose-50"
+                    fixedValues={
+                      coreFieldEditor.field.key === 'category'
+                        ? CATEGORY_OPTION_VALUES_FOR_FIELDS
+                        : undefined
+                    }
+                    fixedValueLabel={(value) => t('fields.savesAs', { value })}
+                  />
                 </div>
               )}
 
@@ -1092,41 +1074,17 @@ export default function FieldSettingsPage() {
                     </button>
                   </div>
 
-                  {optionDrafts.map((option, index) => (
-                    <div key={index} className="grid grid-cols-[1fr,auto] gap-2">
-                      <input
-                        value={option}
-                        onChange={(event) => updateOptionDraft(index, event.target.value)}
-                        placeholder={t('fields.optionPlaceholder', { number: index + 1 })}
-                        className="brand-control h-11 rounded-xl border px-3 text-sm"
-                      />
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => moveOptionDraft(index, -1)}
-                          disabled={index === 0}
-                          className="h-11 rounded-lg border border-slate-200 px-2 text-xs font-bold text-slate-600 disabled:opacity-40"
-                        >
-                          {t('fields.up')}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => moveOptionDraft(index, 1)}
-                          disabled={index === optionDrafts.length - 1}
-                          className="h-11 rounded-lg border border-slate-200 px-2 text-xs font-bold text-slate-600 disabled:opacity-40"
-                        >
-                          {t('fields.down')}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeOptionDraft(index)}
-                          className="h-11 rounded-lg border border-rose-200 px-2 text-xs font-bold text-rose-700 hover:bg-rose-50"
-                        >
-                          {t('common.delete')}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                  <FieldOptionDrafts
+                    drafts={optionDrafts}
+                    onChange={updateOptionDraft}
+                    onRemove={removeOptionDraft}
+                    onMove={moveOptionDraft}
+                    optionPlaceholder={(index) => t('fields.optionPlaceholder', { number: index + 1 })}
+                    deleteLabel={t('common.delete')}
+                    deleteButtonClassName="h-11 rounded-lg border border-rose-200 px-2 text-xs font-bold text-rose-700 hover:bg-rose-50"
+                    upLabel={t('fields.up')}
+                    downLabel={t('fields.down')}
+                  />
                 </div>
               )}
 
