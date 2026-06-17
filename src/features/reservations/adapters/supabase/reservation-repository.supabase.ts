@@ -5,6 +5,7 @@ import type {
   ReservationCancelReason,
   ReservationDTO,
   ReservationStatus,
+  SellActiveReservationDTO,
   UpsertReservationDTO,
 } from "@/features/reservations/dto/reservation-dto";
 import type { ReservationRepository } from "@/features/reservations/repositories/reservation-repository";
@@ -170,6 +171,30 @@ export function createSupabaseReservationRepository(): ReservationRepository {
       if (!response.ok || !payload?.data) {
         throw new AdapterError(
           apiErrorMessage(payload, "Failed to resolve expired reservation."),
+          payload?.details
+        );
+      }
+    },
+
+    async sellActiveReservation(
+      reservationId: string,
+      input: SellActiveReservationDTO
+    ) {
+      const response = await fetch(
+        `/api/reservations/${encodeURIComponent(reservationId)}/sell`,
+        {
+          method: "POST",
+          headers: await getJsonAuthHeaders("seller"),
+          body: JSON.stringify(input),
+        }
+      );
+      const payload = (await response.json().catch(() => null)) as ApiResponse<{
+        ok: boolean;
+      }> | null;
+
+      if (!response.ok || !payload?.data) {
+        throw new AdapterError(
+          apiErrorMessage(payload, "Failed to sell active reservation."),
           payload?.details
         );
       }

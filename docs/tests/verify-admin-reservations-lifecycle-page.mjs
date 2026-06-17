@@ -13,6 +13,9 @@ const files = {
     "src/features/reservations/adapters/supabase/reservation-repository.supabase.ts",
   mockRepository: "src/features/reservations/adapters/mock/reservation-repository.mock.ts",
   service: "src/app/api/reservations/reservation-service.ts",
+  sellActiveService: "src/app/api/reservations/sell-active-service.ts",
+  sellActiveRoute:
+    "src/app/api/reservations/[id]/sell/route.ts",
   resolveExpiredService: "src/app/api/reservations/resolve-expired-service.ts",
   resolveExpiredRoute:
     "src/app/api/reservations/[id]/resolve-expired/route.ts",
@@ -25,6 +28,8 @@ const files = {
   cancelRoute: "src/app/api/reservations/product/[productId]/cancel/route.ts",
   completeRoute: "src/app/api/reservations/product/[productId]/complete/route.ts",
   dictionary: "src/lib/i18n/dictionaries.ts",
+  sellActiveModal:
+    "src/features/reservations/admin/sell-active-reservation-modal.tsx",
   resolveExpiredModal:
     "src/features/reservations/admin/resolve-expired-reservation-modal.tsx",
 };
@@ -69,16 +74,36 @@ if (!/ResolveExpiredReservationDTO/.test(source.dto)) {
   failures.push("Reservation DTO must expose ResolveExpiredReservationDTO.");
 }
 
+if (!/SellActiveReservationDTO/.test(source.dto)) {
+  failures.push("Reservation DTO must expose SellActiveReservationDTO.");
+}
+
 if (!/ResolveExpiredReservationDTO/.test(source.index)) {
   failures.push("Reservations feature index must export ResolveExpiredReservationDTO.");
+}
+
+if (!/SellActiveReservationDTO/.test(source.index)) {
+  failures.push("Reservations feature index must export SellActiveReservationDTO.");
 }
 
 if (!/resolveExpiredReservation\s*\(/.test(source.repository)) {
   failures.push("Reservation repository must expose resolveExpiredReservation().");
 }
 
+if (!/sellActiveReservation\s*\(/.test(source.repository)) {
+  failures.push("Reservation repository must expose sellActiveReservation().");
+}
+
 if (!/resolveExpiredReservation\s*\(/.test(source.supabaseRepository)) {
   failures.push("Supabase reservation repository must implement resolveExpiredReservation().");
+}
+
+if (!/sellActiveReservation\s*\(/.test(source.supabaseRepository)) {
+  failures.push("Supabase reservation repository must implement sellActiveReservation().");
+}
+
+if (!/\/api\/reservations\/\$\{encodeURIComponent\(reservationId\)\}\/sell/.test(source.supabaseRepository)) {
+  failures.push("Supabase repository must call the active reservation sell API route.");
 }
 
 if (!/\/api\/reservations\/\$\{encodeURIComponent\(reservationId\)\}\/resolve-expired/.test(source.supabaseRepository)) {
@@ -89,8 +114,24 @@ if (!/resolveExpiredReservation\s*\(/.test(source.mockRepository)) {
   failures.push("Mock reservation repository must implement resolveExpiredReservation().");
 }
 
+if (!/sellActiveReservation\s*\(/.test(source.mockRepository)) {
+  failures.push("Mock reservation repository must implement sellActiveReservation().");
+}
+
 if (!/resolveExpiredReservation/.test(source.service)) {
   failures.push("Reservation service must export resolveExpiredReservation().");
+}
+
+if (!/sellActiveReservation/.test(source.service)) {
+  failures.push("Reservation service must export sellActiveReservation().");
+}
+
+if (!/export\s+async\s+function\s+sellActiveReservation/.test(source.sellActiveService)) {
+  failures.push("Active sale service must export sellActiveReservation().");
+}
+
+if (!/reservation_id/.test(source.sellActiveService) || !/sale_price_cents/.test(source.sellActiveService)) {
+  failures.push("Active sale service must insert a sale linked to reservation_id.");
 }
 
 if (!/export\s+async\s+function\s+resolveExpiredReservation/.test(source.resolveExpiredService)) {
@@ -109,6 +150,14 @@ if (!/Only admins and sellers can resolve expired reservations/.test(source.reso
   failures.push("Resolve-expired route must enforce staff-only RBAC.");
 }
 
+if (!/sellActiveReservation/.test(source.sellActiveRoute)) {
+  failures.push("Active reservation sell route must call sellActiveReservation().");
+}
+
+if (!/Only admins and sellers can sell active reservations/.test(source.sellActiveRoute)) {
+  failures.push("Active reservation sell route must enforce staff-only RBAC.");
+}
+
 if (/cancelReservationByProductId\(\s*[^,]+,\s*['"]seller_cancelled['"]/.test(source.controller)) {
   failures.push("Admin reservations controller must not hard-code seller_cancelled.");
 }
@@ -123,6 +172,14 @@ if (!/completeModalReservation/.test(source.controller) || !/submitCompleteReser
 
 if (!/completeReservationByProductId/.test(source.controller)) {
   failures.push("Controller must call completeReservationByProductId() for completion.");
+}
+
+if (!/activeSaleReservation/.test(source.controller) || !/submitActiveSale/.test(source.controller)) {
+  failures.push("Controller must expose active sale modal state and submit handler.");
+}
+
+if (!/sellActiveReservation/.test(source.controller)) {
+  failures.push("Controller must call sellActiveReservation() for active reservation sales.");
 }
 
 if (!/expiredResolutionReservation/.test(source.controller) || !/submitExpiredResolution/.test(source.controller)) {
@@ -173,6 +230,10 @@ if (!/onOpenCompleteReservation/.test(source.actions) || !/reservations\.complet
   failures.push("Active actions must render a complete button that opens confirmation.");
 }
 
+if (!/onOpenActiveSale/.test(source.actions) || !/reservations\.markActiveSold/.test(source.actions)) {
+  failures.push("Active actions must render a mark-sold button that opens the sale modal.");
+}
+
 if (!/CancelReservationModal/.test(source.cancelModal)) {
   failures.push("CancelReservationModal component must exist.");
 }
@@ -201,6 +262,22 @@ if (!/reservations\.completeModalTitle/.test(source.completeModal)) {
 
 if (!/CompleteReservationModal/.test(source.view)) {
   failures.push("Admin reservations view must render the complete confirmation modal.");
+}
+
+if (!/SellActiveReservationModal/.test(source.sellActiveModal)) {
+  failures.push("SellActiveReservationModal component must exist.");
+}
+
+if (!/reservations\.sellActiveModalTitle/.test(source.sellActiveModal)) {
+  failures.push("Active sale modal must render sale title text.");
+}
+
+if (!/reservations\.sellActiveSoldPrice/.test(source.sellActiveModal)) {
+  failures.push("Active sale modal must render sold price input.");
+}
+
+if (!/SellActiveReservationModal/.test(source.view)) {
+  failures.push("Admin reservations view must render the active sale modal.");
 }
 
 if (/return\s+['"]seller_cancelled['"]/.test(source.cancelRoute)) {
@@ -237,6 +314,15 @@ for (const key of [
   "reservations.completeModalDescription",
   "reservations.completeModalSubmit",
   "reservations.completeFailed",
+  "reservations.markActiveSold",
+  "reservations.sellActiveModalTitle",
+  "reservations.sellActiveModalDescription",
+  "reservations.sellActiveSoldPrice",
+  "reservations.sellActiveSaleChannel",
+  "reservations.sellActiveAuditNote",
+  "reservations.sellActiveSubmit",
+  "reservations.sellActivePriceRequired",
+  "reservations.sellActiveFailed",
   "reservations.expiredOutcomeTitle",
   "reservations.expiredOutcomeDescription",
   "reservations.releaseProduct",

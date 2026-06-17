@@ -4,6 +4,7 @@ export type {
   ReservationDTO,
   ReservationSource,
   ReservationStatus,
+  SellActiveReservationDTO,
   UpsertReservationDTO,
 } from "@/features/reservations/dto/reservation-dto";
 export { getReservationRepository } from "@/features/reservations/repositories/reservation-repository.factory";

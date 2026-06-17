@@ -3,6 +3,7 @@ import type {
   ReservationCancelReason,
   ReservationDTO,
   ReservationStatus,
+  SellActiveReservationDTO,
   UpsertReservationDTO,
 } from "@/features/reservations/dto/reservation-dto";
 
@@ -20,5 +21,9 @@ export interface ReservationRepository {
   resolveExpiredReservation(
     reservationId: string,
     input: ResolveExpiredReservationDTO
+  ): Promise<void>;
+  sellActiveReservation(
+    reservationId: string,
+    input: SellActiveReservationDTO
   ): Promise<void>;
 }

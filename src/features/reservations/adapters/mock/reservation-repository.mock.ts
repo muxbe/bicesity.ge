@@ -5,6 +5,7 @@ import type {
   ReservationCancelReason,
   ReservationDTO,
   ReservationStatus,
+  SellActiveReservationDTO,
   UpsertReservationDTO,
 } from "@/features/reservations/dto/reservation-dto";
 import type { ReservationRepository } from "@/features/reservations/repositories/reservation-repository";
@@ -76,6 +77,10 @@ function resolveExpiredNote(input: ResolveExpiredReservationDTO) {
       ? "Product released after reservation expiry."
       : "Product marked sold after reservation expiry.";
   return input.note?.trim() || fallback;
+}
+
+function resolveActiveSaleNote(input: SellActiveReservationDTO) {
+  return input.auditNote?.trim() || "Sold from active reservation page.";
 }
 
 export function createMockReservationRepository(): ReservationRepository {
@@ -260,6 +265,62 @@ export function createMockReservationRepository(): ReservationRepository {
         inStock: false,
       };
       reservation.cancellationNote = resolveExpiredNote(input);
+      reservation.updatedAt = nowIso;
+    },
+
+    async sellActiveReservation(
+      reservationId: string,
+      input: SellActiveReservationDTO
+    ) {
+      const reservation = mockRuntimeStore.reservations.find((item) => item.id === reservationId);
+      if (!reservation) {
+        throw new NotFoundError("Reservation not found.", { reservationId });
+      }
+      if (reservation.status !== "active") {
+        throw new ValidationError("Only active reservations can be sold.");
+      }
+      if (input.soldPrice < 0) {
+        throw new ValidationError("Sold price must be non-negative.");
+      }
+
+      const productIndex = mockRuntimeStore.products.findIndex(
+        (item) => item.id === reservation.productId
+      );
+      if (productIndex < 0) {
+        throw new NotFoundError("Product for reservation not found.", {
+          productId: reservation.productId,
+        });
+      }
+
+      const product = mockRuntimeStore.products[productIndex];
+      if (product.status === "archived") {
+        throw new ValidationError("Deleted products cannot be marked as sold.");
+      }
+      if (product.status === "sold") {
+        throw new ValidationError("Product is already sold.");
+      }
+      if (product.stockCount <= 0) {
+        throw new ValidationError("Out-of-stock products cannot be marked as sold.");
+      }
+
+      const nowIso = input.soldAt ?? new Date().toISOString();
+      mockRuntimeStore.sales.unshift({
+        id: createRuntimeId("sale"),
+        productId: product.id,
+        saleChannel: input.saleChannel,
+        salePrice: input.soldPrice,
+        soldAt: nowIso,
+        auditNote: resolveActiveSaleNote(input),
+        createdAt: nowIso,
+        updatedAt: nowIso,
+      });
+      mockRuntimeStore.products[productIndex] = {
+        ...product,
+        status: "sold",
+        stockCount: 0,
+        inStock: false,
+      };
+      reservation.status = "completed";
       reservation.updatedAt = nowIso;
     },
   };

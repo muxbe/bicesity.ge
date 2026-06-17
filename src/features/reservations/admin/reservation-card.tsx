@@ -14,9 +14,11 @@ type ReservationCardProps = {
   reservation: ReservationDTO;
   isCancelling: boolean;
   isCompleting: boolean;
+  isSellingActive: boolean;
   isResolvingExpired: boolean;
   onOpenCancelReservation: (reservation: ReservationDTO) => void;
   onOpenCompleteReservation: (reservation: ReservationDTO) => void;
+  onOpenActiveSale: (reservation: ReservationDTO) => void;
   onOpenExpiredResolution: (
     reservation: ReservationDTO,
     outcome: ExpiredResolutionOutcome
@@ -129,9 +131,11 @@ export function ReservationCard({
   reservation,
   isCancelling,
   isCompleting,
+  isSellingActive,
   isResolvingExpired,
   onOpenCancelReservation,
   onOpenCompleteReservation,
+  onOpenActiveSale,
   onOpenExpiredResolution,
   onReload,
 }: ReservationCardProps) {
@@ -224,9 +228,11 @@ export function ReservationCard({
                 reservation={reservation}
                 isCancelling={isCancelling}
                 isCompleting={isCompleting}
+                isSellingActive={isSellingActive}
                 isResolvingExpired={isResolvingExpired}
                 onOpenCancelReservation={onOpenCancelReservation}
                 onOpenCompleteReservation={onOpenCompleteReservation}
+                onOpenActiveSale={onOpenActiveSale}
                 onOpenExpiredResolution={onOpenExpiredResolution}
               />
             </div>

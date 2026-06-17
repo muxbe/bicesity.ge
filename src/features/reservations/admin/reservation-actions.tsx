@@ -9,9 +9,11 @@ type ReservationActionsProps = {
   reservation: ReservationDTO;
   isCancelling: boolean;
   isCompleting: boolean;
+  isSellingActive: boolean;
   isResolvingExpired: boolean;
   onOpenCancelReservation: (reservation: ReservationDTO) => void;
   onOpenCompleteReservation: (reservation: ReservationDTO) => void;
+  onOpenActiveSale: (reservation: ReservationDTO) => void;
   onOpenExpiredResolution: (
     reservation: ReservationDTO,
     outcome: ExpiredResolutionOutcome
@@ -22,9 +24,11 @@ export function ReservationActions({
   reservation,
   isCancelling,
   isCompleting,
+  isSellingActive,
   isResolvingExpired,
   onOpenCancelReservation,
   onOpenCompleteReservation,
+  onOpenActiveSale,
   onOpenExpiredResolution,
 }: ReservationActionsProps) {
   const { t } = useI18n();
@@ -66,7 +70,7 @@ export function ReservationActions({
     return null;
   }
 
-  const isBusy = isCancelling || isCompleting;
+  const isBusy = isCancelling || isCompleting || isSellingActive;
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row lg:justify-end">
@@ -82,6 +86,19 @@ export function ReservationActions({
           <CheckCircle2 className="h-4 w-4" />
         )}
         {t('reservations.complete')}
+      </button>
+      <button
+        type="button"
+        onClick={() => onOpenActiveSale(reservation)}
+        disabled={isBusy}
+        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-sky-300 px-4 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {isSellingActive ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <BadgeDollarSign className="h-4 w-4" />
+        )}
+        {t('reservations.markActiveSold')}
       </button>
       <button
         type="button"

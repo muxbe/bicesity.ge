@@ -8,6 +8,7 @@ import {
   type ReservationCancelReason,
   type ReservationDTO,
   type ReservationStatus,
+  type SellActiveReservationDTO,
 } from '@/features/reservations';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { publishInvalidation } from '@/features/shared/freshness/invalidation';
@@ -17,6 +18,7 @@ export type ReservationStatusFilter = ReservationStatus | 'all';
 export type ReservationDateFilter = 'all' | 'today' | 'upcoming' | 'past';
 export type ReservationCounts = Record<ReservationStatus, number>;
 export type ExpiredResolutionOutcome = ResolveExpiredReservationDTO['outcome'];
+export type ReservationSaleChannel = SellActiveReservationDTO['saleChannel'];
 
 const EMPTY_COUNTS: ReservationCounts = {
   active: 0,
@@ -92,6 +94,15 @@ export function useAdminReservationsController() {
     useState<ReservationDTO | null>(null);
   const [completeError, setCompleteError] = useState<string | null>(null);
   const [isCompletingProductId, setIsCompletingProductId] = useState<string | null>(null);
+  const [activeSaleReservation, setActiveSaleReservation] =
+    useState<ReservationDTO | null>(null);
+  const [activeSalePrice, setActiveSalePrice] = useState('');
+  const [activeSaleChannel, setActiveSaleChannel] =
+    useState<ReservationSaleChannel>('in_store');
+  const [activeSaleNote, setActiveSaleNote] = useState('');
+  const [activeSaleError, setActiveSaleError] = useState<string | null>(null);
+  const [isSellingActiveReservationId, setIsSellingActiveReservationId] =
+    useState<string | null>(null);
   const [expiredResolutionReservation, setExpiredResolutionReservation] =
     useState<ReservationDTO | null>(null);
   const [expiredResolutionOutcome, setExpiredResolutionOutcome] =
@@ -224,6 +235,60 @@ export function useAdminReservationsController() {
     }
   };
 
+  const openActiveSale = (reservation: ReservationDTO) => {
+    setActiveSaleReservation(reservation);
+    setActiveSalePrice(String(reservation.price));
+    setActiveSaleChannel('in_store');
+    setActiveSaleNote('');
+    setActiveSaleError(null);
+  };
+
+  const closeActiveSale = () => {
+    if (isSellingActiveReservationId !== null) {
+      return;
+    }
+    setActiveSaleReservation(null);
+    setActiveSalePrice('');
+    setActiveSaleNote('');
+    setActiveSaleError(null);
+  };
+
+  const submitActiveSale = async () => {
+    if (!activeSaleReservation) {
+      return;
+    }
+
+    const soldPrice = Number(activeSalePrice);
+    if (!Number.isFinite(soldPrice) || soldPrice < 0) {
+      setActiveSaleError(t('reservations.sellActivePriceRequired'));
+      return;
+    }
+
+    setIsSellingActiveReservationId(activeSaleReservation.id);
+    setActiveSaleError(null);
+    try {
+      await reservationRepository.sellActiveReservation(activeSaleReservation.id, {
+        soldPrice,
+        saleChannel: activeSaleChannel,
+        soldAt: new Date().toISOString(),
+        auditNote: activeSaleNote || null,
+      });
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.RESERVATIONS_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
+      await reload();
+      setActiveSaleReservation(null);
+      setActiveSalePrice('');
+      setActiveSaleNote('');
+    } catch (caughtError) {
+      setActiveSaleError(
+        caughtError instanceof Error ? caughtError.message : t('reservations.sellActiveFailed')
+      );
+    } finally {
+      setIsSellingActiveReservationId(null);
+    }
+  };
+
   const openExpiredResolution = (
     reservation: ReservationDTO,
     outcome: ExpiredResolutionOutcome
@@ -328,6 +393,21 @@ export function useAdminReservationsController() {
     openCompleteReservation,
     closeCompleteReservation,
     submitCompleteReservation,
+    activeSaleReservation,
+    activeSalePrice,
+    setActiveSalePrice,
+    activeSaleChannel,
+    setActiveSaleChannel,
+    activeSaleNote,
+    setActiveSaleNote,
+    activeSaleError,
+    isSellingActiveReservationId,
+    isActiveSaleSubmitting:
+      Boolean(activeSaleReservation) &&
+      isSellingActiveReservationId === activeSaleReservation?.id,
+    openActiveSale,
+    closeActiveSale,
+    submitActiveSale,
     expiredResolutionReservation,
     expiredResolutionOutcome,
     expiredResolutionNote,

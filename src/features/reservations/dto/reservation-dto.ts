@@ -61,3 +61,10 @@ export type ResolveExpiredReservationDTO =
       saleChannel: "online" | "in_store" | "as_is";
       note?: string;
     };
+
+export type SellActiveReservationDTO = {
+  saleChannel: "online" | "in_store" | "as_is";
+  soldPrice: number;
+  soldAt?: string;
+  auditNote?: string | null;
+};

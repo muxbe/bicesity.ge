@@ -462,3 +462,4 @@ export async function cancelProductReservation(
 }
 
 export { resolveExpiredReservation } from "@/app/api/reservations/resolve-expired-service";
+export { sellActiveReservation } from "@/app/api/reservations/sell-active-service";

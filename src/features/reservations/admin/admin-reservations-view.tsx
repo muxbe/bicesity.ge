@@ -7,6 +7,7 @@ import { ReservationCard } from '@/features/reservations/admin/reservation-card'
 import { ReservationFilters } from '@/features/reservations/admin/reservation-filters';
 import { ReservationSummaryCards } from '@/features/reservations/admin/reservation-summary-cards';
 import { ResolveExpiredReservationModal } from '@/features/reservations/admin/resolve-expired-reservation-modal';
+import { SellActiveReservationModal } from '@/features/reservations/admin/sell-active-reservation-modal';
 import { useAdminReservationsController } from '@/features/reservations/admin/use-admin-reservations-controller';
 
 export function AdminReservationsView() {
@@ -105,11 +106,15 @@ export function AdminReservationsView() {
               reservation={reservation}
               isCancelling={reservations.isCancellingProductId === reservation.productId}
               isCompleting={reservations.isCompletingProductId === reservation.productId}
+              isSellingActive={
+                reservations.isSellingActiveReservationId === reservation.id
+              }
               isResolvingExpired={
                 reservations.isResolvingExpiredReservationId === reservation.id
               }
               onOpenCancelReservation={reservations.openCancelReservation}
               onOpenCompleteReservation={reservations.openCompleteReservation}
+              onOpenActiveSale={reservations.openActiveSale}
               onOpenExpiredResolution={reservations.openExpiredResolution}
               onReload={reservations.reload}
             />
@@ -134,6 +139,19 @@ export function AdminReservationsView() {
         isSubmitting={reservations.isCompleteModalSubmitting}
         onClose={reservations.closeCompleteReservation}
         onSubmit={reservations.submitCompleteReservation}
+      />
+      <SellActiveReservationModal
+        reservation={reservations.activeSaleReservation}
+        soldPrice={reservations.activeSalePrice}
+        saleChannel={reservations.activeSaleChannel}
+        auditNote={reservations.activeSaleNote}
+        error={reservations.activeSaleError}
+        isSubmitting={reservations.isActiveSaleSubmitting}
+        onSoldPriceChange={reservations.setActiveSalePrice}
+        onSaleChannelChange={reservations.setActiveSaleChannel}
+        onAuditNoteChange={reservations.setActiveSaleNote}
+        onClose={reservations.closeActiveSale}
+        onSubmit={reservations.submitActiveSale}
       />
       <ResolveExpiredReservationModal
         reservation={reservations.expiredResolutionReservation}
