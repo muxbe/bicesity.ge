@@ -16,12 +16,13 @@ import {
   Search,
   SlidersHorizontal,
 } from 'lucide-react';
-import { buildPublicAttributes, getFallbackImage, type AttributeDTO, type ProductDTO } from '@/features/catalog';
+import { buildPublicAttributes, type AttributeDTO, type ProductDTO } from '@/features/catalog';
 import { PriceDisplay } from '@/features/catalog/components/price-display';
 import { useAuth } from '@/features/auth';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { useFocusFreshness } from '@/features/shared/freshness/use-focus-freshness';
 import type { ShopBootstrapDTO } from '@/features/shop/shop-bootstrap';
+import { ProductCardImage } from '@/features/shop/home/components/product-card-image';
 import {
   accountRoleLabel,
   buildMessengerUrl,
@@ -57,26 +58,6 @@ async function loadShopBootstrap(): Promise<ShopBootstrapDTO> {
     throw new Error(payload?.error ?? 'Failed to load shop data.');
   }
   return payload.data;
-}
-
-function ProductCardImage({ product }: { product: ProductDTO }) {
-  const fallback = getFallbackImage(product.category);
-  const [imageSrc, setImageSrc] = useState(product.image || fallback);
-
-  useEffect(() => {
-    setImageSrc(product.image || fallback);
-  }, [fallback, product.image]);
-
-  return (
-    <Image
-      src={imageSrc}
-      alt={product.name}
-      fill
-      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-      className="object-cover group-hover:scale-110 transition duration-500"
-      onError={() => setImageSrc(fallback)}
-    />
-  );
 }
 
 function RentView({
