@@ -16,13 +16,12 @@ import {
   Search,
   SlidersHorizontal,
 } from 'lucide-react';
-import { buildPublicAttributes, type AttributeDTO, type ProductDTO } from '@/features/catalog';
-import { PriceDisplay } from '@/features/catalog/components/price-display';
+import { type AttributeDTO, type ProductDTO } from '@/features/catalog';
 import { useAuth } from '@/features/auth';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { useFocusFreshness } from '@/features/shared/freshness/use-focus-freshness';
 import type { ShopBootstrapDTO } from '@/features/shop/shop-bootstrap';
-import { ProductCardImage } from '@/features/shop/home/components/product-card-image';
+import { ProductGrid } from '@/features/shop/home/components/product-grid';
 import {
   accountRoleLabel,
   buildMessengerUrl,
@@ -43,11 +42,8 @@ import {
 } from '@/features/shop/home/home-types';
 import {
   LanguageSwitcher,
-  categoryLabel,
-  discountLabel,
   driveTypeLabel,
   fieldNameLabel,
-  stockLabel,
   useI18n,
 } from '@/lib/i18n';
 
@@ -783,76 +779,13 @@ export default function Home() {
           messengerMessage={rentMessengerMessage}
         />
       ) : (
-      <section id="explore" className="max-w-7xl mx-auto px-4 py-8 sm:px-6 sm:py-12">
-        <h1 className="mb-8 text-4xl font-black text-black sm:mb-12 sm:text-5xl">{t('home.products')}</h1>
-
-        {isLoading ? (
-          <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-10 text-center">
-            <p className="text-lg font-semibold text-slate-800 mb-2">{t('home.loadingProducts')}</p>
-            <p className="text-slate-600">{t('home.fetchingCatalog')}</p>
-          </div>
-        ) : filteredProducts.length === 0 ? (
-          <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-10 text-center">
-            <p className="text-lg font-semibold text-slate-800 mb-2">{t('home.noMatchingProducts')}</p>
-            <p className="text-slate-600">{t('home.adjustFilters')}</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <Link key={product.id} href={`/shop/${product.id}`}>
-                <div className="group cursor-pointer h-full flex flex-col">
-                  <div className="relative mb-4 aspect-square overflow-hidden rounded-2xl bg-slate-100 sm:mb-6 sm:rounded-[2.5rem]">
-                    <ProductCardImage product={product} />
-                    <div className="absolute top-4 right-4 bg-black/75 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur">
-                      {categoryLabel(product.category, t)}
-                    </div>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-black mb-2 group-hover:text-[var(--brand-cyan-dark)] transition">
-                    {product.name}
-                  </h3>
-
-                  <PriceDisplay product={product} size="card" discountLabel={discountLabel(product, t)} />
-
-                  <p className="text-slate-600 text-sm mb-4 line-clamp-2">{product.description}</p>
-
-                  {buildPublicAttributes(product, attributes).length > 0 && (
-                    <div className="mb-4 flex flex-wrap gap-2">
-                      {buildPublicAttributes(product, attributes)
-                        .slice(0, 3)
-                        .map((attribute) => (
-                          <span
-                            key={attribute.id}
-                            className="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-semibold"
-                          >
-                            {fieldNameLabel(attribute, locale)}: {attribute.value}
-                          </span>
-                        ))}
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    <span className="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-semibold">
-                      {driveTypeLabel(product.type, t)}
-                    </span>
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                        product.inStock ? 'bg-cyan-50 text-cyan-700' : 'bg-amber-100 text-amber-700'
-                      }`}
-                    >
-                      {stockLabel(product.inStock, t)}
-                    </span>
-                  </div>
-
-                  <span className="brand-primary mt-auto w-full rounded-xl py-3 text-center font-semibold transition sm:rounded-[1.5rem]">
-                    {t('home.viewDetails')}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
+        <ProductGrid
+          isLoading={isLoading}
+          products={filteredProducts}
+          attributes={attributes}
+          locale={locale}
+          t={t}
+        />
       )}
     </div>
   );
