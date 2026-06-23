@@ -16,12 +16,30 @@ import {
   Search,
   SlidersHorizontal,
 } from 'lucide-react';
-import { buildPublicAttributes, getCurrentPrice, getFallbackImage, type AttributeDTO, type ProductDTO } from '@/features/catalog';
+import { buildPublicAttributes, getFallbackImage, type AttributeDTO, type ProductDTO } from '@/features/catalog';
 import { PriceDisplay } from '@/features/catalog/components/price-display';
 import { useAuth } from '@/features/auth';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { useFocusFreshness } from '@/features/shared/freshness/use-focus-freshness';
 import type { ShopBootstrapDTO } from '@/features/shop/shop-bootstrap';
+import {
+  accountRoleLabel,
+  buildMessengerUrl,
+  buildRentMessage,
+  countActiveFilters,
+  fallbackMessengerTargetUrl,
+  filterProducts,
+  sanitizeAttributeValues,
+} from '@/features/shop/home/home-helpers';
+import {
+  INITIAL_FILTERS,
+  type BikeTypeFilter,
+  type CategoryFilter,
+  type FilterState,
+  type HomeViewMode,
+  type ShopBootstrapApiResponse,
+  type StockFilter,
+} from '@/features/shop/home/home-types';
 import {
   LanguageSwitcher,
   categoryLabel,
@@ -32,65 +50,6 @@ import {
   useI18n,
 } from '@/lib/i18n';
 
-type CategoryFilter = 'All' | 'Bicycle' | 'Parts';
-type StockFilter = 'All' | 'In Stock' | 'Out of Stock';
-type BikeTypeFilter = 'All' | string;
-type HomeView = 'products' | 'rent';
-
-type FilterState = {
-  query: string;
-  category: CategoryFilter;
-  stock: StockFilter;
-  bikeType: BikeTypeFilter;
-  minPrice: string;
-  maxPrice: string;
-  attributeValues: Record<string, string>;
-};
-
-const INITIAL_FILTERS: FilterState = {
-  query: '',
-  category: 'All',
-  stock: 'All',
-  bikeType: 'All',
-  minPrice: '',
-  maxPrice: '',
-  attributeValues: {},
-};
-
-type ShopBootstrapApiResponse = {
-  data?: ShopBootstrapDTO;
-  error?: string;
-};
-
-function accountRoleLabel(role: string | null | undefined, t: (key: string) => string) {
-  if (role === 'admin') {
-    return t('role.admin');
-  }
-  if (role === 'seller') {
-    return t('role.seller');
-  }
-  return t('role.customer');
-}
-
-function parsePrice(value: string): number | null {
-  if (!value.trim()) {
-    return null;
-  }
-  const parsed = Number(value);
-  if (Number.isNaN(parsed) || parsed < 0) {
-    return null;
-  }
-  return parsed;
-}
-
-function fallbackMessengerTargetUrl() {
-  return (
-    process.env.NEXT_PUBLIC_MESSENGER_TARGET_URL?.trim() ||
-    process.env.NEXT_PUBLIC_MESSENGER_URL?.trim() ||
-    ''
-  );
-}
-
 async function loadShopBootstrap(): Promise<ShopBootstrapDTO> {
   const response = await fetch('/api/shop/bootstrap', { cache: 'no-store' });
   const payload = (await response.json().catch(() => null)) as ShopBootstrapApiResponse | null;
@@ -98,49 +57,6 @@ async function loadShopBootstrap(): Promise<ShopBootstrapDTO> {
     throw new Error(payload?.error ?? 'Failed to load shop data.');
   }
   return payload.data;
-}
-
-function buildMessengerUrl(targetUrl: string, message: string) {
-  if (!targetUrl) {
-    return null;
-  }
-
-  try {
-    const url = new URL(targetUrl);
-    url.searchParams.set('text', message);
-    return url.toString();
-  } catch {
-    return null;
-  }
-}
-
-function buildRentMessage(rentUrl: string, t: (key: string) => string) {
-  return [
-    t('rent.requestLine1'),
-    `Link: ${rentUrl}`,
-    t('rent.requestLine3'),
-  ].join('\n');
-}
-
-function sanitizeAttributeValues(
-  attributeValues: Record<string, string>,
-  category: CategoryFilter,
-  attributes: Array<{ id: string; category: 'Bicycle' | 'Parts'; isPublic: boolean }>
-) {
-  const sanitized: Record<string, string> = {};
-  for (const attribute of attributes) {
-    if (!attribute.isPublic) {
-      continue;
-    }
-    if (category !== 'All' && attribute.category !== category) {
-      continue;
-    }
-    const value = attributeValues[attribute.id];
-    if (value) {
-      sanitized[attribute.id] = value;
-    }
-  }
-  return sanitized;
 }
 
 function ProductCardImage({ product }: { product: ProductDTO }) {
@@ -266,7 +182,7 @@ export default function Home() {
   const { locale, t } = useI18n();
   const { status, session, user, role, signOut, isBootstrapping, isRefreshing: isAuthRefreshing } = useAuth();
   const canRenderShop = status === 'authenticated' || Boolean(session);
-  const [activeView, setActiveView] = useState<HomeView>('products');
+  const [activeView, setActiveView] = useState<HomeViewMode>('products');
   const [draftFilters, setDraftFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [appliedFilters, setAppliedFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [isDetailedOpen, setIsDetailedOpen] = useState(false);
@@ -403,90 +319,9 @@ export default function Home() {
     [products]
   );
 
-  const filteredProducts = useMemo(() => {
-    const minPrice = parsePrice(appliedFilters.minPrice);
-    const maxPrice = parsePrice(appliedFilters.maxPrice);
-    const normalizedQuery = appliedFilters.query.trim().toLowerCase();
+  const filteredProducts = useMemo(() => filterProducts(products, appliedFilters), [appliedFilters, products]);
 
-    return products.filter((product) => {
-      if (appliedFilters.category !== 'All' && product.category !== appliedFilters.category) {
-        return false;
-      }
-
-      if (normalizedQuery) {
-        const searchableText = [
-          product.name,
-          product.description,
-          product.serial,
-          ...Object.values(product.values),
-        ]
-          .join(' ')
-          .toLowerCase();
-
-        if (!searchableText.includes(normalizedQuery)) {
-          return false;
-        }
-      }
-
-      if (appliedFilters.stock === 'In Stock' && !product.inStock) {
-        return false;
-      }
-
-      if (appliedFilters.stock === 'Out of Stock' && product.inStock) {
-        return false;
-      }
-
-      if (appliedFilters.bikeType !== 'All') {
-        if (product.category !== 'Bicycle' || product.type !== appliedFilters.bikeType) {
-          return false;
-        }
-      }
-
-      const currentPrice = getCurrentPrice(product);
-      if (minPrice !== null && currentPrice < minPrice) {
-        return false;
-      }
-
-      if (maxPrice !== null && currentPrice > maxPrice) {
-        return false;
-      }
-
-      for (const [attributeId, selectedValue] of Object.entries(appliedFilters.attributeValues)) {
-        if (!selectedValue) {
-          continue;
-        }
-        if (product.values[attributeId] !== selectedValue) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [appliedFilters, products]);
-
-  const activeFilterCount = useMemo(() => {
-    let count = 0;
-    if (appliedFilters.query.trim()) {
-      count += 1;
-    }
-    if (appliedFilters.category !== 'All') {
-      count += 1;
-    }
-    if (appliedFilters.stock !== 'All') {
-      count += 1;
-    }
-    if (appliedFilters.bikeType !== 'All') {
-      count += 1;
-    }
-    if (parsePrice(appliedFilters.minPrice) !== null) {
-      count += 1;
-    }
-    if (parsePrice(appliedFilters.maxPrice) !== null) {
-      count += 1;
-    }
-    count += Object.values(appliedFilters.attributeValues).filter(Boolean).length;
-    return count;
-  }, [appliedFilters]);
+  const activeFilterCount = useMemo(() => countActiveFilters(appliedFilters), [appliedFilters]);
 
   const updateDraftFilters = (updates: Partial<FilterState>) => {
     setDraftFilters((current) => ({ ...current, ...updates }));
