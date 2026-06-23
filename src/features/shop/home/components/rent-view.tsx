@@ -11,12 +11,13 @@ export type RentViewProps = {
   messengerMessage: string | null;
 };
 
-export function RentView({
-  onBrowseBicycles,
-  onMessageSeller,
-  messengerError,
-  messengerMessage,
-}: RentViewProps) {
+export function RentView(props: RentViewProps) {
+  const {
+    onBrowseBicycles,
+    onMessageSeller,
+    messengerError,
+    messengerMessage,
+  } = props;
   const { t } = useI18n();
 
   return (
