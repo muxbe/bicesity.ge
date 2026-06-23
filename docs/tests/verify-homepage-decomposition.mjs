@@ -68,8 +68,14 @@ if (!existsSync(absolute(pagePath))) {
   failures.push("Missing public homepage route.");
 } else {
   const page = read(pagePath);
-  if (!page.includes("HomeView")) {
-    failures.push("Public homepage route must render HomeView.");
+  const hasHomeViewImport =
+    page.includes('from "@/features/shop/home/home-view"') ||
+    page.includes("from '@/features/shop/home/home-view'");
+  const hasHomeViewJsx = /<HomeView(\s|>|\/)/.test(page);
+  if (!hasHomeViewImport || !hasHomeViewJsx) {
+    failures.push(
+      "Public homepage route must import HomeView from @/features/shop/home/home-view and render <HomeView />."
+    );
   }
   if (lineCount(page) > 20) {
     failures.push(`Public homepage route must be at most 20 lines.`);
