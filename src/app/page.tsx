@@ -10,10 +10,7 @@ import { ProductGrid } from '@/features/shop/home/components/product-grid';
 import { RentView } from '@/features/shop/home/components/rent-view';
 import { useHomeCatalog } from '@/features/shop/home/hooks/use-home-catalog';
 import { useHomeFilters } from '@/features/shop/home/hooks/use-home-filters';
-import {
-  buildMessengerUrl,
-  buildRentMessage,
-} from '@/features/shop/home/home-helpers';
+import { useRentMessenger } from '@/features/shop/home/hooks/use-rent-messenger';
 import {
   type CategoryFilter,
   type HomeViewMode,
@@ -38,8 +35,7 @@ export default function Home() {
   } = catalog;
   const filters = useHomeFilters(products, attributes);
   const { closeDetailedFilters, selectCatalogCategory } = filters;
-  const [rentMessengerError, setRentMessengerError] = useState<string | null>(null);
-  const [rentMessengerMessage, setRentMessengerMessage] = useState<string | null>(null);
+  const rentMessenger = useRentMessenger(messengerUrl, t);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -86,8 +82,7 @@ export default function Home() {
   const showCatalogCategory = (category: CategoryFilter, hash: string) => {
     setActiveView('products');
     selectCatalogCategory(category);
-    setRentMessengerError(null);
-    setRentMessengerMessage(null);
+    rentMessenger.clearRentMessengerNotices();
 
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', hash);
@@ -98,43 +93,12 @@ export default function Home() {
   const showRentView = () => {
     setActiveView('rent');
     closeDetailedFilters();
-    setRentMessengerError(null);
-    setRentMessengerMessage(null);
+    rentMessenger.clearRentMessengerNotices();
 
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', '#rent');
     }
     scrollToHomeSection('rent');
-  };
-
-  const openMessengerForRent = async () => {
-    setRentMessengerError(null);
-    setRentMessengerMessage(null);
-
-    const rentUrl =
-      typeof window === 'undefined' ? '/#rent' : `${window.location.origin}/#rent`;
-    const message = buildRentMessage(rentUrl, t);
-    const targetMessengerUrl = buildMessengerUrl(messengerUrl, message);
-    if (!targetMessengerUrl) {
-      setRentMessengerError(t('rent.messageLinkMissing'));
-      return;
-    }
-
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(message);
-      }
-      const opened = window.open(targetMessengerUrl, '_blank', 'noopener,noreferrer');
-      setRentMessengerMessage(
-        opened
-          ? t('rent.messageOpened')
-          : t('rent.messageCopied')
-      );
-    } catch (caughtError) {
-      setRentMessengerError(
-        caughtError instanceof Error ? caughtError.message : t('rent.messageError')
-      );
-    }
   };
 
   const logout = async () => {
@@ -216,9 +180,9 @@ export default function Home() {
       {activeView === 'rent' ? (
         <RentView
           onBrowseBicycles={() => showCatalogCategory('Bicycle', '#bicycles')}
-          onMessageSeller={() => void openMessengerForRent()}
-          messengerError={rentMessengerError}
-          messengerMessage={rentMessengerMessage}
+          onMessageSeller={() => void rentMessenger.openMessengerForRent()}
+          messengerError={rentMessenger.messengerError}
+          messengerMessage={rentMessenger.messengerMessage}
         />
       ) : (
         <ProductGrid
