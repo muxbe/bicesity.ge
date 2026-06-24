@@ -1,21 +1,17 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BikeCityLogo } from '@/components/bike-city-logo';
-import {
-  ChevronDown,
-  Loader2,
-  LogOut,
-  Search,
-  SlidersHorizontal,
-} from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { type AttributeDTO, type ProductDTO } from '@/features/catalog';
 import { useAuth } from '@/features/auth';
 import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
 import { useFocusFreshness } from '@/features/shared/freshness/use-focus-freshness';
 import type { ShopBootstrapDTO } from '@/features/shop/shop-bootstrap';
+import { DetailedFilterPanel } from '@/features/shop/home/components/detailed-filter-panel';
+import { HomeFilterToolbar } from '@/features/shop/home/components/home-filter-toolbar';
 import { ProductGrid } from '@/features/shop/home/components/product-grid';
 import { RentView } from '@/features/shop/home/components/rent-view';
 import {
@@ -29,19 +25,12 @@ import {
 } from '@/features/shop/home/home-helpers';
 import {
   INITIAL_FILTERS,
-  type BikeTypeFilter,
   type CategoryFilter,
   type FilterState,
   type HomeViewMode,
   type ShopBootstrapApiResponse,
-  type StockFilter,
 } from '@/features/shop/home/home-types';
-import {
-  LanguageSwitcher,
-  driveTypeLabel,
-  fieldNameLabel,
-  useI18n,
-} from '@/lib/i18n';
+import { LanguageSwitcher, useI18n } from '@/lib/i18n';
 
 async function loadShopBootstrap(): Promise<ShopBootstrapDTO> {
   const response = await fetch('/api/shop/bootstrap', { cache: 'no-store' });
@@ -211,15 +200,6 @@ export default function Home() {
     }
   };
 
-  const handleBasicSearch = (event: FormEvent) => {
-    event.preventDefault();
-    applyFilters(true);
-  };
-
-  const handleDetailedSearch = (event: FormEvent) => {
-    event.preventDefault();
-    applyFilters(true);
-  };
 
   const handleCategoryChange = (value: CategoryFilter) => {
     setDraftFilters((current) => ({
@@ -446,228 +426,55 @@ export default function Home() {
           </div>
         </div>
 
-        {activeView === 'products' && (
-        <div className="border-t border-slate-200/70">
-          <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 sm:py-4">
-            <form
-              onSubmit={handleBasicSearch}
-              className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-[1.7fr,1fr,1fr,auto,auto] lg:items-center"
-            >
-              <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={draftFilters.query}
-                  onChange={(event) => updateDraftFilters({ query: event.target.value })}
-                  placeholder={t('home.searchPlaceholder')}
-                  className="brand-control h-10 w-full rounded-xl border pl-10 pr-4 text-sm sm:h-11"
-                />
-              </div>
-
-              <select
-                value={draftFilters.category}
-                onChange={(event) => handleCategoryChange(event.target.value as CategoryFilter)}
-                className="brand-control hidden h-11 rounded-xl border px-3 text-sm sm:block"
-              >
-                <option value="All">{t('home.allCategories')}</option>
-                <option value="Bicycle">{t('common.bicycles')}</option>
-                <option value="Parts">{t('common.parts')}</option>
-              </select>
-
-              <select
-                value={draftFilters.stock}
-                onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
-                className="brand-control hidden h-11 rounded-xl border px-3 text-sm sm:block"
-              >
-                <option value="All">{t('home.allStock')}</option>
-                <option value="In Stock">{t('common.inStock')}</option>
-                <option value="Out of Stock">{t('common.outOfStock')}</option>
-              </select>
-
-              <button
-                type="button"
-                onClick={() => setIsDetailedOpen((current) => !current)}
-                className="brand-control flex h-10 items-center justify-center gap-2 rounded-xl border px-3 text-sm font-semibold text-slate-700 transition hover:bg-cyan-50 sm:h-11 sm:px-4"
-              >
-                <SlidersHorizontal className="w-4 h-4" />
-                {t('home.detailed')}
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform ${
-                    isDetailedOpen ? 'rotate-180' : 'rotate-0'
-                  }`}
-                />
-              </button>
-
-              <button
-                type="submit"
-                className="brand-primary hidden h-11 rounded-xl px-6 text-sm font-semibold transition sm:col-span-2 sm:block lg:col-span-1"
-              >
-                {t('common.search')}
-              </button>
-            </form>
-
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 sm:mt-3">
-              <p>
-                {isLoading
-                  ? t('home.loadingCatalog')
-                  : activeFilterCount > 0
-                  ? t('home.productsFoundWithFilters', {
-                      count: filteredProducts.length,
-                      filters: activeFilterCount,
-                    })
-                  : t('home.productsFound', { count: filteredProducts.length })}
-              </p>
-              {(isRefreshing || isAuthRefreshing) && (
-                <span className="inline-flex items-center gap-1 font-semibold text-slate-400">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  {t('common.refreshingBackground')}
-                </span>
-              )}
-            </div>
-            {error && <p className="text-xs text-rose-600 mt-2">{error}</p>}
-          </div>
-
-        </div>
+        {activeView === "products" && (
+          <HomeFilterToolbar
+            draftFilters={draftFilters}
+            isDetailedOpen={isDetailedOpen}
+            isLoading={isLoading}
+            isRefreshing={isRefreshing || isAuthRefreshing}
+            error={error}
+            activeFilterCount={activeFilterCount}
+            productCount={filteredProducts.length}
+            t={t}
+            onQueryChange={(query) => updateDraftFilters({ query })}
+            onCategoryChange={handleCategoryChange}
+            onStockChange={(stock) => updateDraftFilters({ stock })}
+            onToggleDetailed={() => setIsDetailedOpen((current) => !current)}
+            onSearch={() => applyFilters(true)}
+          />
         )}
       </nav>
 
-      {activeView === 'products' && isDetailedOpen && (
-        <div className="border-b border-cyan-100 bg-white">
-          <div className="brand-filter-panel max-w-7xl mx-auto border-x px-4 py-5 sm:px-6 sm:py-6">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <p className="text-sm font-black text-slate-900">{t('home.detailed')}</p>
-              <button
-                type="button"
-                onClick={() => setIsDetailedOpen(false)}
-                aria-label={t('common.close')}
-                className="brand-control inline-flex h-9 items-center rounded-lg border px-3 text-xs font-bold text-slate-700 transition hover:bg-cyan-50"
-              >
-                {t('common.close')}
-              </button>
-            </div>
-
-            <form onSubmit={handleDetailedSearch}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.allCategories')}</label>
-                  <select
-                    value={draftFilters.category}
-                    onChange={(event) => handleCategoryChange(event.target.value as CategoryFilter)}
-                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                  >
-                    <option value="All">{t('home.allCategories')}</option>
-                    <option value="Bicycle">{t('common.bicycles')}</option>
-                    <option value="Parts">{t('common.parts')}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.allStock')}</label>
-                  <select
-                    value={draftFilters.stock}
-                    onChange={(event) => updateDraftFilters({ stock: event.target.value as StockFilter })}
-                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                  >
-                    <option value="All">{t('home.allStock')}</option>
-                    <option value="In Stock">{t('common.inStock')}</option>
-                    <option value="Out of Stock">{t('common.outOfStock')}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.bikeType')}</label>
-                  <select
-                    value={draftFilters.bikeType}
-                    onChange={(event) =>
-                      updateDraftFilters({ bikeType: event.target.value as BikeTypeFilter })
-                    }
-                    disabled={draftFilters.category === 'Parts'}
-                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm disabled:bg-slate-100 disabled:text-slate-400"
-                  >
-                    <option value="All">{t('home.allTypes')}</option>
-                    {bikeTypeOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {driveTypeLabel(option, t)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.minPrice')}</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={draftFilters.minPrice}
-                    onChange={(event) => updateDraftFilters({ minPrice: event.target.value })}
-                    placeholder="0"
-                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">{t('home.maxPrice')}</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={draftFilters.maxPrice}
-                    onChange={(event) => updateDraftFilters({ maxPrice: event.target.value })}
-                    placeholder="15000"
-                    className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                  />
-                </div>
-
-                {visibleAttributes.map((attribute) => (
-                  <div key={attribute.id}>
-                    <label className="block text-xs font-semibold text-slate-500 mb-2">
-                      {fieldNameLabel(attribute, locale)}
-                    </label>
-                    <select
-                      value={draftFilters.attributeValues[attribute.id] ?? ''}
-                      onChange={(event) =>
-                        setDraftFilters((current) => ({
-                          ...current,
-                          attributeValues: {
-                            ...current.attributeValues,
-                            [attribute.id]: event.target.value,
-                          },
-                        }))
-                      }
-                      className="brand-control w-full h-11 rounded-xl border px-3 text-sm"
-                    >
-                      <option value="">{t('common.any')}</option>
-                      {(detailedAttributeOptions[attribute.id] ?? []).map((value) => (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
-                <button
-                  type="submit"
-                  className="brand-primary h-11 rounded-xl px-6 text-sm font-semibold transition"
-                >
-                  {t('common.search')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDraftFilters(INITIAL_FILTERS);
-                    setAppliedFilters(INITIAL_FILTERS);
-                    setIsDetailedOpen(false);
-                  }}
-                  className="brand-control h-11 rounded-xl border px-6 text-sm font-semibold text-slate-700 transition hover:bg-cyan-50"
-                >
-                  {t('common.clearAll')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {activeView === "products" && isDetailedOpen && (
+        <DetailedFilterPanel
+          draftFilters={draftFilters}
+          visibleAttributes={visibleAttributes}
+          detailedAttributeOptions={detailedAttributeOptions}
+          bikeTypeOptions={bikeTypeOptions}
+          locale={locale}
+          t={t}
+          onCategoryChange={handleCategoryChange}
+          onStockChange={(stock) => updateDraftFilters({ stock })}
+          onBikeTypeChange={(bikeType) => updateDraftFilters({ bikeType })}
+          onMinPriceChange={(minPrice) => updateDraftFilters({ minPrice })}
+          onMaxPriceChange={(maxPrice) => updateDraftFilters({ maxPrice })}
+          onAttributeChange={(attributeId, value) =>
+            setDraftFilters((current) => ({
+              ...current,
+              attributeValues: {
+                ...current.attributeValues,
+                [attributeId]: value,
+              },
+            }))
+          }
+          onApply={() => applyFilters(true)}
+          onReset={() => {
+            setDraftFilters(INITIAL_FILTERS);
+            setAppliedFilters(INITIAL_FILTERS);
+            setIsDetailedOpen(false);
+          }}
+          onClose={() => setIsDetailedOpen(false)}
+        />
       )}
 
       {activeView === 'rent' ? (
