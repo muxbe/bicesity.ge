@@ -1,22 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { type AttributeDTO, type ProductDTO } from '@/features/catalog';
 import { useAuth } from '@/features/auth';
-import { CRITICAL_INVALIDATION_TAGS } from '@/features/shared/freshness/critical-field-registry';
-import { useFocusFreshness } from '@/features/shared/freshness/use-focus-freshness';
-import type { ShopBootstrapDTO } from '@/features/shop/shop-bootstrap';
 import { DetailedFilterPanel } from '@/features/shop/home/components/detailed-filter-panel';
 import { HomeFilterToolbar } from '@/features/shop/home/components/home-filter-toolbar';
 import { HomeNavigation } from '@/features/shop/home/components/home-navigation';
 import { ProductGrid } from '@/features/shop/home/components/product-grid';
 import { RentView } from '@/features/shop/home/components/rent-view';
+import { useHomeCatalog } from '@/features/shop/home/hooks/use-home-catalog';
 import {
   buildMessengerUrl,
   buildRentMessage,
   countActiveFilters,
-  fallbackMessengerTargetUrl,
   filterProducts,
   sanitizeAttributeValues,
 } from '@/features/shop/home/home-helpers';
@@ -25,18 +21,8 @@ import {
   type CategoryFilter,
   type FilterState,
   type HomeViewMode,
-  type ShopBootstrapApiResponse,
 } from '@/features/shop/home/home-types';
 import { useI18n } from '@/lib/i18n';
-
-async function loadShopBootstrap(): Promise<ShopBootstrapDTO> {
-  const response = await fetch('/api/shop/bootstrap', { cache: 'no-store' });
-  const payload = (await response.json().catch(() => null)) as ShopBootstrapApiResponse | null;
-  if (!response.ok || !payload?.data) {
-    throw new Error(payload?.error ?? 'Failed to load shop data.');
-  }
-  return payload.data;
-}
 
 export default function Home() {
   const router = useRouter();
@@ -48,62 +34,23 @@ export default function Home() {
   const [draftFilters, setDraftFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [appliedFilters, setAppliedFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [isDetailedOpen, setIsDetailedOpen] = useState(false);
-  const [products, setProducts] = useState<ProductDTO[]>([]);
-  const [attributes, setAttributes] = useState<AttributeDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [messengerUrl, setMessengerUrl] = useState(fallbackMessengerTargetUrl());
+  const catalog = useHomeCatalog(t);
+  const {
+    products,
+    attributes,
+    messengerUrl,
+    isLoading,
+    isRefreshing,
+    error,
+  } = catalog;
   const [rentMessengerError, setRentMessengerError] = useState<string | null>(null);
   const [rentMessengerMessage, setRentMessengerMessage] = useState<string | null>(null);
-  const hasLoadedBootstrapRef = useRef(false);
-  const tRef = useRef(t);
-
-  useEffect(() => {
-    tRef.current = t;
-  }, [t]);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
   }, [pathname, router, status]);
-
-  const loadBootstrapData = useCallback(async (options: { background?: boolean } = {}) => {
-    const shouldShowLoader = !options.background || !hasLoadedBootstrapRef.current;
-
-    if (shouldShowLoader) {
-      setIsLoading(true);
-    }
-    setError(null);
-
-    try {
-      const nextData = await loadShopBootstrap();
-      setProducts(nextData.products);
-      setAttributes(nextData.attributes);
-      setMessengerUrl(nextData.settings.messengerUrl.trim());
-      hasLoadedBootstrapRef.current = true;
-    } catch (loadError) {
-      if (hasLoadedBootstrapRef.current) {
-        return;
-      }
-      setError(tRef.current('home.failedShopData'));
-    } finally {
-      if (shouldShowLoader) {
-        setIsLoading(false);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadBootstrapData();
-  }, [loadBootstrapData]);
-
-  const freshness = useFocusFreshness({
-    tags: [CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL],
-    onRefresh: () => loadBootstrapData({ background: true }),
-  });
-  const isRefreshing = freshness.isRefreshing;
-
   useEffect(() => {
     if (!canRenderShop || typeof window === 'undefined') {
       return;
