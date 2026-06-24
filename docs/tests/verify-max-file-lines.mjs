@@ -3,7 +3,6 @@ import { lineCount, pathExists, failIfAny, listFiles } from "./structure-test-he
 const trackedFiles = [
   { path: "src/features/admin/admin-inventory-view.tsx", max: 2101, reason: "legacy file before admin inventory split" },
   { path: "src/app/admin/fields/page.tsx", max: 1250, reason: "legacy file before fields split" },
-  { path: "src/app/page.tsx", max: 1050, reason: "legacy file before public shop split" },
   { path: "src/app/shop/[id]/page.tsx", max: 650, reason: "legacy file before product detail split" },
   { path: "src/lib/i18n/dictionaries.ts", max: 1600, reason: "legacy file before i18n split" },
   { path: "src/app/api/catalog/catalog-service.ts", max: 1050, reason: "legacy file before backend service split" },
@@ -12,6 +11,8 @@ const trackedFiles = [
 ];
 
 const futureFolderLimits = [
+  { dir: "src/features/shop/home/components", max: 300 },
+  { dir: "src/features/shop/home/hooks", max: 350 },
   { dir: "src/components/ui", max: 220 },
   { dir: "src/features/admin/inventory/components", max: 360 },
   { dir: "src/features/admin/inventory/hooks", max: 260 },
