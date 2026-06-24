@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/features/auth';
 import { DetailedFilterPanel } from '@/features/shop/home/components/detailed-filter-panel';
@@ -9,17 +9,13 @@ import { HomeNavigation } from '@/features/shop/home/components/home-navigation'
 import { ProductGrid } from '@/features/shop/home/components/product-grid';
 import { RentView } from '@/features/shop/home/components/rent-view';
 import { useHomeCatalog } from '@/features/shop/home/hooks/use-home-catalog';
+import { useHomeFilters } from '@/features/shop/home/hooks/use-home-filters';
 import {
   buildMessengerUrl,
   buildRentMessage,
-  countActiveFilters,
-  filterProducts,
-  sanitizeAttributeValues,
 } from '@/features/shop/home/home-helpers';
 import {
-  INITIAL_FILTERS,
   type CategoryFilter,
-  type FilterState,
   type HomeViewMode,
 } from '@/features/shop/home/home-types';
 import { useI18n } from '@/lib/i18n';
@@ -31,9 +27,6 @@ export default function Home() {
   const { status, session, user, role, signOut, isBootstrapping, isRefreshing: isAuthRefreshing } = useAuth();
   const canRenderShop = status === 'authenticated' || Boolean(session);
   const [activeView, setActiveView] = useState<HomeViewMode>('products');
-  const [draftFilters, setDraftFilters] = useState<FilterState>(INITIAL_FILTERS);
-  const [appliedFilters, setAppliedFilters] = useState<FilterState>(INITIAL_FILTERS);
-  const [isDetailedOpen, setIsDetailedOpen] = useState(false);
   const catalog = useHomeCatalog(t);
   const {
     products,
@@ -43,6 +36,8 @@ export default function Home() {
     isRefreshing,
     error,
   } = catalog;
+  const filters = useHomeFilters(products, attributes);
+  const { closeDetailedFilters, selectCatalogCategory } = filters;
   const [rentMessengerError, setRentMessengerError] = useState<string | null>(null);
   const [rentMessengerMessage, setRentMessengerMessage] = useState<string | null>(null);
 
@@ -60,17 +55,14 @@ export default function Home() {
       const hash = window.location.hash.toLowerCase();
       if (hash === '#rent') {
         setActiveView('rent');
-        setIsDetailedOpen(false);
+        closeDetailedFilters();
         return;
       }
 
       const category: CategoryFilter =
         hash === '#bicycles' ? 'Bicycle' : hash === '#components' ? 'Parts' : 'All';
-      const nextFilters: FilterState = { ...INITIAL_FILTERS, category };
       setActiveView('products');
-      setDraftFilters(nextFilters);
-      setAppliedFilters(nextFilters);
-      setIsDetailedOpen(false);
+      selectCatalogCategory(category);
     };
 
     applyHashView();
@@ -79,80 +71,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('hashchange', applyHashView);
     };
-  }, [canRenderShop]);
-
-  const visibleAttributes = useMemo(
-    () =>
-      attributes.filter(
-        (attribute) =>
-          attribute.isPublic &&
-          (draftFilters.category === 'All' || attribute.category === draftFilters.category)
-      ),
-    [attributes, draftFilters.category]
-  );
-
-  const detailedAttributeOptions = useMemo(() => {
-    const scopedProducts = products.filter(
-      (product) => draftFilters.category === 'All' || product.category === draftFilters.category
-    );
-    const options: Record<string, string[]> = {};
-
-    for (const attribute of visibleAttributes) {
-      if (attribute.inputMode === 'single_select' && attribute.options.length > 0) {
-        options[attribute.id] = attribute.options.map((option) => option.value);
-        continue;
-      }
-      const distinctValues = Array.from(
-        new Set(
-          scopedProducts
-            .map((product) => product.values[attribute.id])
-            .filter((value): value is string => Boolean(value))
-        )
-      ).sort((a, b) => a.localeCompare(b));
-      options[attribute.id] = distinctValues;
-    }
-
-    return options;
-  }, [draftFilters.category, products, visibleAttributes]);
-
-  const bikeTypeOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          products
-            .filter((product) => product.category === 'Bicycle')
-            .map((product) => product.type)
-            .filter((value): value is string => Boolean(value))
-        )
-      ).sort((a, b) => a.localeCompare(b)),
-    [products]
-  );
-
-  const filteredProducts = useMemo(() => filterProducts(products, appliedFilters), [appliedFilters, products]);
-
-  const activeFilterCount = useMemo(() => countActiveFilters(appliedFilters), [appliedFilters]);
-
-  const updateDraftFilters = (updates: Partial<FilterState>) => {
-    setDraftFilters((current) => ({ ...current, ...updates }));
-  };
-
-  const applyFilters = (collapseDetailed: boolean) => {
-    setActiveView('products');
-    setAppliedFilters(draftFilters);
-    if (collapseDetailed) {
-      setIsDetailedOpen(false);
-    }
-  };
-
-
-  const handleCategoryChange = (value: CategoryFilter) => {
-    setDraftFilters((current) => ({
-      ...current,
-      category: value,
-      bikeType: value === 'Parts' ? 'All' : current.bikeType,
-      attributeValues: sanitizeAttributeValues(current.attributeValues, value, attributes),
-    }));
-  };
+  }, [canRenderShop, closeDetailedFilters, selectCatalogCategory]);
 
   const scrollToHomeSection = (sectionId: string) => {
     if (typeof window === 'undefined') {
@@ -165,11 +84,8 @@ export default function Home() {
   };
 
   const showCatalogCategory = (category: CategoryFilter, hash: string) => {
-    const nextFilters: FilterState = { ...INITIAL_FILTERS, category };
     setActiveView('products');
-    setDraftFilters(nextFilters);
-    setAppliedFilters(nextFilters);
-    setIsDetailedOpen(false);
+    selectCatalogCategory(category);
     setRentMessengerError(null);
     setRentMessengerMessage(null);
 
@@ -181,7 +97,7 @@ export default function Home() {
 
   const showRentView = () => {
     setActiveView('rent');
-    setIsDetailedOpen(false);
+    closeDetailedFilters();
     setRentMessengerError(null);
     setRentMessengerMessage(null);
 
@@ -247,7 +163,7 @@ export default function Home() {
       <nav className="sticky top-0 z-50 bg-white/75 backdrop-blur-xl border-b border-slate-200">
         <HomeNavigation
           activeView={activeView}
-          activeCategory={appliedFilters.category}
+          activeCategory={filters.appliedFilters.category}
           email={user?.email ?? t("common.account")}
           role={role}
           t={t}
@@ -260,52 +176,40 @@ export default function Home() {
 
         {activeView === "products" && (
           <HomeFilterToolbar
-            draftFilters={draftFilters}
-            isDetailedOpen={isDetailedOpen}
+            draftFilters={filters.draftFilters}
+            isDetailedOpen={filters.isDetailedOpen}
             isLoading={isLoading}
             isRefreshing={isRefreshing || isAuthRefreshing}
             error={error}
-            activeFilterCount={activeFilterCount}
-            productCount={filteredProducts.length}
+            activeFilterCount={filters.activeFilterCount}
+            productCount={filters.filteredProducts.length}
             t={t}
-            onQueryChange={(query) => updateDraftFilters({ query })}
-            onCategoryChange={handleCategoryChange}
-            onStockChange={(stock) => updateDraftFilters({ stock })}
-            onToggleDetailed={() => setIsDetailedOpen((current) => !current)}
-            onSearch={() => applyFilters(true)}
+            onQueryChange={(query) => filters.updateDraftFilters({ query })}
+            onCategoryChange={filters.handleCategoryChange}
+            onStockChange={(stock) => filters.updateDraftFilters({ stock })}
+            onToggleDetailed={filters.toggleDetailedFilters}
+            onSearch={filters.applyFilters}
           />
         )}
       </nav>
 
-      {activeView === "products" && isDetailedOpen && (
+      {activeView === "products" && filters.isDetailedOpen && (
         <DetailedFilterPanel
-          draftFilters={draftFilters}
-          visibleAttributes={visibleAttributes}
-          detailedAttributeOptions={detailedAttributeOptions}
-          bikeTypeOptions={bikeTypeOptions}
+          draftFilters={filters.draftFilters}
+          visibleAttributes={filters.visibleAttributes}
+          detailedAttributeOptions={filters.detailedAttributeOptions}
+          bikeTypeOptions={filters.bikeTypeOptions}
           locale={locale}
           t={t}
-          onCategoryChange={handleCategoryChange}
-          onStockChange={(stock) => updateDraftFilters({ stock })}
-          onBikeTypeChange={(bikeType) => updateDraftFilters({ bikeType })}
-          onMinPriceChange={(minPrice) => updateDraftFilters({ minPrice })}
-          onMaxPriceChange={(maxPrice) => updateDraftFilters({ maxPrice })}
-          onAttributeChange={(attributeId, value) =>
-            setDraftFilters((current) => ({
-              ...current,
-              attributeValues: {
-                ...current.attributeValues,
-                [attributeId]: value,
-              },
-            }))
-          }
-          onApply={() => applyFilters(true)}
-          onReset={() => {
-            setDraftFilters(INITIAL_FILTERS);
-            setAppliedFilters(INITIAL_FILTERS);
-            setIsDetailedOpen(false);
-          }}
-          onClose={() => setIsDetailedOpen(false)}
+          onCategoryChange={filters.handleCategoryChange}
+          onStockChange={(stock) => filters.updateDraftFilters({ stock })}
+          onBikeTypeChange={(bikeType) => filters.updateDraftFilters({ bikeType })}
+          onMinPriceChange={(minPrice) => filters.updateDraftFilters({ minPrice })}
+          onMaxPriceChange={(maxPrice) => filters.updateDraftFilters({ maxPrice })}
+          onAttributeChange={filters.updateAttributeFilter}
+          onApply={filters.applyFilters}
+          onReset={filters.resetFilters}
+          onClose={filters.closeDetailedFilters}
         />
       )}
 
@@ -319,7 +223,7 @@ export default function Home() {
       ) : (
         <ProductGrid
           isLoading={isLoading}
-          products={filteredProducts}
+          products={filters.filteredProducts}
           attributes={attributes}
           locale={locale}
           t={t}
