@@ -70,6 +70,13 @@ export type HomeNavigationResult = {
   showRentView: () => void;
 };
 
+export type UseHomeNavigationOptions = {
+  canRenderShop: boolean;
+  onHashCategory: (category: CategoryFilter) => void;
+  onCloseDetailedFilters: () => void;
+  onClearRentNotices: () => void;
+};
+
 export type RentMessengerResult = {
   messengerError: string | null;
   messengerMessage: string | null;

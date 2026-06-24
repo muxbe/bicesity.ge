@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/features/auth';
 import { DetailedFilterPanel } from '@/features/shop/home/components/detailed-filter-panel';
@@ -10,11 +10,8 @@ import { ProductGrid } from '@/features/shop/home/components/product-grid';
 import { RentView } from '@/features/shop/home/components/rent-view';
 import { useHomeCatalog } from '@/features/shop/home/hooks/use-home-catalog';
 import { useHomeFilters } from '@/features/shop/home/hooks/use-home-filters';
+import { useHomeNavigation } from '@/features/shop/home/hooks/use-home-navigation';
 import { useRentMessenger } from '@/features/shop/home/hooks/use-rent-messenger';
-import {
-  type CategoryFilter,
-  type HomeViewMode,
-} from '@/features/shop/home/home-types';
 import { useI18n } from '@/lib/i18n';
 
 export default function Home() {
@@ -23,7 +20,6 @@ export default function Home() {
   const { locale, t } = useI18n();
   const { status, session, user, role, signOut, isBootstrapping, isRefreshing: isAuthRefreshing } = useAuth();
   const canRenderShop = status === 'authenticated' || Boolean(session);
-  const [activeView, setActiveView] = useState<HomeViewMode>('products');
   const catalog = useHomeCatalog(t);
   const {
     products,
@@ -34,73 +30,19 @@ export default function Home() {
     error,
   } = catalog;
   const filters = useHomeFilters(products, attributes);
-  const { closeDetailedFilters, selectCatalogCategory } = filters;
   const rentMessenger = useRentMessenger(messengerUrl, t);
+  const navigation = useHomeNavigation({
+    canRenderShop,
+    onHashCategory: filters.selectCatalogCategory,
+    onCloseDetailedFilters: filters.closeDetailedFilters,
+    onClearRentNotices: rentMessenger.clearRentMessengerNotices,
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
   }, [pathname, router, status]);
-  useEffect(() => {
-    if (!canRenderShop || typeof window === 'undefined') {
-      return;
-    }
-
-    const applyHashView = () => {
-      const hash = window.location.hash.toLowerCase();
-      if (hash === '#rent') {
-        setActiveView('rent');
-        closeDetailedFilters();
-        return;
-      }
-
-      const category: CategoryFilter =
-        hash === '#bicycles' ? 'Bicycle' : hash === '#components' ? 'Parts' : 'All';
-      setActiveView('products');
-      selectCatalogCategory(category);
-    };
-
-    applyHashView();
-    window.addEventListener('hashchange', applyHashView);
-
-    return () => {
-      window.removeEventListener('hashchange', applyHashView);
-    };
-  }, [canRenderShop, closeDetailedFilters, selectCatalogCategory]);
-
-  const scrollToHomeSection = (sectionId: string) => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    window.requestAnimationFrame(() => {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  };
-
-  const showCatalogCategory = (category: CategoryFilter, hash: string) => {
-    setActiveView('products');
-    selectCatalogCategory(category);
-    rentMessenger.clearRentMessengerNotices();
-
-    if (typeof window !== 'undefined') {
-      window.history.replaceState(null, '', hash);
-    }
-    scrollToHomeSection('explore');
-  };
-
-  const showRentView = () => {
-    setActiveView('rent');
-    closeDetailedFilters();
-    rentMessenger.clearRentMessengerNotices();
-
-    if (typeof window !== 'undefined') {
-      window.history.replaceState(null, '', '#rent');
-    }
-    scrollToHomeSection('rent');
-  };
-
   const logout = async () => {
     await signOut();
     router.replace('/login');
@@ -126,19 +68,19 @@ export default function Home() {
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-50 bg-white/75 backdrop-blur-xl border-b border-slate-200">
         <HomeNavigation
-          activeView={activeView}
+          activeView={navigation.activeView}
           activeCategory={filters.appliedFilters.category}
           email={user?.email ?? t("common.account")}
           role={role}
           t={t}
-          onExplore={() => showCatalogCategory("All", "#explore")}
-          onBicycles={() => showCatalogCategory("Bicycle", "#bicycles")}
-          onComponents={() => showCatalogCategory("Parts", "#components")}
-          onRent={showRentView}
+          onExplore={() => navigation.showCatalogCategory("All", "#explore")}
+          onBicycles={() => navigation.showCatalogCategory("Bicycle", "#bicycles")}
+          onComponents={() => navigation.showCatalogCategory("Parts", "#components")}
+          onRent={navigation.showRentView}
           onLogout={() => void logout()}
         />
 
-        {activeView === "products" && (
+        {navigation.activeView === "products" && (
           <HomeFilterToolbar
             draftFilters={filters.draftFilters}
             isDetailedOpen={filters.isDetailedOpen}
@@ -157,7 +99,7 @@ export default function Home() {
         )}
       </nav>
 
-      {activeView === "products" && filters.isDetailedOpen && (
+      {navigation.activeView === "products" && filters.isDetailedOpen && (
         <DetailedFilterPanel
           draftFilters={filters.draftFilters}
           visibleAttributes={filters.visibleAttributes}
@@ -177,9 +119,9 @@ export default function Home() {
         />
       )}
 
-      {activeView === 'rent' ? (
+      {navigation.activeView === 'rent' ? (
         <RentView
-          onBrowseBicycles={() => showCatalogCategory('Bicycle', '#bicycles')}
+          onBrowseBicycles={() => navigation.showCatalogCategory('Bicycle', '#bicycles')}
           onMessageSeller={() => void rentMessenger.openMessengerForRent()}
           messengerError={rentMessenger.messengerError}
           messengerMessage={rentMessenger.messengerMessage}
