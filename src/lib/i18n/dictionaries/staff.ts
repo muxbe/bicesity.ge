@@ -2,105 +2,105 @@ import type { DictionarySection } from "@/lib/i18n/dictionaries/types";
 
 export const staffDictionary: DictionarySection = {
   en: {
-    "staff.eyebrow": "Staff Access"
-    "staff.title": "Staff Users"
-    "staff.description": "Create seller accounts and keep staff roles in the profiles table."
-    "staff.createTitle": "Create Staff User"
-    "staff.currentTitle": "Current Staff"
-    "staff.emailPlaceholder": "email@example.com"
-    "staff.fullName": "Full name"
-    "staff.tempPassword": "Temporary password"
-    "staff.passwordOptional": "Password for new users, optional for existing users"
-    "staff.create": "Create"
-    "staff.createOrPromote": "Save access"
-    "staff.loading": "Loading staff..."
-    "staff.noProfiles": "No staff profiles yet."
-    "staff.user": "User"
-    "staff.role": "Role"
-    "staff.status": "Status"
-    "staff.created": "Created"
-    "staff.actions": "Actions"
-    "staff.noName": "No name"
-    "staff.inactive": "Inactive"
-    "staff.deactivate": "Deactivate"
-    "staff.reactivate": "Reactivate"
-    "staff.newPassword": "New password"
-    "staff.resetPassword": "Reset password"
-    "staff.passwordTooShort": "Password must be at least 6 characters."
-    "staff.selfPasswordResetBlocked": "Use verified password reset for your own account."
-    "staff.loadFailed": "Failed to load staff."
-    "staff.createFailed": "Failed to create staff user."
-    "staff.updateFailed": "Failed to update staff user."
-    "staff.createdMessage": "Created {email}."
-    "staff.savedMessage": "Saved staff access for {email}."
-    "staff.updatedMessage": "Updated {email}."
+    "staff.eyebrow": "Staff Access",
+    "staff.title": "Staff Users",
+    "staff.description": "Create seller accounts and keep staff roles in the profiles table.",
+    "staff.createTitle": "Create Staff User",
+    "staff.currentTitle": "Current Staff",
+    "staff.emailPlaceholder": "email@example.com",
+    "staff.fullName": "Full name",
+    "staff.tempPassword": "Temporary password",
+    "staff.passwordOptional": "Password for new users, optional for existing users",
+    "staff.create": "Create",
+    "staff.createOrPromote": "Save access",
+    "staff.loading": "Loading staff...",
+    "staff.noProfiles": "No staff profiles yet.",
+    "staff.user": "User",
+    "staff.role": "Role",
+    "staff.status": "Status",
+    "staff.created": "Created",
+    "staff.actions": "Actions",
+    "staff.noName": "No name",
+    "staff.inactive": "Inactive",
+    "staff.deactivate": "Deactivate",
+    "staff.reactivate": "Reactivate",
+    "staff.newPassword": "New password",
+    "staff.resetPassword": "Reset password",
+    "staff.passwordTooShort": "Password must be at least 6 characters.",
+    "staff.selfPasswordResetBlocked": "Use verified password reset for your own account.",
+    "staff.loadFailed": "Failed to load staff.",
+    "staff.createFailed": "Failed to create staff user.",
+    "staff.updateFailed": "Failed to update staff user.",
+    "staff.createdMessage": "Created {email}.",
+    "staff.savedMessage": "Saved staff access for {email}.",
+    "staff.updatedMessage": "Updated {email}.",
   },
   ru: {
-    "staff.eyebrow": "Доступ сотрудников"
-    "staff.title": "Сотрудники"
-    "staff.description": "Создавайте аккаунты продавцов и управляйте ролями в таблице профилей."
-    "staff.createTitle": "Создать сотрудника"
-    "staff.currentTitle": "Текущие сотрудники"
-    "staff.emailPlaceholder": "email@example.com"
-    "staff.fullName": "Полное имя"
-    "staff.tempPassword": "Временный пароль"
-    "staff.passwordOptional": "Пароль для новых пользователей, необязательно для существующих"
-    "staff.create": "Создать"
-    "staff.createOrPromote": "Сохранить доступ"
-    "staff.loading": "Сотрудники загружаются..."
-    "staff.noProfiles": "Профилей сотрудников пока нет."
-    "staff.user": "Пользователь"
-    "staff.role": "Роль"
-    "staff.status": "Статус"
-    "staff.created": "Создан"
-    "staff.actions": "Действия"
-    "staff.noName": "Имя не указано"
-    "staff.inactive": "Неактивен"
-    "staff.deactivate": "Деактивировать"
-    "staff.reactivate": "Активировать"
-    "staff.newPassword": "Новый пароль"
-    "staff.resetPassword": "Сбросить пароль"
-    "staff.passwordTooShort": "Пароль должен быть не короче 6 символов."
-    "staff.selfPasswordResetBlocked": "Для своего аккаунта используйте проверенный сброс пароля."
-    "staff.loadFailed": "Не удалось загрузить сотрудников."
-    "staff.createFailed": "Не удалось создать сотрудника."
-    "staff.updateFailed": "Не удалось обновить сотрудника."
-    "staff.createdMessage": "Создан {email}."
-    "staff.savedMessage": "Доступ сотрудника для {email} сохранен."
-    "staff.updatedMessage": "Обновлен {email}."
+    "staff.eyebrow": "Доступ сотрудников",
+    "staff.title": "Сотрудники",
+    "staff.description": "Создавайте аккаунты продавцов и управляйте ролями в таблице профилей.",
+    "staff.createTitle": "Создать сотрудника",
+    "staff.currentTitle": "Текущие сотрудники",
+    "staff.emailPlaceholder": "email@example.com",
+    "staff.fullName": "Полное имя",
+    "staff.tempPassword": "Временный пароль",
+    "staff.passwordOptional": "Пароль для новых пользователей, необязательно для существующих",
+    "staff.create": "Создать",
+    "staff.createOrPromote": "Сохранить доступ",
+    "staff.loading": "Сотрудники загружаются...",
+    "staff.noProfiles": "Профилей сотрудников пока нет.",
+    "staff.user": "Пользователь",
+    "staff.role": "Роль",
+    "staff.status": "Статус",
+    "staff.created": "Создан",
+    "staff.actions": "Действия",
+    "staff.noName": "Имя не указано",
+    "staff.inactive": "Неактивен",
+    "staff.deactivate": "Деактивировать",
+    "staff.reactivate": "Активировать",
+    "staff.newPassword": "Новый пароль",
+    "staff.resetPassword": "Сбросить пароль",
+    "staff.passwordTooShort": "Пароль должен быть не короче 6 символов.",
+    "staff.selfPasswordResetBlocked": "Для своего аккаунта используйте проверенный сброс пароля.",
+    "staff.loadFailed": "Не удалось загрузить сотрудников.",
+    "staff.createFailed": "Не удалось создать сотрудника.",
+    "staff.updateFailed": "Не удалось обновить сотрудника.",
+    "staff.createdMessage": "Создан {email}.",
+    "staff.savedMessage": "Доступ сотрудника для {email} сохранен.",
+    "staff.updatedMessage": "Обновлен {email}.",
   },
   ka: {
-    "staff.eyebrow": "თანამშრომლების წვდომა"
-    "staff.title": "თანამშრომლები"
-    "staff.description": "შექმენით გამყიდველის ანგარიშები და მართეთ როლები პროფილების ცხრილში."
-    "staff.createTitle": "თანამშრომლის შექმნა"
-    "staff.currentTitle": "მიმდინარე თანამშრომლები"
-    "staff.emailPlaceholder": "email@example.com"
-    "staff.fullName": "სრული სახელი"
-    "staff.tempPassword": "დროებითი პაროლი"
-    "staff.passwordOptional": "პაროლი ახალი მომხმარებლისთვის, არსებულისთვის არასავალდებულოა"
-    "staff.create": "შექმნა"
-    "staff.createOrPromote": "წვდომის შენახვა"
-    "staff.loading": "თანამშრომლები იტვირთება..."
-    "staff.noProfiles": "თანამშრომლის პროფილები ჯერ არ არის."
-    "staff.user": "მომხმარებელი"
-    "staff.role": "როლი"
-    "staff.status": "სტატუსი"
-    "staff.created": "შექმნილია"
-    "staff.actions": "მოქმედებები"
-    "staff.noName": "სახელი არ არის"
-    "staff.inactive": "არააქტიური"
-    "staff.deactivate": "დეაქტივაცია"
-    "staff.reactivate": "აქტივაცია"
-    "staff.newPassword": "ახალი პაროლი"
-    "staff.resetPassword": "პაროლის შეცვლა"
-    "staff.passwordTooShort": "პაროლი უნდა იყოს მინიმუმ 6 სიმბოლო."
-    "staff.selfPasswordResetBlocked": "საკუთარი ანგარიშისთვის გამოიყენე დადასტურებული პაროლის აღდგენა."
-    "staff.loadFailed": "თანამშრომლების ჩატვირთვა ვერ მოხერხდა."
-    "staff.createFailed": "თანამშრომლის შექმნა ვერ მოხერხდა."
-    "staff.updateFailed": "თანამშრომლის განახლება ვერ მოხერხდა."
-    "staff.createdMessage": "შეიქმნა {email}."
-    "staff.savedMessage": "{email}-ისთვის თანამშრომლის წვდომა შენახულია."
-    "staff.updatedMessage": "განახლდა {email}."
+    "staff.eyebrow": "თანამშრომლების წვდომა",
+    "staff.title": "თანამშრომლები",
+    "staff.description": "შექმენით გამყიდველის ანგარიშები და მართეთ როლები პროფილების ცხრილში.",
+    "staff.createTitle": "თანამშრომლის შექმნა",
+    "staff.currentTitle": "მიმდინარე თანამშრომლები",
+    "staff.emailPlaceholder": "email@example.com",
+    "staff.fullName": "სრული სახელი",
+    "staff.tempPassword": "დროებითი პაროლი",
+    "staff.passwordOptional": "პაროლი ახალი მომხმარებლისთვის, არსებულისთვის არასავალდებულოა",
+    "staff.create": "შექმნა",
+    "staff.createOrPromote": "წვდომის შენახვა",
+    "staff.loading": "თანამშრომლები იტვირთება...",
+    "staff.noProfiles": "თანამშრომლის პროფილები ჯერ არ არის.",
+    "staff.user": "მომხმარებელი",
+    "staff.role": "როლი",
+    "staff.status": "სტატუსი",
+    "staff.created": "შექმნილია",
+    "staff.actions": "მოქმედებები",
+    "staff.noName": "სახელი არ არის",
+    "staff.inactive": "არააქტიური",
+    "staff.deactivate": "დეაქტივაცია",
+    "staff.reactivate": "აქტივაცია",
+    "staff.newPassword": "ახალი პაროლი",
+    "staff.resetPassword": "პაროლის შეცვლა",
+    "staff.passwordTooShort": "პაროლი უნდა იყოს მინიმუმ 6 სიმბოლო.",
+    "staff.selfPasswordResetBlocked": "საკუთარი ანგარიშისთვის გამოიყენე დადასტურებული პაროლის აღდგენა.",
+    "staff.loadFailed": "თანამშრომლების ჩატვირთვა ვერ მოხერხდა.",
+    "staff.createFailed": "თანამშრომლის შექმნა ვერ მოხერხდა.",
+    "staff.updateFailed": "თანამშრომლის განახლება ვერ მოხერხდა.",
+    "staff.createdMessage": "შეიქმნა {email}.",
+    "staff.savedMessage": "{email}-ისთვის თანამშრომლის წვდომა შენახულია.",
+    "staff.updatedMessage": "განახლდა {email}.",
   },
 };

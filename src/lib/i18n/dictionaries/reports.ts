@@ -2,150 +2,150 @@ import type { DictionarySection } from "@/lib/i18n/dictionaries/types";
 
 export const reportsDictionary: DictionarySection = {
   en: {
-    "reports.eyebrow": "Admin Analytics"
-    "reports.title": "Sales Reports"
-    "reports.description": "Revenue and reservation activity for the selected period."
-    "reports.startDate": "Start Date"
-    "reports.endDate": "End Date"
-    "reports.apply": "Apply"
-    "reports.last30Days": "Last 30 Days"
-    "reports.showing": "Showing {range}"
-    "reports.chooseDates": "Choose both a start date and an end date."
-    "reports.endAfterStart": "End date must be on or after start date."
-    "reports.loading": "Loading report data..."
-    "reports.refreshing": "Refreshing report data in background..."
-    "reports.lastRefresh": "Last refresh: {value}"
-    "reports.stale": "Report data may be stale. Refocus tab or retry."
-    "reports.retry": "Retry"
-    "reports.revenue": "Revenue"
-    "reports.unitsSold": "Units Sold"
-    "reports.avgOrderValue": "Avg Order Value"
-    "reports.reservationsStarted": "Reservations Started"
-    "reports.activeReservations": "Active Reservations"
-    "reports.selectedPeriod": "Selected period"
-    "reports.completedSales": "Completed sales in range"
-    "reports.selectedAverage": "Selected period average"
-    "reports.reservedRange": "Reserved in range"
-    "reports.stillActive": "Still active from that set"
-    "reports.revenueOverTime": "Revenue Over Time"
-    "reports.noRevenue": "No revenue data in this period."
-    "reports.topModels": "Top Selling Models"
-    "reports.model": "Model"
-    "reports.units": "Units"
-    "reports.trend": "Trend"
-    "reports.noSales": "No sales data yet."
-    "reports.outcomes": "Reservation Outcomes"
-    "reports.outcomesDescription": "Based on reservations started in the selected period."
-    "reports.started": "Started"
-    "reports.completed": "Completed"
-    "reports.cancelled": "Cancelled"
-    "reports.expired": "Expired"
-    "reports.reservations": "reservations"
-    "reports.activeLower": "active"
-    "reports.completedLower": "completed"
-    "reports.cancelledLower": "cancelled"
-    "reports.expiredLower": "expired"
-    "reports.previousPeriod": "previous period"
-    "reports.noChangeVs": "No change vs {label}"
-    "reports.deltaVs": "{delta} vs {label}"
-    "reports.deltaPercentVs": "{delta} ({percent}%) vs {label}"
+    "reports.eyebrow": "Admin Analytics",
+    "reports.title": "Sales Reports",
+    "reports.description": "Revenue and reservation activity for the selected period.",
+    "reports.startDate": "Start Date",
+    "reports.endDate": "End Date",
+    "reports.apply": "Apply",
+    "reports.last30Days": "Last 30 Days",
+    "reports.showing": "Showing {range}",
+    "reports.chooseDates": "Choose both a start date and an end date.",
+    "reports.endAfterStart": "End date must be on or after start date.",
+    "reports.loading": "Loading report data...",
+    "reports.refreshing": "Refreshing report data in background...",
+    "reports.lastRefresh": "Last refresh: {value}",
+    "reports.stale": "Report data may be stale. Refocus tab or retry.",
+    "reports.retry": "Retry",
+    "reports.revenue": "Revenue",
+    "reports.unitsSold": "Units Sold",
+    "reports.avgOrderValue": "Avg Order Value",
+    "reports.reservationsStarted": "Reservations Started",
+    "reports.activeReservations": "Active Reservations",
+    "reports.selectedPeriod": "Selected period",
+    "reports.completedSales": "Completed sales in range",
+    "reports.selectedAverage": "Selected period average",
+    "reports.reservedRange": "Reserved in range",
+    "reports.stillActive": "Still active from that set",
+    "reports.revenueOverTime": "Revenue Over Time",
+    "reports.noRevenue": "No revenue data in this period.",
+    "reports.topModels": "Top Selling Models",
+    "reports.model": "Model",
+    "reports.units": "Units",
+    "reports.trend": "Trend",
+    "reports.noSales": "No sales data yet.",
+    "reports.outcomes": "Reservation Outcomes",
+    "reports.outcomesDescription": "Based on reservations started in the selected period.",
+    "reports.started": "Started",
+    "reports.completed": "Completed",
+    "reports.cancelled": "Cancelled",
+    "reports.expired": "Expired",
+    "reports.reservations": "reservations",
+    "reports.activeLower": "active",
+    "reports.completedLower": "completed",
+    "reports.cancelledLower": "cancelled",
+    "reports.expiredLower": "expired",
+    "reports.previousPeriod": "previous period",
+    "reports.noChangeVs": "No change vs {label}",
+    "reports.deltaVs": "{delta} vs {label}",
+    "reports.deltaPercentVs": "{delta} ({percent}%) vs {label}",
   },
   ru: {
-    "reports.eyebrow": "Аналитика администратора"
-    "reports.title": "Отчеты продаж"
-    "reports.description": "Выручка и активность резервов за выбранный период."
-    "reports.startDate": "Дата начала"
-    "reports.endDate": "Дата окончания"
-    "reports.apply": "Применить"
-    "reports.last30Days": "Последние 30 дней"
-    "reports.showing": "Показано: {range}"
-    "reports.chooseDates": "Выберите дату начала и дату окончания."
-    "reports.endAfterStart": "Дата окончания должна быть не раньше даты начала."
-    "reports.loading": "Данные отчета загружаются..."
-    "reports.refreshing": "Данные отчета обновляются в фоне..."
-    "reports.lastRefresh": "Последнее обновление: {value}"
-    "reports.stale": "Данные отчета могут быть устаревшими. Вернитесь на вкладку или попробуйте снова."
-    "reports.retry": "Повторить"
-    "reports.revenue": "Выручка"
-    "reports.unitsSold": "Продано единиц"
-    "reports.avgOrderValue": "Средний чек"
-    "reports.reservationsStarted": "Начато резервов"
-    "reports.activeReservations": "Активные резервы"
-    "reports.selectedPeriod": "Выбранный период"
-    "reports.completedSales": "Завершенные продажи за период"
-    "reports.selectedAverage": "Среднее за выбранный период"
-    "reports.reservedRange": "Зарезервировано за период"
-    "reports.stillActive": "Все еще активны из этого набора"
-    "reports.revenueOverTime": "Выручка по времени"
-    "reports.noRevenue": "За этот период нет данных по выручке."
-    "reports.topModels": "Лучшие модели по продажам"
-    "reports.model": "Модель"
-    "reports.units": "Единицы"
-    "reports.trend": "Тренд"
-    "reports.noSales": "Данных о продажах пока нет."
-    "reports.outcomes": "Результаты резервов"
-    "reports.outcomesDescription": "Основано на резервах, начатых в выбранный период."
-    "reports.started": "Начато"
-    "reports.completed": "Завершено"
-    "reports.cancelled": "Отменено"
-    "reports.expired": "Истекло"
-    "reports.reservations": "резервов"
-    "reports.activeLower": "активно"
-    "reports.completedLower": "завершено"
-    "reports.cancelledLower": "отменено"
-    "reports.expiredLower": "истекло"
-    "reports.previousPeriod": "предыдущий период"
-    "reports.noChangeVs": "Без изменений относительно {label}"
-    "reports.deltaVs": "{delta} относительно {label}"
-    "reports.deltaPercentVs": "{delta} ({percent}%) относительно {label}"
+    "reports.eyebrow": "Аналитика администратора",
+    "reports.title": "Отчеты продаж",
+    "reports.description": "Выручка и активность резервов за выбранный период.",
+    "reports.startDate": "Дата начала",
+    "reports.endDate": "Дата окончания",
+    "reports.apply": "Применить",
+    "reports.last30Days": "Последние 30 дней",
+    "reports.showing": "Показано: {range}",
+    "reports.chooseDates": "Выберите дату начала и дату окончания.",
+    "reports.endAfterStart": "Дата окончания должна быть не раньше даты начала.",
+    "reports.loading": "Данные отчета загружаются...",
+    "reports.refreshing": "Данные отчета обновляются в фоне...",
+    "reports.lastRefresh": "Последнее обновление: {value}",
+    "reports.stale": "Данные отчета могут быть устаревшими. Вернитесь на вкладку или попробуйте снова.",
+    "reports.retry": "Повторить",
+    "reports.revenue": "Выручка",
+    "reports.unitsSold": "Продано единиц",
+    "reports.avgOrderValue": "Средний чек",
+    "reports.reservationsStarted": "Начато резервов",
+    "reports.activeReservations": "Активные резервы",
+    "reports.selectedPeriod": "Выбранный период",
+    "reports.completedSales": "Завершенные продажи за период",
+    "reports.selectedAverage": "Среднее за выбранный период",
+    "reports.reservedRange": "Зарезервировано за период",
+    "reports.stillActive": "Все еще активны из этого набора",
+    "reports.revenueOverTime": "Выручка по времени",
+    "reports.noRevenue": "За этот период нет данных по выручке.",
+    "reports.topModels": "Лучшие модели по продажам",
+    "reports.model": "Модель",
+    "reports.units": "Единицы",
+    "reports.trend": "Тренд",
+    "reports.noSales": "Данных о продажах пока нет.",
+    "reports.outcomes": "Результаты резервов",
+    "reports.outcomesDescription": "Основано на резервах, начатых в выбранный период.",
+    "reports.started": "Начато",
+    "reports.completed": "Завершено",
+    "reports.cancelled": "Отменено",
+    "reports.expired": "Истекло",
+    "reports.reservations": "резервов",
+    "reports.activeLower": "активно",
+    "reports.completedLower": "завершено",
+    "reports.cancelledLower": "отменено",
+    "reports.expiredLower": "истекло",
+    "reports.previousPeriod": "предыдущий период",
+    "reports.noChangeVs": "Без изменений относительно {label}",
+    "reports.deltaVs": "{delta} относительно {label}",
+    "reports.deltaPercentVs": "{delta} ({percent}%) относительно {label}",
   },
   ka: {
-    "reports.eyebrow": "ადმინის ანალიტიკა"
-    "reports.title": "გაყიდვების ანგარიშები"
-    "reports.description": "შემოსავალი და ჯავშნების აქტივობა არჩეული პერიოდისთვის."
-    "reports.startDate": "საწყისი თარიღი"
-    "reports.endDate": "საბოლოო თარიღი"
-    "reports.apply": "გამოყენება"
-    "reports.last30Days": "ბოლო 30 დღე"
-    "reports.showing": "ნაჩვენებია: {range}"
-    "reports.chooseDates": "აირჩიეთ საწყისი და საბოლოო თარიღი."
-    "reports.endAfterStart": "საბოლოო თარიღი საწყისზე ადრე არ უნდა იყოს."
-    "reports.loading": "ანგარიშის მონაცემები იტვირთება..."
-    "reports.refreshing": "ანგარიშის მონაცემები ფონურად ახლდება..."
-    "reports.lastRefresh": "ბოლო განახლება: {value}"
-    "reports.stale": "ანგარიშის მონაცემები შეიძლება მოძველებული იყოს. დაბრუნდით ჩანართზე ან სცადეთ ხელახლა."
-    "reports.retry": "თავიდან ცდა"
-    "reports.revenue": "შემოსავალი"
-    "reports.unitsSold": "გაყიდული ერთეული"
-    "reports.avgOrderValue": "საშუალო შეკვეთა"
-    "reports.reservationsStarted": "დაწყებული ჯავშნები"
-    "reports.activeReservations": "აქტიური ჯავშნები"
-    "reports.selectedPeriod": "არჩეული პერიოდი"
-    "reports.completedSales": "დასრულებული გაყიდვები პერიოდში"
-    "reports.selectedAverage": "არჩეული პერიოდის საშუალო"
-    "reports.reservedRange": "დაჯავშნილი პერიოდში"
-    "reports.stillActive": "ამ ნაკრებიდან ჯერ აქტიურია"
-    "reports.revenueOverTime": "შემოსავალი დროში"
-    "reports.noRevenue": "ამ პერიოდში შემოსავლის მონაცემები არ არის."
-    "reports.topModels": "ყველაზე გაყიდვადი მოდელები"
-    "reports.model": "მოდელი"
-    "reports.units": "ერთეული"
-    "reports.trend": "ტრენდი"
-    "reports.noSales": "გაყიდვების მონაცემები ჯერ არ არის."
-    "reports.outcomes": "ჯავშნების შედეგები"
-    "reports.outcomesDescription": "ეფუძნება არჩეულ პერიოდში დაწყებულ ჯავშნებს."
-    "reports.started": "დაწყებული"
-    "reports.completed": "დასრულებული"
-    "reports.cancelled": "გაუქმებული"
-    "reports.expired": "ვადაგასული"
-    "reports.reservations": "ჯავშანი"
-    "reports.activeLower": "აქტიური"
-    "reports.completedLower": "დასრულებული"
-    "reports.cancelledLower": "გაუქმებული"
-    "reports.expiredLower": "ვადაგასული"
-    "reports.previousPeriod": "წინა პერიოდი"
-    "reports.noChangeVs": "ცვლილება არ არის: {label}"
-    "reports.deltaVs": "{delta} შედარებით {label}"
-    "reports.deltaPercentVs": "{delta} ({percent}%) შედარებით {label}"
+    "reports.eyebrow": "ადმინის ანალიტიკა",
+    "reports.title": "გაყიდვების ანგარიშები",
+    "reports.description": "შემოსავალი და ჯავშნების აქტივობა არჩეული პერიოდისთვის.",
+    "reports.startDate": "საწყისი თარიღი",
+    "reports.endDate": "საბოლოო თარიღი",
+    "reports.apply": "გამოყენება",
+    "reports.last30Days": "ბოლო 30 დღე",
+    "reports.showing": "ნაჩვენებია: {range}",
+    "reports.chooseDates": "აირჩიეთ საწყისი და საბოლოო თარიღი.",
+    "reports.endAfterStart": "საბოლოო თარიღი საწყისზე ადრე არ უნდა იყოს.",
+    "reports.loading": "ანგარიშის მონაცემები იტვირთება...",
+    "reports.refreshing": "ანგარიშის მონაცემები ფონურად ახლდება...",
+    "reports.lastRefresh": "ბოლო განახლება: {value}",
+    "reports.stale": "ანგარიშის მონაცემები შეიძლება მოძველებული იყოს. დაბრუნდით ჩანართზე ან სცადეთ ხელახლა.",
+    "reports.retry": "თავიდან ცდა",
+    "reports.revenue": "შემოსავალი",
+    "reports.unitsSold": "გაყიდული ერთეული",
+    "reports.avgOrderValue": "საშუალო შეკვეთა",
+    "reports.reservationsStarted": "დაწყებული ჯავშნები",
+    "reports.activeReservations": "აქტიური ჯავშნები",
+    "reports.selectedPeriod": "არჩეული პერიოდი",
+    "reports.completedSales": "დასრულებული გაყიდვები პერიოდში",
+    "reports.selectedAverage": "არჩეული პერიოდის საშუალო",
+    "reports.reservedRange": "დაჯავშნილი პერიოდში",
+    "reports.stillActive": "ამ ნაკრებიდან ჯერ აქტიურია",
+    "reports.revenueOverTime": "შემოსავალი დროში",
+    "reports.noRevenue": "ამ პერიოდში შემოსავლის მონაცემები არ არის.",
+    "reports.topModels": "ყველაზე გაყიდვადი მოდელები",
+    "reports.model": "მოდელი",
+    "reports.units": "ერთეული",
+    "reports.trend": "ტრენდი",
+    "reports.noSales": "გაყიდვების მონაცემები ჯერ არ არის.",
+    "reports.outcomes": "ჯავშნების შედეგები",
+    "reports.outcomesDescription": "ეფუძნება არჩეულ პერიოდში დაწყებულ ჯავშნებს.",
+    "reports.started": "დაწყებული",
+    "reports.completed": "დასრულებული",
+    "reports.cancelled": "გაუქმებული",
+    "reports.expired": "ვადაგასული",
+    "reports.reservations": "ჯავშანი",
+    "reports.activeLower": "აქტიური",
+    "reports.completedLower": "დასრულებული",
+    "reports.cancelledLower": "გაუქმებული",
+    "reports.expiredLower": "ვადაგასული",
+    "reports.previousPeriod": "წინა პერიოდი",
+    "reports.noChangeVs": "ცვლილება არ არის: {label}",
+    "reports.deltaVs": "{delta} შედარებით {label}",
+    "reports.deltaPercentVs": "{delta} ({percent}%) შედარებით {label}",
   },
 };

@@ -2,179 +2,179 @@ import type { DictionarySection } from "@/lib/i18n/dictionaries/types";
 
 export const authDictionary: DictionarySection = {
   en: {
-    "login.heroTitle": "Catalog access for every role."
-    "login.heroCopy": "Customers browse the shop. Sellers manage reservations. Admins run the inventory."
-    "login.welcomeBack": "Welcome back"
-    "login.customerAccess": "Customer access"
-    "login.signIn": "Sign in"
-    "login.createAccount": "Create account"
-    "login.staffRequired": "Staff pages require an active seller or admin profile."
+    "login.heroTitle": "Catalog access for every role.",
+    "login.heroCopy": "Customers browse the shop. Sellers manage reservations. Admins run the inventory.",
+    "login.welcomeBack": "Welcome back",
+    "login.customerAccess": "Customer access",
+    "login.signIn": "Sign in",
+    "login.createAccount": "Create account",
+    "login.staffRequired": "Staff pages require an active seller or admin profile.",
     "login.customerOrStaff":
-          "Use Google or email for the customer catalog. Staff accounts use email and password."
-    "login.customerAccountSignedIn": "Customer account signed in"
-    "login.accountSignedIn": "{role} account signed in"
-    "login.savedBrowser": "Saved in this browser"
-    "login.askAdmin": "Ask an admin to create a seller/admin profile, or sign out and use a staff account."
-    "login.openAdmin": "Open admin"
-    "login.openSeller": "Open seller"
-    "login.openShop": "Open shop"
-    "login.sellerView": "Seller view"
-    "login.supabaseMissing": "Supabase URL and anon key are required before accounts can sign in."
-    "login.facebookCustomerOnly": "Facebook login is for customer accounts. Staff pages need a seller or admin account."
-    "login.continueFacebook": "Continue with Facebook"
-    "login.googleCustomerOnly": "Google login is for customer accounts. Staff pages need a seller or admin account."
-    "login.continueGoogle": "Continue with Google"
-    "login.register": "Register"
-    "login.email": "Email"
-    "login.password": "Password"
-    "login.checkingAccess": "Checking access"
-    "login.signInEmail": "Sign in with email"
-    "login.createCustomerAccount": "Create customer account"
-    "login.customer": "Customer"
-    "login.customerCopy": "Browse active products with Google or email access."
-    "login.sellerCopy": "Reserve items and manage holds after an admin creates the staff profile."
-    "login.adminCopy": "Manage inventory, fields, staff, settings, and reports."
-    "login.confirmEmail": "Check your email to confirm the account, then sign in."
+          "Use Google or email for the customer catalog. Staff accounts use email and password.",
+    "login.customerAccountSignedIn": "Customer account signed in",
+    "login.accountSignedIn": "{role} account signed in",
+    "login.savedBrowser": "Saved in this browser",
+    "login.askAdmin": "Ask an admin to create a seller/admin profile, or sign out and use a staff account.",
+    "login.openAdmin": "Open admin",
+    "login.openSeller": "Open seller",
+    "login.openShop": "Open shop",
+    "login.sellerView": "Seller view",
+    "login.supabaseMissing": "Supabase URL and anon key are required before accounts can sign in.",
+    "login.facebookCustomerOnly": "Facebook login is for customer accounts. Staff pages need a seller or admin account.",
+    "login.continueFacebook": "Continue with Facebook",
+    "login.googleCustomerOnly": "Google login is for customer accounts. Staff pages need a seller or admin account.",
+    "login.continueGoogle": "Continue with Google",
+    "login.register": "Register",
+    "login.email": "Email",
+    "login.password": "Password",
+    "login.checkingAccess": "Checking access",
+    "login.signInEmail": "Sign in with email",
+    "login.createCustomerAccount": "Create customer account",
+    "login.customer": "Customer",
+    "login.customerCopy": "Browse active products with Google or email access.",
+    "login.sellerCopy": "Reserve items and manage holds after an admin creates the staff profile.",
+    "login.adminCopy": "Manage inventory, fields, staff, settings, and reports.",
+    "login.confirmEmail": "Check your email to confirm the account, then sign in.",
     "login.customerAccountStaffError":
-          "This is a customer account. Use an active seller or admin account for staff pages."
-    "login.adminAccessCopy": "Inventory, staff, reports, settings, and seller tools are available."
-    "login.sellerAccessCopy": "Seller inventory and reservations are available."
-    "login.customerAccessCopy": "The customer catalog is available."
-    "login.shopImageAlt": "Bicycle in a city street"
-    "login.forgotPassword": "Forgot password?"
-    "login.sendingReset": "Sending reset email"
-    "login.enterEmailForReset": "Enter your email above first, then click forgot password again."
-    "login.resetEmailSent": "Password reset email sent. Open the link in your email to set a new password."
-    "reset.eyebrow": "Password reset"
-    "reset.title": "Set a new password"
-    "reset.description": "Use the secure link from your email, then choose a new password for this account."
-    "reset.checkingLink": "Checking reset link"
-    "reset.supabaseMissing": "Supabase URL and anon key are required before password reset can work."
-    "reset.missingSession": "This reset link is missing or expired. Request a new password reset email from the login page."
-    "reset.newPassword": "New password"
-    "reset.confirmPassword": "Confirm password"
-    "reset.passwordTooShort": "Password must be at least 6 characters."
-    "reset.passwordMismatch": "Passwords do not match."
-    "reset.updateFailed": "Could not update password."
-    "reset.updating": "Updating password"
-    "reset.updatePassword": "Update password"
-    "reset.updated": "Password updated. Please sign in again with your new password."
-    "reset.backToLogin": "Back to login"
+          "This is a customer account. Use an active seller or admin account for staff pages.",
+    "login.adminAccessCopy": "Inventory, staff, reports, settings, and seller tools are available.",
+    "login.sellerAccessCopy": "Seller inventory and reservations are available.",
+    "login.customerAccessCopy": "The customer catalog is available.",
+    "login.shopImageAlt": "Bicycle in a city street",
+    "login.forgotPassword": "Forgot password?",
+    "login.sendingReset": "Sending reset email",
+    "login.enterEmailForReset": "Enter your email above first, then click forgot password again.",
+    "login.resetEmailSent": "Password reset email sent. Open the link in your email to set a new password.",
+    "reset.eyebrow": "Password reset",
+    "reset.title": "Set a new password",
+    "reset.description": "Use the secure link from your email, then choose a new password for this account.",
+    "reset.checkingLink": "Checking reset link",
+    "reset.supabaseMissing": "Supabase URL and anon key are required before password reset can work.",
+    "reset.missingSession": "This reset link is missing or expired. Request a new password reset email from the login page.",
+    "reset.newPassword": "New password",
+    "reset.confirmPassword": "Confirm password",
+    "reset.passwordTooShort": "Password must be at least 6 characters.",
+    "reset.passwordMismatch": "Passwords do not match.",
+    "reset.updateFailed": "Could not update password.",
+    "reset.updating": "Updating password",
+    "reset.updatePassword": "Update password",
+    "reset.updated": "Password updated. Please sign in again with your new password.",
+    "reset.backToLogin": "Back to login",
   },
   ru: {
-    "login.heroTitle": "Доступ к каталогу для каждой роли."
-    "login.heroCopy": "Клиенты смотрят магазин. Продавцы управляют бронями. Администраторы ведут инвентарь."
-    "login.welcomeBack": "С возвращением"
-    "login.customerAccess": "Доступ клиента"
-    "login.signIn": "Войти"
-    "login.createAccount": "Создать аккаунт"
-    "login.staffRequired": "Для staff-страниц нужен активный профиль продавца или администратора."
-    "login.customerOrStaff": "Для клиентского каталога используйте Google или email. Staff-аккаунты используют email и пароль."
-    "login.customerAccountSignedIn": "Выполнен вход как клиент"
-    "login.accountSignedIn": "Выполнен вход: {role}"
-    "login.savedBrowser": "Сохранено в этом браузере"
-    "login.askAdmin": "Попросите администратора создать профиль продавца/админа или выйдите и используйте staff-аккаунт."
-    "login.openAdmin": "Открыть админ"
-    "login.openSeller": "Открыть продавца"
-    "login.openShop": "Открыть магазин"
-    "login.sellerView": "Вид продавца"
-    "login.supabaseMissing": "Для входа нужны Supabase URL и anon key."
-    "login.facebookCustomerOnly": "Facebook-вход только для клиентов. Для staff-страниц нужен аккаунт продавца или админа."
-    "login.continueFacebook": "Продолжить с Facebook"
-    "login.googleCustomerOnly": "Google-вход только для клиентов. Для staff-страниц нужен аккаунт продавца или админа."
-    "login.continueGoogle": "Продолжить с Google"
-    "login.register": "Регистрация"
-    "login.email": "Email"
-    "login.password": "Пароль"
-    "login.checkingAccess": "Проверка доступа"
-    "login.signInEmail": "Войти по email"
-    "login.createCustomerAccount": "Создать аккаунт клиента"
-    "login.customer": "Клиент"
-    "login.customerCopy": "Смотрите активные товары через Google или email."
-    "login.sellerCopy": "Бронируйте товары и управляйте удержаниями после создания staff-профиля администратором."
-    "login.adminCopy": "Управляйте инвентарем, полями, staff, настройками и отчетами."
-    "login.confirmEmail": "Проверьте email, подтвердите аккаунт и затем войдите."
-    "login.customerAccountStaffError": "Это клиентский аккаунт. Для staff-страниц используйте аккаунт продавца или админа."
-    "login.adminAccessCopy": "Доступны инвентарь, staff, отчеты, настройки и инструменты продавца."
-    "login.sellerAccessCopy": "Доступны инвентарь продавца и бронирования."
-    "login.customerAccessCopy": "Клиентский каталог доступен."
-    "login.shopImageAlt": "Велосипед на городской улице"
-    "login.forgotPassword": "Забыли пароль?"
-    "login.sendingReset": "Отправляем письмо"
-    "login.enterEmailForReset": "Сначала введите email выше, затем снова нажмите забыли пароль."
-    "login.resetEmailSent": "Письмо для сброса пароля отправлено. Откройте ссылку в email, чтобы задать новый пароль."
-    "reset.eyebrow": "Сброс пароля"
-    "reset.title": "Задайте новый пароль"
-    "reset.description": "Откройте безопасную ссылку из email и выберите новый пароль для этого аккаунта."
-    "reset.checkingLink": "Проверяем ссылку сброса"
-    "reset.supabaseMissing": "Для сброса пароля нужны Supabase URL и anon key."
-    "reset.missingSession": "Эта ссылка отсутствует или истекла. Запросите новое письмо для сброса пароля на странице входа."
-    "reset.newPassword": "Новый пароль"
-    "reset.confirmPassword": "Подтвердите пароль"
-    "reset.passwordTooShort": "Пароль должен быть не короче 6 символов."
-    "reset.passwordMismatch": "Пароли не совпадают."
-    "reset.updateFailed": "Не удалось обновить пароль."
-    "reset.updating": "Обновляем пароль"
-    "reset.updatePassword": "Обновить пароль"
-    "reset.updated": "Пароль обновлен. Войдите снова с новым паролем."
-    "reset.backToLogin": "Назад ко входу"
+    "login.heroTitle": "Доступ к каталогу для каждой роли.",
+    "login.heroCopy": "Клиенты смотрят магазин. Продавцы управляют бронями. Администраторы ведут инвентарь.",
+    "login.welcomeBack": "С возвращением",
+    "login.customerAccess": "Доступ клиента",
+    "login.signIn": "Войти",
+    "login.createAccount": "Создать аккаунт",
+    "login.staffRequired": "Для staff-страниц нужен активный профиль продавца или администратора.",
+    "login.customerOrStaff": "Для клиентского каталога используйте Google или email. Staff-аккаунты используют email и пароль.",
+    "login.customerAccountSignedIn": "Выполнен вход как клиент",
+    "login.accountSignedIn": "Выполнен вход: {role}",
+    "login.savedBrowser": "Сохранено в этом браузере",
+    "login.askAdmin": "Попросите администратора создать профиль продавца/админа или выйдите и используйте staff-аккаунт.",
+    "login.openAdmin": "Открыть админ",
+    "login.openSeller": "Открыть продавца",
+    "login.openShop": "Открыть магазин",
+    "login.sellerView": "Вид продавца",
+    "login.supabaseMissing": "Для входа нужны Supabase URL и anon key.",
+    "login.facebookCustomerOnly": "Facebook-вход только для клиентов. Для staff-страниц нужен аккаунт продавца или админа.",
+    "login.continueFacebook": "Продолжить с Facebook",
+    "login.googleCustomerOnly": "Google-вход только для клиентов. Для staff-страниц нужен аккаунт продавца или админа.",
+    "login.continueGoogle": "Продолжить с Google",
+    "login.register": "Регистрация",
+    "login.email": "Email",
+    "login.password": "Пароль",
+    "login.checkingAccess": "Проверка доступа",
+    "login.signInEmail": "Войти по email",
+    "login.createCustomerAccount": "Создать аккаунт клиента",
+    "login.customer": "Клиент",
+    "login.customerCopy": "Смотрите активные товары через Google или email.",
+    "login.sellerCopy": "Бронируйте товары и управляйте удержаниями после создания staff-профиля администратором.",
+    "login.adminCopy": "Управляйте инвентарем, полями, staff, настройками и отчетами.",
+    "login.confirmEmail": "Проверьте email, подтвердите аккаунт и затем войдите.",
+    "login.customerAccountStaffError": "Это клиентский аккаунт. Для staff-страниц используйте аккаунт продавца или админа.",
+    "login.adminAccessCopy": "Доступны инвентарь, staff, отчеты, настройки и инструменты продавца.",
+    "login.sellerAccessCopy": "Доступны инвентарь продавца и бронирования.",
+    "login.customerAccessCopy": "Клиентский каталог доступен.",
+    "login.shopImageAlt": "Велосипед на городской улице",
+    "login.forgotPassword": "Забыли пароль?",
+    "login.sendingReset": "Отправляем письмо",
+    "login.enterEmailForReset": "Сначала введите email выше, затем снова нажмите забыли пароль.",
+    "login.resetEmailSent": "Письмо для сброса пароля отправлено. Откройте ссылку в email, чтобы задать новый пароль.",
+    "reset.eyebrow": "Сброс пароля",
+    "reset.title": "Задайте новый пароль",
+    "reset.description": "Откройте безопасную ссылку из email и выберите новый пароль для этого аккаунта.",
+    "reset.checkingLink": "Проверяем ссылку сброса",
+    "reset.supabaseMissing": "Для сброса пароля нужны Supabase URL и anon key.",
+    "reset.missingSession": "Эта ссылка отсутствует или истекла. Запросите новое письмо для сброса пароля на странице входа.",
+    "reset.newPassword": "Новый пароль",
+    "reset.confirmPassword": "Подтвердите пароль",
+    "reset.passwordTooShort": "Пароль должен быть не короче 6 символов.",
+    "reset.passwordMismatch": "Пароли не совпадают.",
+    "reset.updateFailed": "Не удалось обновить пароль.",
+    "reset.updating": "Обновляем пароль",
+    "reset.updatePassword": "Обновить пароль",
+    "reset.updated": "Пароль обновлен. Войдите снова с новым паролем.",
+    "reset.backToLogin": "Назад ко входу",
   },
   ka: {
-    "login.heroTitle": "კატალოგზე წვდომა ყველა როლისთვის."
-    "login.heroCopy": "მომხმარებლები ათვალიერებენ მაღაზიას. გამყიდველები მართავენ ჯავშნებს. ადმინები მართავენ ინვენტარს."
-    "login.welcomeBack": "კეთილი დაბრუნება"
-    "login.customerAccess": "მომხმარებლის წვდომა"
-    "login.signIn": "შესვლა"
-    "login.createAccount": "ანგარიშის შექმნა"
-    "login.staffRequired": "Staff გვერდებისთვის საჭიროა აქტიური გამყიდველის ან ადმინის პროფილი."
-    "login.customerOrStaff": "მომხმარებლის კატალოგისთვის გამოიყენე Google ან email. Staff ანგარიშებისთვის საჭიროა email და პაროლი."
-    "login.customerAccountSignedIn": "შესული ხარ როგორც მომხმარებელი"
-    "login.accountSignedIn": "შესული ხარ: {role}"
-    "login.savedBrowser": "შენახულია ამ ბრაუზერში"
-    "login.askAdmin": "სთხოვე ადმინს შექმნას გამყიდველის/ადმინის პროფილი, ან გამოდი და გამოიყენე staff ანგარიში."
-    "login.openAdmin": "ადმინის გახსნა"
-    "login.openSeller": "გამყიდველის გახსნა"
-    "login.openShop": "მაღაზიის გახსნა"
-    "login.sellerView": "გამყიდველის ხედი"
-    "login.supabaseMissing": "შესვლისთვის საჭიროა Supabase URL და anon key."
-    "login.facebookCustomerOnly": "Facebook შესვლა მხოლოდ მომხმარებლებისთვისაა. Staff გვერდებისთვის საჭიროა გამყიდველის ან ადმინის ანგარიში."
-    "login.continueFacebook": "Facebook-ით გაგრძელება"
-    "login.googleCustomerOnly": "Google შესვლა მხოლოდ მომხმარებლებისთვისაა. Staff გვერდებისთვის საჭიროა გამყიდველის ან ადმინის ანგარიში."
-    "login.continueGoogle": "Google-ით გაგრძელება"
-    "login.register": "რეგისტრაცია"
-    "login.email": "Email"
-    "login.password": "პაროლი"
-    "login.checkingAccess": "წვდომის შემოწმება"
-    "login.signInEmail": "Email-ით შესვლა"
-    "login.createCustomerAccount": "მომხმარებლის ანგარიშის შექმნა"
-    "login.customer": "მომხმარებელი"
-    "login.customerCopy": "დაათვალიერე აქტიური პროდუქტები Google-ით ან email-ით."
-    "login.sellerCopy": "დაჯავშნე ნივთები და მართე ჯავშნები მას შემდეგ, რაც ადმინი staff პროფილს შექმნის."
-    "login.adminCopy": "მართე ინვენტარი, ველები, staff, პარამეტრები და ანგარიშები."
-    "login.confirmEmail": "შეამოწმე email, დაადასტურე ანგარიში და შემდეგ შედი."
-    "login.customerAccountStaffError": "ეს მომხმარებლის ანგარიშია. Staff გვერდებისთვის გამოიყენე გამყიდველის ან ადმინის ანგარიში."
-    "login.adminAccessCopy": "ხელმისაწვდომია ინვენტარი, staff, ანგარიშები, პარამეტრები და გამყიდველის ხელსაწყოები."
-    "login.sellerAccessCopy": "ხელმისაწვდომია გამყიდველის ინვენტარი და ჯავშნები."
-    "login.customerAccessCopy": "მომხმარებლის კატალოგი ხელმისაწვდომია."
-    "login.shopImageAlt": "ველოსიპედი ქალაქის ქუჩაზე"
-    "login.forgotPassword": "დაგავიწყდა პაროლი?"
-    "login.sendingReset": "იგზავნება აღდგენის წერილი"
-    "login.enterEmailForReset": "ჯერ ზემოთ შეიყვანე email, შემდეგ ისევ დააჭირე პაროლის აღდგენას."
-    "login.resetEmailSent": "პაროლის აღდგენის წერილი გაიგზავნა. გახსენი email-ის ბმული ახალი პაროლის დასაყენებლად."
-    "reset.eyebrow": "პაროლის აღდგენა"
-    "reset.title": "დააყენე ახალი პაროლი"
-    "reset.description": "გამოიყენე email-ში მიღებული უსაფრთხო ბმული და აირჩიე ახალი პაროლი ამ ანგარიშისთვის."
-    "reset.checkingLink": "აღდგენის ბმული მოწმდება"
-    "reset.supabaseMissing": "პაროლის აღდგენისთვის საჭიროა Supabase URL და anon key."
-    "reset.missingSession": "ეს აღდგენის ბმული არასწორია ან ვადა გაუვიდა. მოითხოვე ახალი პაროლის აღდგენის წერილი შესვლის გვერდიდან."
-    "reset.newPassword": "ახალი პაროლი"
-    "reset.confirmPassword": "გაიმეორე პაროლი"
-    "reset.passwordTooShort": "პაროლი უნდა იყოს მინიმუმ 6 სიმბოლო."
-    "reset.passwordMismatch": "პაროლები არ ემთხვევა."
-    "reset.updateFailed": "პაროლის განახლება ვერ მოხერხდა."
-    "reset.updating": "პაროლი ახლდება"
-    "reset.updatePassword": "პაროლის განახლება"
-    "reset.updated": "პაროლი განახლდა. შედი თავიდან ახალი პაროლით."
-    "reset.backToLogin": "შესვლის გვერდზე დაბრუნება"
+    "login.heroTitle": "კატალოგზე წვდომა ყველა როლისთვის.",
+    "login.heroCopy": "მომხმარებლები ათვალიერებენ მაღაზიას. გამყიდველები მართავენ ჯავშნებს. ადმინები მართავენ ინვენტარს.",
+    "login.welcomeBack": "კეთილი დაბრუნება",
+    "login.customerAccess": "მომხმარებლის წვდომა",
+    "login.signIn": "შესვლა",
+    "login.createAccount": "ანგარიშის შექმნა",
+    "login.staffRequired": "Staff გვერდებისთვის საჭიროა აქტიური გამყიდველის ან ადმინის პროფილი.",
+    "login.customerOrStaff": "მომხმარებლის კატალოგისთვის გამოიყენე Google ან email. Staff ანგარიშებისთვის საჭიროა email და პაროლი.",
+    "login.customerAccountSignedIn": "შესული ხარ როგორც მომხმარებელი",
+    "login.accountSignedIn": "შესული ხარ: {role}",
+    "login.savedBrowser": "შენახულია ამ ბრაუზერში",
+    "login.askAdmin": "სთხოვე ადმინს შექმნას გამყიდველის/ადმინის პროფილი, ან გამოდი და გამოიყენე staff ანგარიში.",
+    "login.openAdmin": "ადმინის გახსნა",
+    "login.openSeller": "გამყიდველის გახსნა",
+    "login.openShop": "მაღაზიის გახსნა",
+    "login.sellerView": "გამყიდველის ხედი",
+    "login.supabaseMissing": "შესვლისთვის საჭიროა Supabase URL და anon key.",
+    "login.facebookCustomerOnly": "Facebook შესვლა მხოლოდ მომხმარებლებისთვისაა. Staff გვერდებისთვის საჭიროა გამყიდველის ან ადმინის ანგარიში.",
+    "login.continueFacebook": "Facebook-ით გაგრძელება",
+    "login.googleCustomerOnly": "Google შესვლა მხოლოდ მომხმარებლებისთვისაა. Staff გვერდებისთვის საჭიროა გამყიდველის ან ადმინის ანგარიში.",
+    "login.continueGoogle": "Google-ით გაგრძელება",
+    "login.register": "რეგისტრაცია",
+    "login.email": "Email",
+    "login.password": "პაროლი",
+    "login.checkingAccess": "წვდომის შემოწმება",
+    "login.signInEmail": "Email-ით შესვლა",
+    "login.createCustomerAccount": "მომხმარებლის ანგარიშის შექმნა",
+    "login.customer": "მომხმარებელი",
+    "login.customerCopy": "დაათვალიერე აქტიური პროდუქტები Google-ით ან email-ით.",
+    "login.sellerCopy": "დაჯავშნე ნივთები და მართე ჯავშნები მას შემდეგ, რაც ადმინი staff პროფილს შექმნის.",
+    "login.adminCopy": "მართე ინვენტარი, ველები, staff, პარამეტრები და ანგარიშები.",
+    "login.confirmEmail": "შეამოწმე email, დაადასტურე ანგარიში და შემდეგ შედი.",
+    "login.customerAccountStaffError": "ეს მომხმარებლის ანგარიშია. Staff გვერდებისთვის გამოიყენე გამყიდველის ან ადმინის ანგარიში.",
+    "login.adminAccessCopy": "ხელმისაწვდომია ინვენტარი, staff, ანგარიშები, პარამეტრები და გამყიდველის ხელსაწყოები.",
+    "login.sellerAccessCopy": "ხელმისაწვდომია გამყიდველის ინვენტარი და ჯავშნები.",
+    "login.customerAccessCopy": "მომხმარებლის კატალოგი ხელმისაწვდომია.",
+    "login.shopImageAlt": "ველოსიპედი ქალაქის ქუჩაზე",
+    "login.forgotPassword": "დაგავიწყდა პაროლი?",
+    "login.sendingReset": "იგზავნება აღდგენის წერილი",
+    "login.enterEmailForReset": "ჯერ ზემოთ შეიყვანე email, შემდეგ ისევ დააჭირე პაროლის აღდგენას.",
+    "login.resetEmailSent": "პაროლის აღდგენის წერილი გაიგზავნა. გახსენი email-ის ბმული ახალი პაროლის დასაყენებლად.",
+    "reset.eyebrow": "პაროლის აღდგენა",
+    "reset.title": "დააყენე ახალი პაროლი",
+    "reset.description": "გამოიყენე email-ში მიღებული უსაფრთხო ბმული და აირჩიე ახალი პაროლი ამ ანგარიშისთვის.",
+    "reset.checkingLink": "აღდგენის ბმული მოწმდება",
+    "reset.supabaseMissing": "პაროლის აღდგენისთვის საჭიროა Supabase URL და anon key.",
+    "reset.missingSession": "ეს აღდგენის ბმული არასწორია ან ვადა გაუვიდა. მოითხოვე ახალი პაროლის აღდგენის წერილი შესვლის გვერდიდან.",
+    "reset.newPassword": "ახალი პაროლი",
+    "reset.confirmPassword": "გაიმეორე პაროლი",
+    "reset.passwordTooShort": "პაროლი უნდა იყოს მინიმუმ 6 სიმბოლო.",
+    "reset.passwordMismatch": "პაროლები არ ემთხვევა.",
+    "reset.updateFailed": "პაროლის განახლება ვერ მოხერხდა.",
+    "reset.updating": "პაროლი ახლდება",
+    "reset.updatePassword": "პაროლის განახლება",
+    "reset.updated": "პაროლი განახლდა. შედი თავიდან ახალი პაროლით.",
+    "reset.backToLogin": "შესვლის გვერდზე დაბრუნება",
   },
 };
