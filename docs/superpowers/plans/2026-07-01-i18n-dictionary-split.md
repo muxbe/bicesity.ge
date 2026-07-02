@@ -891,5 +891,3 @@ Stop the development server after smoke verification.
 - Placeholder scan: No unresolved implementation placeholders remain.
 - Type consistency: `Locale`, `Dictionary`, `DictionarySection`, and `mergeDictionarySections` are defined before use and referenced consistently.
 - Scope check: This plan only splits dictionaries and updates verification guards; page/component refactors are excluded.
-
-

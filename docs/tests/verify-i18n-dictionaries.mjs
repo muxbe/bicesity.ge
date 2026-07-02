@@ -1,3 +1,8 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+import ts from "typescript";
 import {
   failIfAny,
   lineCount,
@@ -60,7 +65,7 @@ for (const requiredFile of ["types.ts", "merge.ts", "index.ts"]) {
   }
 }
 
-const globalKeysByLocale = new Map(
+const globalEntriesByLocale = new Map(
   expectedLocales.map((locale) => [locale, new Map()])
 );
 
@@ -76,9 +81,93 @@ function localeBlock(text, locale) {
   return text.slice(current.index, next ? next.index : text.length);
 }
 
-function keysForLocale(text, locale) {
+function parseJsonString(raw, context) {
+  try {
+    return JSON.parse(`"${raw}"`);
+  } catch (error) {
+    failures.push(`${context}: invalid string literal (${error.message})`);
+    return raw;
+  }
+}
+
+function entriesForLocale(text, locale, filePath) {
   const block = localeBlock(text, locale);
-  return [...block.matchAll(/"([^"]+)":/g)].map((match) => match[1]);
+  return [...block.matchAll(/"((?:\\.|[^"\\])+)":\s*"((?:\\.|[^"\\])*)"/g)]
+    .map((match) => ({
+      key: parseJsonString(match[1], `${filePath}: locale '${locale}' key`),
+      value: parseJsonString(match[2], `${filePath}: locale '${locale}' value`),
+    }));
+}
+
+function outputPathFor(sourcePath, tempRoot) {
+  return path.join(tempRoot, sourcePath).replace(/\.ts$/, ".mjs");
+}
+
+function relativeImportSpecifier(fromOutputPath, toOutputPath) {
+  const relative = path
+    .relative(path.dirname(fromOutputPath), toOutputPath)
+    .replace(/\\/g, "/");
+  return relative.startsWith(".") ? relative : `./${relative}`;
+}
+
+function resolveAliasSourcePath(aliasPath) {
+  const sourceBase = path.join("src", aliasPath).replace(/\\/g, "/");
+  const filePath = `${sourceBase}.ts`;
+  if (pathExists(filePath)) {
+    return filePath;
+  }
+  const indexPath = `${sourceBase}/index.ts`;
+  if (pathExists(indexPath)) {
+    return indexPath;
+  }
+  throw new Error(`Unable to resolve aliased import '@/${aliasPath}'`);
+}
+
+function rewriteAliasImports(source, outputPath, tempRoot) {
+  const rewrite = (match, prefix, quote, aliasPath) => {
+    const targetSourcePath = resolveAliasSourcePath(aliasPath);
+    const targetOutputPath = outputPathFor(targetSourcePath, tempRoot);
+    return `${prefix}${quote}${relativeImportSpecifier(outputPath, targetOutputPath)}${quote}`;
+  };
+
+  return source
+    .replace(/(from\s+)(["'])@\/([^"']+)\2/g, rewrite)
+    .replace(/(import\s+)(["'])@\/([^"']+)\2/g, rewrite);
+}
+
+async function loadRuntimeDictionaries() {
+  const tempRoot = mkdtempSync(path.join(tmpdir(), "i18n-dictionaries-"));
+  const sourcePaths = [
+    rootDictionaryPath,
+    `${dictionaryDir}/types.ts`,
+    `${dictionaryDir}/merge.ts`,
+    `${dictionaryDir}/index.ts`,
+    ...modules.map((module) => `${dictionaryDir}/${module.file}`),
+  ];
+
+  try {
+    for (const sourcePath of sourcePaths) {
+      const outputPath = outputPathFor(sourcePath, tempRoot);
+      mkdirSync(path.dirname(outputPath), { recursive: true });
+
+      const source = rewriteAliasImports(readText(sourcePath), outputPath, tempRoot);
+      const transpiled = ts.transpileModule(source, {
+        compilerOptions: {
+          module: ts.ModuleKind.ES2022,
+          target: ts.ScriptTarget.ES2020,
+        },
+        fileName: sourcePath,
+      });
+      writeFileSync(outputPath, transpiled.outputText);
+    }
+
+    const runtimeModule = await import(
+      pathToFileURL(outputPathFor(rootDictionaryPath, tempRoot)).href
+    );
+    return runtimeModule.dictionaries;
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
 }
 
 for (const module of modules) {
@@ -94,12 +183,12 @@ for (const module of modules) {
   }
 
   for (const locale of expectedLocales) {
-    const keys = keysForLocale(text, locale);
-    if (keys.length === 0) {
+    const entries = entriesForLocale(text, locale, path);
+    if (entries.length === 0) {
       failures.push(`${path}: locale '${locale}' has no keys`);
     }
 
-    for (const key of keys) {
+    for (const { key, value } of entries) {
       const prefix = key.split(".")[0];
       const expectedOwner = prefixOwners.get(prefix);
       if (expectedOwner !== module.file) {
@@ -108,20 +197,20 @@ for (const module of modules) {
         );
       }
 
-      const localeKeys = globalKeysByLocale.get(locale);
-      if (localeKeys.has(key)) {
+      const localeEntries = globalEntriesByLocale.get(locale);
+      if (localeEntries.has(key)) {
         failures.push(
-          `${path}: duplicate key '${key}' also found in ${localeKeys.get(key)}`
+          `${path}: duplicate key '${key}' also found in ${localeEntries.get(key).path}`
         );
       }
-      localeKeys.set(key, path);
+      localeEntries.set(key, { path, value });
     }
   }
 }
 
-const enKeys = [...(globalKeysByLocale.get("en") ?? new Map()).keys()].sort();
+const enKeys = [...(globalEntriesByLocale.get("en") ?? new Map()).keys()].sort();
 for (const locale of ["ru", "ka"]) {
-  const localeKeys = [...(globalKeysByLocale.get(locale) ?? new Map()).keys()].sort();
+  const localeKeys = [...(globalEntriesByLocale.get(locale) ?? new Map()).keys()].sort();
   const localeSet = new Set(localeKeys);
   for (const key of enKeys) {
     if (!localeSet.has(key)) {
@@ -138,6 +227,41 @@ for (const locale of ["ru", "ka"]) {
 
 if (enKeys.length < 540) {
   failures.push(`${dictionaryDir}: expected at least 540 English keys, found ${enKeys.length}`);
+}
+
+let runtimeDictionaries;
+try {
+  runtimeDictionaries = await loadRuntimeDictionaries();
+} catch (error) {
+  failures.push(`${rootDictionaryPath}: failed to load runtime dictionaries (${error.message})`);
+}
+
+if (runtimeDictionaries) {
+  for (const locale of expectedLocales) {
+    const runtimeEntries = runtimeDictionaries[locale];
+    const sourceEntries = globalEntriesByLocale.get(locale) ?? new Map();
+
+    if (!runtimeEntries || typeof runtimeEntries !== "object" || Array.isArray(runtimeEntries)) {
+      failures.push(`${rootDictionaryPath}: runtime locale '${locale}' is missing or invalid`);
+      continue;
+    }
+
+    for (const [key, sourceEntry] of sourceEntries) {
+      if (!Object.prototype.hasOwnProperty.call(runtimeEntries, key)) {
+        failures.push(`${rootDictionaryPath}: runtime locale '${locale}' missing key '${key}'`);
+        continue;
+      }
+      if (runtimeEntries[key] !== sourceEntry.value) {
+        failures.push(`${rootDictionaryPath}: runtime locale '${locale}' changed value for '${key}'`);
+      }
+    }
+
+    for (const key of Object.keys(runtimeEntries)) {
+      if (!sourceEntries.has(key)) {
+        failures.push(`${rootDictionaryPath}: runtime locale '${locale}' has extra key '${key}'`);
+      }
+    }
+  }
 }
 
 failIfAny(
