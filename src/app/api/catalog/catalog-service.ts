@@ -10,6 +10,18 @@ import type {
   ProductStatusFilter,
   UpdateProductDTO,
 } from "@/features/catalog/dto/catalog-dto";
+import type {
+  AttributeOptionValidationRow,
+  AttributeValidationRow,
+  CatalogItemRow,
+  ListProductsOptions,
+  ProductImageStorageRow,
+  ValueRow,
+} from "@/app/api/catalog/services/catalog-types";
+import {
+  CATALOG_ITEM_SELECT,
+  PRODUCT_STATUSES,
+} from "@/app/api/catalog/services/catalog-types";
 import { listFields } from "@/app/api/fields/field-service";
 import {
   assertRequiredText,
@@ -26,73 +38,6 @@ import {
 } from "@/features/catalog/repositories/catalog-helpers";
 import { AdapterError, NotFoundError, ValidationError } from "@/features/shared/domain/errors";
 import { getServerSupabaseAdminClient } from "@/lib/supabase/admin";
-
-type CatalogItemRow = {
-  id: string;
-  name: string;
-  item_type: "bicycle" | "part";
-  serial_number: string;
-  price_cents: number;
-  stock_count: number;
-  status: "active" | "reserved" | "sold" | "archived";
-  description: string;
-  rating: number | null;
-  discount_type: "amount" | "percent" | null;
-  discount_amount_cents: number | null;
-  discount_percent_bps: number | null;
-  discount_reason: string | null;
-  bicycles: { drive_type: string } | { drive_type: string }[] | null;
-  product_images:
-    | {
-        bucket_name: string | null;
-        object_path: string | null;
-        external_url: string | null;
-        is_primary: boolean;
-        sort_order: number;
-      }[]
-    | null;
-};
-
-type AttributeRow = {
-  id: string;
-  display_name: string;
-  category: "bicycle" | "part";
-  is_public: boolean;
-  sort_order: number;
-  field_key: string;
-  data_type: "text" | "number" | "boolean" | "date" | "image" | "url";
-};
-
-type AttributeValidationRow = {
-  id: string;
-  display_name: string;
-  input_mode: "free_text" | "single_select" | null;
-};
-
-type AttributeOptionValidationRow = {
-  attribute_id: string;
-  value: string;
-};
-
-type ValueRow = {
-  catalog_item_id: string;
-  attribute_id: string;
-  value_text: string | null;
-};
-
-type ProductImageStorageRow = {
-  bucket_name: string | null;
-  object_path: string | null;
-  external_url: string | null;
-};
-
-type ListProductsOptions = {
-  syncReservations?: boolean;
-};
-
-const CATALOG_ITEM_SELECT =
-  "id,name,item_type,serial_number,price_cents,stock_count,status,description,rating,discount_type,discount_amount_cents,discount_percent_bps,discount_reason,bicycles(drive_type),product_images(bucket_name,object_path,external_url,is_primary,sort_order)";
-const PRODUCT_STATUSES: ProductStatus[] = ["active", "reserved", "sold", "archived"];
 
 function mapCategoryFromDb(dbCategory: "bicycle" | "part"): ProductCategory {
   return dbCategory === "bicycle" ? "Bicycle" : "Parts";
