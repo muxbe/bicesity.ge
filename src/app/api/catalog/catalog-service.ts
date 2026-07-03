@@ -1,27 +1,11 @@
 import type {
-  AttributeDTO,
   CreateProductDTO,
   MarkSoldDTO,
-  ProductCategory,
   ProductDTO,
-  ProductStatus,
-  CatalogStatusCounts,
-  ProductStatusFilter,
   UpdateProductDTO,
 } from "@/features/catalog/dto/catalog-dto";
-import type {
-  CatalogItemRow,
-  ListProductsOptions,
-  ProductImageStorageRow,
-} from "@/app/api/catalog/services/catalog-types";
-import {
-  CATALOG_ITEM_SELECT,
-  PRODUCT_STATUSES,
-} from "@/app/api/catalog/services/catalog-types";
-import {
-  fetchAttributeValueMap,
-  syncAttributeValues,
-} from "@/app/api/catalog/services/catalog-attributes";
+import type { ProductImageStorageRow } from "@/app/api/catalog/services/catalog-types";
+import { syncAttributeValues } from "@/app/api/catalog/services/catalog-attributes";
 import {
   normalizeProductImages,
   removeUnusedStorageObjects,
@@ -31,9 +15,8 @@ import {
   discountPatchFromInput,
   mapCategoryToDb,
   mapDriveTypeToDb,
-  rowToProduct,
 } from "@/app/api/catalog/services/catalog-mappers";
-import { listFields } from "@/app/api/fields/field-service";
+import { getProductById } from "@/app/api/catalog/services/catalog-queries";
 import {
   assertRequiredText,
   assertValidPrice,
@@ -42,172 +25,13 @@ import {
 import { AdapterError, NotFoundError, ValidationError } from "@/features/shared/domain/errors";
 import { getServerSupabaseAdminClient } from "@/lib/supabase/admin";
 
-async function fetchCatalogItems(status: ProductStatusFilter = "all"): Promise<CatalogItemRow[]> {
-  const supabase = getServerSupabaseAdminClient();
-  let query = supabase
-    .from("catalog_items")
-    .select(CATALOG_ITEM_SELECT)
-    .order("created_at", { ascending: false });
-
-  if (status === "all") {
-    query = query.neq("status", "archived");
-  } else {
-    query = query.eq("status", status);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    throw new AdapterError("Failed to fetch catalog items.", error);
-  }
-
-  return (data ?? []) as unknown as CatalogItemRow[];
-}
-
-async function countCatalogItems(status: ProductStatus): Promise<number> {
-  const supabase = getServerSupabaseAdminClient();
-  const { count, error } = await supabase
-    .from("catalog_items")
-    .select("id", { count: "exact", head: true })
-    .eq("status", status);
-
-  if (error) {
-    throw new AdapterError("Failed to count catalog items.", error);
-  }
-
-  return count ?? 0;
-}
-
-async function syncCatalogReservationStatuses(): Promise<void> {
-  const supabase = getServerSupabaseAdminClient();
-  const { data: reservationRows, error: reservationError } = await supabase
-    .from("reservations")
-    .select("catalog_item_id")
-    .eq("status", "active");
-
-  if (reservationError) {
-    throw new AdapterError("Failed to read active reservations for catalog sync.", reservationError);
-  }
-
-  const activeReservationItemIds = Array.from(
-    new Set(
-      (reservationRows ?? [])
-        .map((row) => row.catalog_item_id as string | null)
-        .filter((id): id is string => Boolean(id))
-    )
-  );
-
-  if (activeReservationItemIds.length > 0) {
-    const { error } = await supabase
-      .from("catalog_items")
-      .update({ status: "reserved" })
-      .in("id", activeReservationItemIds)
-      .eq("status", "active");
-
-    if (error) {
-      throw new AdapterError("Failed to sync active reservations to reserved items.", error);
-    }
-  }
-
-  const { data: reservedRows, error: reservedError } = await supabase
-    .from("catalog_items")
-    .select("id")
-    .eq("status", "reserved");
-
-  if (reservedError) {
-    throw new AdapterError("Failed to read reserved items for catalog sync.", reservedError);
-  }
-
-  const activeReservationItemIdSet = new Set(activeReservationItemIds);
-  const staleReservedItemIds = (reservedRows ?? [])
-    .map((row) => row.id as string | null)
-    .filter((id): id is string => {
-      if (!id) {
-        return false;
-      }
-      return !activeReservationItemIdSet.has(id);
-    });
-
-  if (staleReservedItemIds.length > 0) {
-    const { error } = await supabase
-      .from("catalog_items")
-      .update({ status: "active" })
-      .in("id", staleReservedItemIds)
-      .eq("status", "reserved");
-
-    if (error) {
-      throw new AdapterError("Failed to sync stale reserved items back to active.", error);
-    }
-  }
-}
-
-async function fetchOneCatalogItem(productId: string): Promise<CatalogItemRow | null> {
-  const supabase = getServerSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("catalog_items")
-    .select(CATALOG_ITEM_SELECT)
-    .eq("id", productId)
-    .maybeSingle();
-
-  if (error) {
-    throw new AdapterError("Failed to fetch catalog item.", error);
-  }
-
-  return (data as unknown as CatalogItemRow | null) ?? null;
-}
-
-export async function listProducts(
-  status: ProductStatusFilter = "all",
-  options: ListProductsOptions = {}
-): Promise<ProductDTO[]> {
-  if (options.syncReservations) {
-    await syncCatalogReservationStatuses();
-  }
-  const [itemRows, valuesByItemId] = await Promise.all([
-    fetchCatalogItems(status),
-    fetchAttributeValueMap(),
-  ]);
-  return itemRows.map((row) => rowToProduct(row, valuesByItemId));
-}
-
-export async function countProductsByStatus(
-  options: ListProductsOptions = {}
-): Promise<CatalogStatusCounts> {
-  if (options.syncReservations) {
-    await syncCatalogReservationStatuses();
-  }
-
-  const entries = await Promise.all(
-    PRODUCT_STATUSES.map(async (status) => [status, await countCatalogItems(status)] as const)
-  );
-
-  return Object.fromEntries(entries) as CatalogStatusCounts;
-}
-
-export async function listPublicActiveProducts(publicAttributes: AttributeDTO[]): Promise<ProductDTO[]> {
-  const publicAttributeIds = new Set(publicAttributes.map((attribute) => attribute.id));
-  const products = await listProducts("active", { syncReservations: false });
-
-  return products.map((product) => ({
-    ...product,
-    values: Object.fromEntries(
-      Object.entries(product.values).filter(([attributeId]) => publicAttributeIds.has(attributeId))
-    ),
-  }));
-}
-
-export async function getProductById(productId: string): Promise<ProductDTO | null> {
-  const row = await fetchOneCatalogItem(productId);
-  if (!row) {
-    return null;
-  }
-  const valuesByItemId = await fetchAttributeValueMap();
-  return rowToProduct(row, valuesByItemId);
-}
-
-export async function listAttributes(): Promise<AttributeDTO[]> {
-  return listFields("all");
-}
+export {
+  countProductsByStatus,
+  getProductById,
+  listAttributes,
+  listProducts,
+  listPublicActiveProducts,
+} from "@/app/api/catalog/services/catalog-queries";
 
 export async function createProduct(input: CreateProductDTO): Promise<ProductDTO> {
   assertRequiredText(input.name, "name");
