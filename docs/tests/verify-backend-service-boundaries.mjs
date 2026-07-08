@@ -23,4 +23,15 @@ for (const file of listFiles("src/components", [".ts", ".tsx"])) {
   }
 }
 
+for (const file of listFiles("src/app/api/catalog", [".ts", ".tsx"])) {
+  if (file.includes("/services/") || file === "src/app/api/catalog/catalog-service.ts") {
+    continue;
+  }
+
+  const text = readText(file);
+  if (/from\s+["']@\/app\/api\/catalog\/services\//.test(text)) {
+    failures.push(`${file}: catalog routes must import through catalog-service facade`);
+  }
+}
+
 failIfAny(failures, "Backend service boundary checks passed.");
