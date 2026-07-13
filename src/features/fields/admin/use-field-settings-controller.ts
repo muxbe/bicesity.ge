@@ -1,18 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { getFieldRepository, useFieldData } from "@/features/fields";
+import { useEffect, useMemo, useState } from "react";
+import {
+  getFieldRepository,
+  publishFieldLayoutState,
+  useFieldData,
+} from "@/features/fields";
 import type { FieldDTO, FieldDataType } from "@/features/fields";
 import {
   buildFieldLayoutItems,
+  clearLegacyFieldLayoutConfig,
   coreFieldOptions,
-  loadFieldLayoutConfig,
-  saveFieldLayoutConfig,
+  createDefaultFieldLayoutConfig,
+  loadLegacyFieldLayoutConfig,
   setCategoryFieldOrder,
   setCoreFieldLabel,
   setCoreFieldOptions,
   setCorePublicVisibility,
   type CoreFieldKey,
+  type FieldLayoutConfig,
   type FieldLayoutItem,
 } from "@/features/fields/field-layout";
 import type {
@@ -53,7 +59,13 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
   const [actionError, setActionError] = useState<string | null>(null);
   const [draggingFieldId, setDraggingFieldId] = useState<string | null>(null);
   const [dragOverFieldId, setDragOverFieldId] = useState<string | null>(null);
-  const [layoutVersion, setLayoutVersion] = useState(0);
+  const [fieldLayoutConfig, setFieldLayoutConfig] = useState<FieldLayoutConfig>(() =>
+    createDefaultFieldLayoutConfig(false)
+  );
+  const [legacyFieldLayoutConfig, setLegacyFieldLayoutConfig] = useState<FieldLayoutConfig | null>(null);
+  const [isLayoutLoading, setIsLayoutLoading] = useState(true);
+  const [isLayoutReviewSaving, setIsLayoutReviewSaving] = useState(false);
+  const [layoutStorageReady, setLayoutStorageReady] = useState(false);
   const [optionsField, setOptionsField] = useState<FieldDTO | null>(null);
   const [optionsFieldName, setOptionsFieldName] = useState('');
   const [optionsFieldNameRu, setOptionsFieldNameRu] = useState('');
@@ -74,7 +86,37 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
   const isUsingFallbackMock = isSupabaseRequested && !hasSupabaseEnv;
   const isMockRequested = dataSource === 'mock';
 
-  const fieldLayoutConfig = useMemo(() => loadFieldLayoutConfig(), [layoutVersion]);
+  useEffect(() => {
+    let isActive = true;
+    setIsLayoutLoading(true);
+    fieldRepository
+      .getFieldLayout()
+      .then((state) => {
+        if (!isActive) {
+          return;
+        }
+        setFieldLayoutConfig(state.config);
+        setLayoutStorageReady(state.storageReady);
+        publishFieldLayoutState(state);
+        setLegacyFieldLayoutConfig(
+          state.config.configured ? null : loadLegacyFieldLayoutConfig()
+        );
+      })
+      .catch((caughtError) => {
+        if (isActive) {
+          setActionError(parseActionError(caughtError));
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLayoutLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [fieldRepository]);
 
   const orderedLayoutItems = useMemo(
     () => buildFieldLayoutItems(activeTab, fields, fieldLayoutConfig),
@@ -117,7 +159,74 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
       });
   }, [orderedLayoutItems, query, visibilityFilter]);
 
-  const canReorderFields = workingFieldId !== 'reordering';
+  const needsLayoutReview = !isLayoutLoading && !fieldLayoutConfig.configured;
+  const canReorderFields =
+    workingFieldId !== 'reordering' &&
+    !isLayoutLoading &&
+    layoutStorageReady &&
+    fieldLayoutConfig.configured;
+
+  const persistFieldLayout = async (
+    nextConfig: FieldLayoutConfig,
+    workingId: string
+  ): Promise<boolean> => {
+    if (!layoutStorageReady) {
+      setActionError(t('fields.layoutMigrationRequired'));
+      return false;
+    }
+    if (!fieldLayoutConfig.configured) {
+      setActionError(t('fields.layoutReviewRequired'));
+      return false;
+    }
+
+    const previousConfig = fieldLayoutConfig;
+    setFieldLayoutConfig(nextConfig);
+    setWorkingFieldId(workingId);
+    setActionError(null);
+    try {
+      const state = await fieldRepository.updateFieldLayout(nextConfig);
+      setFieldLayoutConfig(state.config);
+      setLayoutStorageReady(state.storageReady);
+      publishFieldLayoutState(state);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
+      return true;
+    } catch (caughtError) {
+      setFieldLayoutConfig(previousConfig);
+      setActionError(parseActionError(caughtError));
+      return false;
+    } finally {
+      setWorkingFieldId(null);
+    }
+  };
+
+  const confirmLayoutReview = async (useLegacyLayout: boolean) => {
+    if (!layoutStorageReady) {
+      setActionError(t('fields.layoutMigrationRequired'));
+      return;
+    }
+
+    const selectedConfig =
+      useLegacyLayout && legacyFieldLayoutConfig
+        ? legacyFieldLayoutConfig
+        : createDefaultFieldLayoutConfig(false);
+    setIsLayoutReviewSaving(true);
+    setActionError(null);
+    try {
+      const state = await fieldRepository.updateFieldLayout(selectedConfig);
+      setFieldLayoutConfig(state.config);
+      setLayoutStorageReady(state.storageReady);
+      publishFieldLayoutState(state);
+      setLegacyFieldLayoutConfig(null);
+      clearLegacyFieldLayoutConfig();
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
+      publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
+    } catch (caughtError) {
+      setActionError(parseActionError(caughtError));
+    } finally {
+      setIsLayoutReviewSaving(false);
+    }
+  };
 
   const createField = async () => {
     if (!newFieldName.trim()) {
@@ -177,12 +286,9 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
     }
   };
 
-  const toggleCoreVisibility = (fieldKey: CoreFieldKey, isPublic: boolean) => {
+  const toggleCoreVisibility = async (fieldKey: CoreFieldKey, isPublic: boolean) => {
     const nextConfig = setCorePublicVisibility(fieldLayoutConfig, activeTab, fieldKey, !isPublic);
-    saveFieldLayoutConfig(nextConfig);
-    setLayoutVersion((current) => current + 1);
-    publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
-    publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
+    await persistFieldLayout(nextConfig, `core:${fieldKey}`);
   };
 
   const archiveField = async (fieldId: string) => {
@@ -317,7 +423,7 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
     setCoreFieldIsPublic(true);
   };
 
-  const saveCoreEditor = () => {
+  const saveCoreEditor = async () => {
     if (!coreFieldEditor) {
       return;
     }
@@ -353,11 +459,10 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
       nextConfig = setCoreFieldOptions(nextConfig, coreFieldEditor.field.key, nextOptions);
     }
 
-    saveFieldLayoutConfig(nextConfig);
-    setLayoutVersion((current) => current + 1);
-    publishInvalidation(CRITICAL_INVALIDATION_TAGS.CATALOG_CRITICAL);
-    publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
-    closeCoreEditor();
+    const saved = await persistFieldLayout(nextConfig, `core:${coreFieldEditor.field.key}`);
+    if (saved) {
+      closeCoreEditor();
+    }
   };
 
   const updateCoreOptionDraft = (index: number, value: string) => {
@@ -401,12 +506,17 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
       activeTab,
       nextOrder.map((item) => item.id)
     );
-    saveFieldLayoutConfig(nextConfig);
-    setLayoutVersion((current) => current + 1);
-
+    const previousConfig = fieldLayoutConfig;
+    let layoutSaved = false;
+    setFieldLayoutConfig(nextConfig);
     setWorkingFieldId('reordering');
     setActionError(null);
     try {
+      const layoutState = await fieldRepository.updateFieldLayout(nextConfig);
+      layoutSaved = true;
+      setFieldLayoutConfig(layoutState.config);
+      setLayoutStorageReady(layoutState.storageReady);
+      publishFieldLayoutState(layoutState);
       const customFieldsInOrder = nextOrder.filter(
         (item): item is Extract<FieldLayoutItem, { kind: 'custom' }> => item.kind === 'custom'
       );
@@ -421,6 +531,16 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
       publishInvalidation(CRITICAL_INVALIDATION_TAGS.REPORTS_KPI);
       await reload();
     } catch (caughtError) {
+      setFieldLayoutConfig(previousConfig);
+      if (layoutSaved) {
+        const rollbackState = await fieldRepository
+          .updateFieldLayout(previousConfig)
+          .catch(() => null);
+        if (rollbackState) {
+          setFieldLayoutConfig(rollbackState.config);
+          publishFieldLayoutState(rollbackState);
+        }
+      }
       setActionError(parseActionError(caughtError));
     } finally {
       setWorkingFieldId(null);
@@ -478,7 +598,13 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
     setCoreOptionDrafts,
     coreFieldIsPublic,
     setCoreFieldIsPublic,
-    isLoading,
+    isLoading: isLoading || isLayoutLoading,
+    isLayoutLoading,
+    isLayoutReviewSaving,
+    layoutStorageReady,
+    needsLayoutReview,
+    hasLegacyLayout: Boolean(legacyFieldLayoutConfig),
+    legacyFieldLayoutConfig,
     error,
     isUsingFallbackMock,
     isMockRequested,
@@ -503,5 +629,6 @@ export function useFieldSettingsController(t: FieldSettingsTranslator) {
     updateNewFieldOptionDraft,
     removeNewFieldOptionDraft,
     reorderField,
+    confirmLayoutReview,
   };
 }

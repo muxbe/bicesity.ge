@@ -9,7 +9,8 @@ import type {
   StockFilter,
 } from '@/features/admin/inventory/types';
 import { parseFilterPrice } from '@/features/admin/inventory/utils/money';
-import { coreFieldOptions, loadFieldLayoutConfig } from '@/features/fields/field-layout';
+import { coreFieldOptions } from '@/features/fields/field-layout';
+import { useFieldLayout } from '@/features/fields';
 
 type UseInventoryFiltersParams = {
   products: ProductDTO[];
@@ -32,6 +33,7 @@ export function useInventoryFilters({
   const [maxPriceFilter, setMaxPriceFilter] = useState('');
   const [attributeFilters, setAttributeFilters] = useState<Record<string, string>>({});
   const [isDetailedFiltersOpen, setIsDetailedFiltersOpen] = useState(false);
+  const { config: fieldLayoutConfig } = useFieldLayout();
 
   const visibleFilterAttributes = useMemo(
     () =>
@@ -125,7 +127,7 @@ export function useInventoryFilters({
   ]);
 
   const driveTypeFilterOptions = useMemo(() => {
-    const configuredOptions = coreFieldOptions(loadFieldLayoutConfig(), 'drive_type').map(
+    const configuredOptions = coreFieldOptions(fieldLayoutConfig, 'drive_type').map(
       (option) => option.value
     );
     const productOptions = products
@@ -134,7 +136,7 @@ export function useInventoryFilters({
     return Array.from(new Set([...configuredOptions, ...productOptions])).sort((a, b) =>
       a.localeCompare(b)
     );
-  }, [products]);
+  }, [fieldLayoutConfig, products]);
 
   const counts = useMemo(
     () =>

@@ -6,8 +6,14 @@ import type {
   UpdateFieldDTO,
 } from "@/features/fields/dto/field-dto";
 import type { FieldRepository } from "@/features/fields/repositories/field-repository";
+import {
+  createDefaultFieldLayoutConfig,
+  normalizeFieldLayoutConfig,
+} from "@/features/fields/field-layout";
+import type { FieldLayoutConfig } from "@/features/fields/field-layout";
 
 const archivedFieldIds = new Set<string>();
+let mockFieldLayout = createDefaultFieldLayoutConfig(false);
 
 function cloneField(field: FieldDTO): FieldDTO {
   return {
@@ -23,6 +29,10 @@ function slugify(name: string): string {
     .trim()
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "");
+}
+
+function cloneFieldLayout(config: FieldLayoutConfig): FieldLayoutConfig {
+  return normalizeFieldLayoutConfig(config);
 }
 
 export function createMockFieldRepository(): FieldRepository {
@@ -137,6 +147,21 @@ export function createMockFieldRepository(): FieldRepository {
         throw new NotFoundError("Field not found.", { fieldId });
       }
       archivedFieldIds.add(fieldId);
+    },
+
+    async getFieldLayout() {
+      return {
+        config: cloneFieldLayout(mockFieldLayout),
+        storageReady: true,
+      };
+    },
+
+    async updateFieldLayout(config: FieldLayoutConfig) {
+      mockFieldLayout = normalizeFieldLayoutConfig({ ...config, configured: true });
+      return {
+        config: cloneFieldLayout(mockFieldLayout),
+        storageReady: true,
+      };
     },
   };
 }

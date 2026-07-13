@@ -10,9 +10,9 @@ import {
 import {
   buildFieldLayoutItems,
   coreFieldOptions,
-  loadFieldLayoutConfig,
   type FieldLayoutItem,
 } from '@/features/fields/field-layout';
+import { useFieldLayout } from '@/features/fields';
 import type { ProductFormDraft } from '@/features/admin/inventory/types';
 import { ProductImage } from '@/features/admin/inventory/components/product-image';
 import { valuesForCategory } from '@/features/admin/inventory/utils/product-draft';
@@ -55,7 +55,7 @@ export function ProductForm({
     const normalized = nextImages.map((image) => image.trim()).filter(Boolean).slice(0, 5);
     onChange({ ...draft, images: normalized, image: normalized[0] ?? '' });
   };
-  const fieldLayoutConfig = loadFieldLayoutConfig();
+  const { config: fieldLayoutConfig } = useFieldLayout();
   const fieldLayoutItems = buildFieldLayoutItems(
     draft.category,
     attributes,

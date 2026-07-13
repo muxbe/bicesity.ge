@@ -2,6 +2,11 @@ import { promises as fs } from "fs";
 import path from "path";
 import { getServerSupabaseAdminClient } from "@/lib/supabase/admin";
 import { DEFAULT_APP_SETTINGS, type AppSettingsDTO } from "@/lib/settings";
+import {
+  createDefaultFieldLayoutConfig,
+  normalizeFieldLayoutConfig,
+  type FieldLayoutConfig,
+} from "@/features/fields/field-layout";
 
 export type SettingsPayload = {
   shopName?: unknown;
@@ -17,10 +22,18 @@ type SettingsRow = {
   messenger_url: string | null;
   public_contact_info: string | null;
   updated_at: string | null;
+  field_layout_config?: unknown;
+};
+
+export type ShopConfigurationDTO = {
+  settings: AppSettingsDTO;
+  fieldLayout: FieldLayoutConfig;
+  fieldLayoutStorageReady: boolean;
 };
 
 export const SETTINGS_ID = "global";
 export const SETTINGS_SELECT = "id,shop_name,currency,messenger_url,public_contact_info,updated_at";
+export const SHOP_CONFIGURATION_SELECT = `${SETTINGS_SELECT},field_layout_config`;
 
 const LOCAL_SETTINGS_PATH =
   process.env.VERCEL === "1"
@@ -47,6 +60,14 @@ function isMissingSettingsTable(error: { code?: string; message?: string } | nul
     error?.code === "42P01" ||
     error?.code === "PGRST205" ||
     Boolean(error?.message?.toLowerCase().includes("app_settings"))
+  );
+}
+
+function isMissingFieldLayoutColumn(error: { code?: string; message?: string } | null): boolean {
+  const message = error?.message?.toLowerCase() ?? "";
+  return (
+    (error?.code === "42703" || error?.code === "PGRST204" || message.includes("schema cache")) &&
+    message.includes("field_layout_config")
   );
 }
 
@@ -131,20 +152,47 @@ export function parseMessengerUrl(value: unknown, fallback: string): string | nu
   }
 }
 
-export async function readSettings(): Promise<AppSettingsDTO> {
+async function readSettingsRow(select: string) {
   const supabase = getServerSupabaseAdminClient();
-  const { data, error } = await supabase
+  return supabase
     .from("app_settings")
-    .select(SETTINGS_SELECT)
+    .select(select)
     .eq("id", SETTINGS_ID)
     .maybeSingle();
+}
+
+export async function readShopConfiguration(): Promise<ShopConfigurationDTO> {
+  let { data, error } = await readSettingsRow(SHOP_CONFIGURATION_SELECT);
+  let fieldLayoutStorageReady = true;
+
+  if (isMissingFieldLayoutColumn(error)) {
+    fieldLayoutStorageReady = false;
+    const legacyResult = await readSettingsRow(SETTINGS_SELECT);
+    data = legacyResult.data;
+    error = legacyResult.error;
+  }
 
   if (error) {
     if (isMissingSettingsTable(error)) {
-      return (await readLocalSettings()) ?? fallbackSettings();
+      return {
+        settings: (await readLocalSettings()) ?? fallbackSettings(),
+        fieldLayout: createDefaultFieldLayoutConfig(false),
+        fieldLayoutStorageReady: false,
+      };
     }
     throw error;
   }
 
-  return mapSettings((data as SettingsRow | null) ?? null);
+  const row = (data as SettingsRow | null) ?? null;
+  return {
+    settings: mapSettings(row),
+    fieldLayout: fieldLayoutStorageReady
+      ? normalizeFieldLayoutConfig(row?.field_layout_config)
+      : createDefaultFieldLayoutConfig(false),
+    fieldLayoutStorageReady,
+  };
+}
+
+export async function readSettings(): Promise<AppSettingsDTO> {
+  return (await readShopConfiguration()).settings;
 }
