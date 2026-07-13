@@ -5,6 +5,10 @@ import type {
   UpdateFieldDTO,
 } from "@/features/fields/dto/field-dto";
 import type { FieldRepository } from "@/features/fields/repositories/field-repository";
+import type {
+  FieldLayoutConfig,
+  FieldLayoutState,
+} from "@/features/fields/field-layout";
 import { getAuthHeaders, getJsonAuthHeaders } from "@/lib/auth/request-headers";
 
 type ApiResponse<T> = {
@@ -75,6 +79,24 @@ export function createSupabaseFieldRepository(): FieldRepository {
       });
 
       await parseApiResponse<{ archived: boolean }>(response, "Failed to archive field.");
+    },
+
+    async getFieldLayout() {
+      const response = await fetch("/api/fields/layout", {
+        method: "GET",
+        headers: await getAuthHeaders("admin"),
+        cache: "no-store",
+      });
+      return parseApiResponse<FieldLayoutState>(response, "Failed to load shared field layout.");
+    },
+
+    async updateFieldLayout(config: FieldLayoutConfig) {
+      const response = await fetch("/api/fields/layout", {
+        method: "PATCH",
+        headers: await getJsonAuthHeaders("admin"),
+        body: JSON.stringify({ config }),
+      });
+      return parseApiResponse<FieldLayoutState>(response, "Failed to save shared field layout.");
     },
   };
 }

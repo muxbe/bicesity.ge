@@ -3,6 +3,7 @@
 import { AddFieldModal } from '@/features/fields/admin/add-field-modal';
 import { FieldCardGrid } from '@/features/fields/admin/field-card-grid';
 import { FieldSettingsToolbar } from '@/features/fields/admin/field-settings-toolbar';
+import { FieldLayoutReviewBanner } from '@/features/fields/admin/field-layout-review-banner';
 import { EditCoreFieldModal } from '@/features/fields/admin/edit-core-field-modal';
 import { EditCustomFieldModal } from '@/features/fields/admin/edit-custom-field-modal';
 import { useFieldSettingsController } from '@/features/fields/admin/use-field-settings-controller';
@@ -65,6 +66,10 @@ export function FieldSettingsView() {
     error,
     isUsingFallbackMock,
     isMockRequested,
+    needsLayoutReview,
+    layoutStorageReady,
+    isLayoutReviewSaving,
+    legacyFieldLayoutConfig,
     fieldLayoutConfig,
     visibleLayoutItems,
     canReorderFields,
@@ -86,6 +91,7 @@ export function FieldSettingsView() {
     updateNewFieldOptionDraft,
     removeNewFieldOptionDraft,
     reorderField,
+    confirmLayoutReview,
   } = useFieldSettingsController(t);
   return (
     <div className="w-full max-w-6xl">
@@ -109,6 +115,16 @@ export function FieldSettingsView() {
           {t('fields.help')}
         </p>
       </div>
+
+      <FieldLayoutReviewBanner
+        needsReview={needsLayoutReview}
+        storageReady={layoutStorageReady}
+        isSaving={isLayoutReviewSaving}
+        legacyConfig={legacyFieldLayoutConfig}
+        t={t}
+        onImportLegacy={() => void confirmLayoutReview(true)}
+        onUseDefaults={() => void confirmLayoutReview(false)}
+      />
 
       <div className="mb-8 flex gap-5 overflow-x-auto border-b border-slate-200 sm:mb-10 sm:gap-8">
         {(['Bicycle', 'Parts'] as const).map((tab) => (

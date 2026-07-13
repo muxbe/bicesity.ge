@@ -7,7 +7,8 @@ import Image from 'next/image';
 import { ChevronLeft, Zap, Bike, LogOut, Loader2 } from 'lucide-react';
 import { formatGel, getCatalogRepository, getFallbackImage, type AttributeDTO, type ProductDTO } from '@/features/catalog';
 import { useAuth } from '@/features/auth';
-import { buildFieldLayoutItems, loadFieldLayoutConfig, type FieldLayoutItem } from '@/features/fields/field-layout';
+import { buildFieldLayoutItems, type FieldLayoutItem } from '@/features/fields/field-layout';
+import { useFieldLayout } from '@/features/fields';
 import { DEFAULT_APP_SETTINGS, type AppSettingsDTO } from '@/lib/settings';
 import {
   LanguageSwitcher,
@@ -221,6 +222,8 @@ export default function ProductDetailPage() {
   const { locale, t } = useI18n();
   const tRef = useRef(t);
   const { status, user, role, signOut, isBootstrapping, isRefreshing: isAuthRefreshing } = useAuth();
+  const isStaff = role === 'admin' || role === 'seller';
+  const { config: fieldLayoutConfig } = useFieldLayout({ enabled: isStaff });
   const params = useParams();
   const productId = params.id as string;
   const [product, setProduct] = useState<ProductDTO | null>(null);
@@ -318,13 +321,12 @@ export default function ProductDetailPage() {
     );
   }
 
-  const isStaff = role === 'admin' || role === 'seller';
   const backHref = isStaff ? (role === 'seller' ? '/seller' : '/admin') : '/';
   const backLabel = isStaff ? t('shop.backToInventory') : t('shop.backToCatalog');
   const detailAttrs: DetailAttribute[] = buildFieldLayoutItems(
     product.category,
     attributes,
-    loadFieldLayoutConfig()
+    fieldLayoutConfig
   )
     .filter((item) => isStaff || item.isPublic)
     .flatMap((item) => {
